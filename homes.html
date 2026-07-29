@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Homes — Victoria Haus</title>
+<meta name="description" content="Three levels, three bedrooms, a genkan at the door and a private roof deck at the top. The homes at Victoria Haus, level by level.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  .lvl{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap);
+    margin-top:clamp(52px,7vw,120px);align-items:center}
+  .lvl .num{font-family:'Jost',sans-serif;font-weight:200;font-size:clamp(46px,6vw,96px);
+    line-height:.9;color:var(--sand-2)}
+  .lvl h3{font-size:clamp(24px,2.8vw,40px);line-height:1.12;font-weight:300;margin-top:6px}
+  .lvl .sq{margin-top:12px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--moss)}
+  .lvl p{margin-top:18px;color:var(--ink-2);line-height:1.8;font-size:15.5px;max-width:44ch}
+  .lvl ul{margin-top:20px;list-style:none;font-size:14.5px;color:var(--ink-2)}
+  .lvl ul li{padding:9px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
+  .lvl ul li span{color:var(--muted)}
+
+  .l1 .fig{grid-column:1/8;aspect-ratio:16/11}
+  .l1 .txt{grid-column:8/13}
+  .l2 .txt{grid-column:1/5}
+  .l2 .figA{grid-column:5/9;aspect-ratio:3/4}
+  .l2 .figB{grid-column:9/13;aspect-ratio:3/4;margin-top:clamp(28px,4vw,64px)}
+  .l3 .fig{grid-column:1/13;aspect-ratio:21/9}
+  .l3 .fig::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,rgba(18,17,14,.8) 0%,rgba(18,17,14,.42) 44%,transparent 72%)}
+  .l3 .over{position:absolute;z-index:2;left:clamp(24px,4vw,66px);bottom:clamp(24px,4vw,58px);
+    right:clamp(24px,4vw,66px);max-width:38ch;color:#fff}
+  .l3 .over p{color:#DCD8D0}
+  .l3 .over .num{color:rgba(255,255,255,.28)}
+  .l3 .over .sq{color:#B7C2AB}
+
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap) clamp(28px,4vw,64px);
+    margin-top:clamp(44px,5vw,72px)}
+  .feat div{border-top:1px solid var(--line);padding-top:20px}
+  .feat h4{font-family:'Jost',sans-serif;font-weight:400;font-size:19px;margin-bottom:8px}
+  .feat p{font-size:14.5px;color:var(--muted);line-height:1.7}
+
+  @media(max-width:1000px){
+    .l1 .fig,.l1 .txt,.l2 .txt,.l3 .fig{grid-column:1/13}
+    .l2 .figA{grid-column:1/7}.l2 .figB{grid-column:7/13;margin-top:0}
+    .feat{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:640px){
+    .l2 .figA,.l2 .figB{grid-column:1/13}
+    .l3 .fig{aspect-ratio:4/5}
+    .l3 .fig::after{background:linear-gradient(to top,rgba(18,17,14,.86),rgba(18,17,14,.25) 62%)}
+    .feat{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="index.html">Victoria<b>Haus</b></a>
+    <ul>
+      <li><a class="nl active" href="homes.html">Homes</a></li>
+      <li><a class="nl" href="floorplans.html">Floor Plans</a></li>
+      <li><a class="nl" href="neighbourhood.html">Neighbourhood</a></li>
+      <li><a class="nl" href="team.html">Team</a></li>
+      <li><a class="reg" href="#register">Register</a></li>
+    </ul>
+    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <a href="homes.html">Homes</a>
+  <a href="floorplans.html">Floor Plans</a>
+  <a href="neighbourhood.html">Neighbourhood</a>
+  <a href="team.html">Team</a>
+  <a href="#register">Register</a>
+  <div class="d-meta">
+    Victoria Drive at East 23rd Avenue<br>
+    Vancouver, British Columbia<br>
+    hello@victoriahaus-demo.ca
+  </div>
+</div>
+
+<header class="hero sub">
+  <div class="media">
+    <img src="assets/img/03-living-kitchen.webp" alt="Living, dining and kitchen at Victoria Haus">
+    <video data-loop autoplay muted loop playsinline preload="auto" poster="assets/img/03-living-kitchen.webp">
+      <source src="assets/video/homes-loop.webm" type="video/webm">
+      <source src="assets/video/homes-loop.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="shade"></div>
+  <div class="hero-inner">
+    <h1 class="display">
+      <span class="ln"><span>Three levels.</span></span>
+      <span class="ln"><span>No wasted ones.</span></span>
+    </h1>
+    <p class="sub-copy">1,410 square feet inside, arranged so each floor does one thing properly.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">The homes</div>
+    <h2 class="title display reveal d1">A house, stacked.</h2>
+    <p class="lead reveal d2">Not an apartment with stairs. Each home has its own front door onto the street, its own garden at the back, and its own roof. The plan reads like a narrow city house because that is what it is — three storeys, one family, no shared corridor.</p>
+
+    <!-- LEVEL 1 -->
+    <div class="lvl l1">
+      <div class="fig frame reveal" data-lightbox data-title="Level 1 — living, dining, kitchen"
+           data-caption="The ground floor runs the full depth of the home, opening onto the garden patio.">
+        <img src="assets/img/03-living-kitchen.webp" alt="Living, dining and kitchen" loading="lazy">
+        <span class="cap">Level 1 — living, dining, kitchen</span>
+      </div>
+      <div class="txt reveal d1">
+        <div class="num display">01</div>
+        <h3 class="display">Ground floor</h3>
+        <div class="sq">534 sq ft</div>
+        <p>You come in through the genkan, drop everything, and step up into one long room. Kitchen at the back with the island facing in, dining in the middle, living at the front where the windows are — then straight out to the garden.</p>
+        <ul>
+          <li>Living <span>11'-4" × 12'-8"</span></li>
+          <li>Kitchen <span>8'-0" × 12'-3"</span></li>
+          <li>Genkan <span>3'-11" × 6'-1"</span></li>
+          <li>Powder room <span>3'-11" × 6'-9"</span></li>
+          <li>Storage &amp; mechanical <span>3'-0" × 14'-7"</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- LEVEL 2 -->
+    <div class="lvl l2">
+      <div class="txt reveal">
+        <div class="num display">02</div>
+        <h3 class="display">Bedroom floor</h3>
+        <div class="sq">528 sq ft</div>
+        <p>Two bedrooms of near-identical size, a full bath between them, and the laundry on the same floor as the clothes. Nobody has to carry a basket up two flights.</p>
+        <ul>
+          <li>Bedroom 1 <span>13'-0" × 8'-10"</span></li>
+          <li>Bedroom 2 <span>13'-4" × 8'-7"</span></li>
+          <li>Bath <span>8'-10" × 5'-6"</span></li>
+          <li>Laundry <span>On this floor</span></li>
+        </ul>
+      </div>
+      <div class="figA frame reveal d1" data-lightbox data-title="Level 2 — bedroom"
+           data-caption="Two bedrooms of near-identical size, with a full bath between them.">
+        <img src="assets/img/05-primary-bedroom.webp" alt="Bedroom" loading="lazy">
+      </div>
+      <div class="figB frame reveal d2" data-lightbox data-title="Level 2 — bath"
+           data-caption="A full bath between the two bedrooms.">
+        <img src="assets/img/08-ensuite.webp" alt="Bathroom" loading="lazy">
+      </div>
+    </div>
+
+    <!-- LEVEL 3 -->
+    <div class="lvl l3">
+      <div class="fig frame reveal" data-lightbox data-title="Level 3 — primary suite and roof deck"
+           data-caption="The whole top floor is one suite, opening onto 185 sq ft of private roof deck.">
+        <img src="assets/img/06-roof-deck.webp" alt="Roof deck and primary suite" loading="lazy">
+        <div class="over">
+          <div class="num display">03</div>
+          <h3 class="display">The top floor is yours</h3>
+          <div class="sq">348 sq ft interior + 185 sq ft roof deck</div>
+          <p>One suite, one ensuite, and a door onto 185 square feet of private roof deck — seventeen feet by ten, above the street trees, with nobody above you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--sand)">
+  <div class="wrap">
+    <div class="kicker reveal">Inside</div>
+    <h2 class="title display reveal d1">Quiet materials, done properly.</h2>
+    <p class="lead reveal d2">A restrained palette — pale oak, lime-washed plaster, blackened hardware — chosen so the rooms age well rather than date fast.</p>
+    <div class="feat">
+      <div class="reveal"><h4>The genkan</h4><p>A recessed entry vestibule at the door of every home. Shoes, coats and bicycles stop here, and the living space stays clean.</p></div>
+      <div class="reveal d1"><h4>Full-depth ground floor</h4><p>Kitchen, dining and living in one uninterrupted run, opening directly onto the private garden patio.</p></div>
+      <div class="reveal d2"><h4>Private roof deck</h4><p>185 sq ft off the primary suite. Seventeen by ten feet — big enough for a table of six.</p></div>
+      <div class="reveal"><h4>Laundry upstairs</h4><p>On the bedroom floor, where the laundry is generated. A small thing you notice every week.</p></div>
+      <div class="reveal d1"><h4>Own front door</h4><p>No corridor, no lobby, no lift. Each home meets the street or the garden walk on its own terms.</p></div>
+      <div class="reveal d2"><h4>Storage that exists</h4><p>A dedicated 14-foot storage and mechanical run on the ground floor, plus storage off the primary suite.</p></div>
+    </div>
+    <div style="margin-top:clamp(38px,4vw,60px)" class="reveal">
+      <a class="btn" href="floorplans.html">See the floor plans <span class="arr">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="register" id="register">
+  <div class="wrap inner">
+    <div>
+      <h2 class="display reveal">Register for<br>first access.</h2>
+      <p class="reveal d1">Four homes, released together. Register for floor plans, pricing and a private preview before we open to the public.</p>
+      <p class="reveal d2" style="margin-top:26px">
+        <b style="color:#EDEAE3">Victoria Haus</b><br>
+        Victoria Drive at East 23rd Avenue<br>
+        Vancouver, British Columbia<br>
+        604.555.0123 · hello@victoriahaus-demo.ca
+      </p>
+    </div>
+    <form data-demo class="reveal d1">
+      <input placeholder="First name" aria-label="First name" required>
+      <input placeholder="Last name" aria-label="Last name" required>
+      <input class="full" type="email" placeholder="Email address" aria-label="Email address" required>
+      <input type="tel" placeholder="Phone" aria-label="Phone">
+      <input type="text" placeholder="Postal code" aria-label="Postal code">
+      <select class="full" aria-label="Are you working with a realtor?">
+        <option value="">Are you working with a realtor?</option>
+        <option>No, I am not represented</option>
+        <option>Yes, I am represented</option>
+        <option>I am a realtor</option>
+      </select>
+      <button type="submit">Register</button>
+      <p class="consent">By registering you consent to receive updates about Victoria Haus. You can unsubscribe at any time.</p>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap f-in">
+    <span><b>VICTORIA HAUS</b><br>Victoria Drive at East 23rd Avenue<br>Kensington-Cedar Cottage, Vancouver</span>
+    <span class="fl">
+      <a href="homes.html">Homes</a>
+      <a href="floorplans.html">Floor Plans</a>
+      <a href="neighbourhood.html">Neighbourhood</a>
+      <a href="team.html">Team</a>
+      <a href="#register">Register</a>
+    </span>
+  </div>
+  <div class="wrap"><p class="legend legal">
+    Renderings are artistic representations only and are not intended to form part of any contract. Floor plans are draft and approximate; dimensions and areas are subject to change. This is not an offering for sale — any such offering may only be made with a disclosure statement. E.&amp;O.E.
+    <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
+  </p></div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

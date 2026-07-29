@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floor Plans — Victoria Haus</title>
+<meta name="description" content="Choose a home on the site plan, walk it level by level, compare up to three and save the plans you like. Four three-bedroom homes of 1,595 sq ft.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  /* ---------- FILTERS ---------- */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:var(--gap)}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;
+    font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:12px 22px;
+    cursor:pointer;display:flex;align-items:center;gap:9px;
+    transition:background .3s,color .3s,border-color .3s}
+  .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--moss)}
+  .chip .dot.sold{background:#B0A99C}
+  .chip:hover{border-color:var(--ink)}
+  .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .chip.on .dot{background:#fff}
+
+  /* ---------- SELECTOR ---------- */
+  /* The site plan is how you navigate this page, so it gets a wider shell than
+     the rest of the site — otherwise a 2560px monitor renders it at exactly the
+     same 732px as a 1440px one, and the extra screen buys nothing. */
+  .fp-wide{max-width:1880px}
+  .selector{display:grid;grid-template-columns:1.5fr 1fr;gap:var(--gap);align-items:start}
+  @media(max-width:1080px){.selector{grid-template-columns:1fr}}
+
+  .board{background:#fff;border:1px solid var(--line);overflow:hidden}
+  .board-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+    padding:16px clamp(16px,2vw,26px);border-bottom:1px solid var(--line)}
+  .board-head h3{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
+  .hint{font-size:12.5px;color:var(--muted)}
+  .site-holder svg{display:block;width:100%;height:auto}
+
+  .hs{fill:rgba(58,66,50,0);stroke:rgba(255,255,255,0);stroke-width:3;cursor:pointer;
+    transition:fill .3s ease,stroke .3s ease}
+  g.unit:hover .hs{fill:rgba(46,54,40,.34)}
+  g.unit.sel .hs{fill:rgba(46,54,40,.55);stroke:#fff}
+  g.unit.dim{opacity:.28;pointer-events:none}
+  g.unit.sold .hs{fill:rgba(40,38,34,.30)}
+  g.unit.sold:hover .hs{fill:rgba(40,38,34,.44)}
+  .hs-lab{fill:#fff;font-family:'Jost',sans-serif;font-weight:300;font-size:34px;text-anchor:middle;
+    pointer-events:none}
+  .hs-sub{fill:#E8EDE2;font-family:'Inter',sans-serif;font-size:14px;letter-spacing:.22em;
+    text-anchor:middle;pointer-events:none;opacity:.8}
+  .hs-stat{font-family:'Inter',sans-serif;font-size:13px;letter-spacing:.18em;text-anchor:middle;
+    pointer-events:none;fill:#CDE0BC}
+  g.unit.sold .hs-stat{fill:#D8D2C6}
+
+  /* ---------- DETAIL PANEL ---------- */
+  .panel{background:#fff;border:1px solid var(--line);position:sticky;top:100px}
+  .panel-head{padding:clamp(22px,2.4vw,30px);border-bottom:1px solid var(--line)}
+  .panel-head .row1{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .panel-head h2{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(30px,3.2vw,44px);line-height:1}
+  .panel-head .letter{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--moss);font-weight:600}
+  .panel-head .addr{margin-top:10px;font-size:14px;color:var(--muted)}
+  .panel-head .row2{display:flex;justify-content:space-between;align-items:center;gap:14px;
+    margin-top:18px;flex-wrap:wrap}
+  .status{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    padding:7px 14px;border:1px solid var(--moss);color:var(--moss)}
+  .status.sold{border-color:#B0A99C;color:#8E877B}
+  .price{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(22px,2.2vw,30px)}
+  .price.sold{color:var(--muted);text-decoration:line-through}
+
+  .levels{display:flex;border-bottom:1px solid var(--line)}
+  .levels button{flex:1;border:0;background:transparent;font-family:inherit;font-size:11.5px;
+    font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:15px 6px;cursor:pointer;
+    color:var(--muted);border-bottom:2px solid transparent;transition:color .3s,border-color .3s}
+  .levels button:hover{color:var(--ink)}
+  .levels button.on{color:var(--ink);border-bottom-color:var(--moss)}
+  .levels button small{display:block;font-weight:400;letter-spacing:.02em;text-transform:none;
+    font-size:11px;color:var(--muted);margin-top:3px}
+
+  .planbox{padding:clamp(16px,2vw,26px);cursor:zoom-in;position:relative;background:#fff;
+    min-height:190px;display:flex;align-items:center;justify-content:center}
+  .planbox img{width:100%;display:block;transition:opacity .28s}
+  .planbox .zi{position:absolute;top:16px;right:16px;background:rgba(27,26,23,.86);color:#fff;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:8px 14px;opacity:0;
+    transition:opacity .35s}
+  .planbox:hover .zi{opacity:1}
+
+  .prow{padding:0 clamp(22px,2.4vw,30px)}
+  .prow div{display:flex;justify-content:space-between;gap:14px;padding:11px 0;
+    border-bottom:1px solid #EFEBE1;font-size:14px}
+  .prow div:last-child{border-bottom:0}
+  .prow dt{color:var(--muted)}
+  .prow dd{font-weight:600}
+  .prow div.hi dd{color:var(--moss)}
+  .panel .note{padding:12px clamp(22px,2.4vw,30px) 0;font-size:13px}
+  .pacts{display:flex;gap:10px;padding:clamp(20px,2.2vw,26px);flex-wrap:wrap}
+  .pacts .btn{flex:1;justify-content:center;min-width:132px;padding:14px 12px;font-size:11px}
+  .icon-btn{border:1px solid var(--ink);background:transparent;width:52px;cursor:pointer;
+    display:grid;place-items:center;font-size:17px;color:var(--ink);transition:background .3s,color .3s}
+  .icon-btn:hover{background:var(--ink);color:var(--paper)}
+  .icon-btn.on{background:var(--clay);border-color:var(--clay);color:#fff}
+
+  /* ---------- TRAY ---------- */
+  .tray{position:fixed;left:0;right:0;bottom:0;z-index:120;background:rgba(24,23,20,.97);
+    backdrop-filter:blur(14px);color:var(--paper);transform:translateY(110%);
+    transition:transform .42s cubic-bezier(.2,.7,.2,1);box-shadow:0 -12px 40px rgba(0,0,0,.3)}
+  .tray.up{transform:none}
+  .tray-in{max-width:var(--shell);margin-inline:auto;padding:15px var(--gutter);
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .tray-lab{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8E887E;white-space:nowrap}
+  .slots{display:flex;gap:9px;flex:1;flex-wrap:wrap;min-width:180px}
+  .slot{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.14);padding:7px 10px 7px 8px;
+    animation:slotIn .34s cubic-bezier(.2,.7,.2,1)}
+  @keyframes slotIn{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
+  .slot img{width:46px;height:34px;object-fit:cover;background:#fff;flex-shrink:0}
+  .slot .t b{display:block;font-size:13px;font-family:'Jost',sans-serif;font-weight:400}
+  .slot .t small{font-size:10.5px;color:#9A948A;letter-spacing:.08em}
+  .slot button{border:0;background:transparent;color:#9A948A;cursor:pointer;font-size:14px;padding:2px 4px}
+  .slot button:hover{color:var(--clay)}
+  .slot.ghost{border-style:dashed;background:transparent;color:#7C766C;font-size:11.5px;
+    padding:15px 16px;animation:none}
+  .tray-act{display:flex;gap:10px;align-items:center;white-space:nowrap}
+  .tray-act .go{background:var(--paper);color:var(--ink);border:0;font-weight:600;font-size:11.5px;
+    letter-spacing:.12em;text-transform:uppercase;padding:14px 26px;cursor:pointer;font-family:inherit;
+    transition:background .3s,color .3s}
+  .tray-act .go:disabled{background:rgba(255,255,255,.12);color:#7C766C;cursor:not-allowed}
+  .tray-act .go:not(:disabled):hover{background:var(--moss);color:#fff}
+  .tray-act .clr{background:transparent;border:0;color:#9A948A;font-size:12px;cursor:pointer;
+    text-decoration:underline;font-family:inherit}
+  body.tray-open{padding-bottom:96px}
+  @media(max-width:820px){
+    .tray-lab{display:none}.tray-act{width:100%}.tray-act .go{flex:1}
+    body.tray-open{padding-bottom:0}
+  }
+
+  /* ---------- COMPARE / SAVED OVERLAY ---------- */
+  .ov{position:fixed;inset:0;z-index:150;background:var(--paper);display:none;flex-direction:column;
+    opacity:0;transition:opacity .32s}
+  .ov.open{display:flex}.ov.show{opacity:1}
+  .ov-head{display:flex;justify-content:space-between;align-items:center;gap:16px;
+    padding:18px clamp(16px,3vw,34px);border-bottom:1px solid var(--line);background:#fff;flex-shrink:0}
+  .ov-head h3{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(20px,2.2vw,28px)}
+  .ov-head p{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .ov-x{border:1px solid var(--line);background:transparent;width:44px;height:44px;cursor:pointer;
+    font-size:16px;color:var(--ink);transition:background .3s,color .3s}
+  .ov-x:hover{background:var(--ink);color:var(--paper)}
+  .ov-body{flex:1;overflow:auto;padding:clamp(16px,2.4vw,34px)}
+  .cmp-grid{display:grid;gap:var(--gap);max-width:1400px;margin-inline:auto}
+  .cmp-col{background:#fff;border:1px solid var(--line);display:flex;flex-direction:column}
+  .cmp-col h4{padding:18px 22px 15px;border-bottom:1px solid var(--line)}
+  .cmp-col h4 span{display:block;color:var(--moss);font-size:10.5px;font-weight:600;letter-spacing:.18em;
+    text-transform:uppercase;margin-bottom:5px}
+  .cmp-col h4 b{font-family:'Jost',sans-serif;font-weight:300;font-size:26px}
+  .cmp-plan{padding:12px;cursor:zoom-in;background:#fff}
+  .cmp-plan img{width:100%;display:block}
+  .cmp-spec{border-top:1px solid var(--line);margin-top:auto}
+  .cmp-spec div{display:flex;justify-content:space-between;gap:12px;padding:11px 22px;font-size:13.5px;
+    border-bottom:1px solid #F2EEE4}
+  .cmp-spec div:last-child{border-bottom:0}
+  .cmp-spec dt{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .cmp-spec dd{font-weight:600;text-align:right}
+  .cmp-spec div.diff{background:#F4F6EE}
+  .cmp-spec div.diff dd{color:var(--moss)}
+  @media(max-width:860px){.cmp-grid{grid-template-columns:1fr !important}}
+
+  /* saved / email */
+  .saved-wrap{max-width:640px;margin-inline:auto}
+  .saved-list{background:#fff;border:1px solid var(--line)}
+  .saved-list .s{display:flex;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .saved-list .s:last-child{border-bottom:0}
+  .saved-list img{width:74px;height:54px;object-fit:cover;background:#fff;border:1px solid var(--line)}
+  .saved-list .t{flex:1}
+  .saved-list .t b{font-family:'Jost',sans-serif;font-weight:400;font-size:19px;display:block}
+  .saved-list .t small{font-size:12.5px;color:var(--muted)}
+  .saved-list .s button{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:15px}
+  .saved-list .s button:hover{color:var(--clay)}
+  .mailform{margin-top:26px;display:grid;gap:12px}
+  .mailform input{padding:16px 18px;border:1px solid var(--line);font-family:inherit;font-size:15px;background:#fff}
+  .mailform input:focus{outline:none;border-color:var(--moss)}
+  .mailform button{padding:17px;border:0;background:var(--ink);color:var(--paper);font-family:inherit;
+    font-weight:600;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+    transition:background .3s}
+  .mailform button:hover{background:var(--moss)}
+  .empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:15px}
+</style>
+</head>
+<body>
+
+<nav class="solid">
+  <div class="nav-in">
+    <a class="logo" href="index.html">Victoria<b>Haus</b></a>
+    <ul>
+      <li><a class="nl" href="homes.html">Homes</a></li>
+      <li><a class="nl active" href="floorplans.html">Floor Plans</a></li>
+      <li><a class="nl" href="neighbourhood.html">Neighbourhood</a></li>
+      <li><a class="nl" href="team.html">Team</a></li>
+      <li><a class="reg" href="#register">Register</a></li>
+    </ul>
+    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <a href="homes.html">Homes</a>
+  <a href="floorplans.html">Floor Plans</a>
+  <a href="neighbourhood.html">Neighbourhood</a>
+  <a href="team.html">Team</a>
+  <a href="#register">Register</a>
+  <div class="d-meta">
+    Victoria Drive at East 23rd Avenue<br>
+    Vancouver, British Columbia<br>
+    hello@victoriahaus-demo.ca
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap">
+    <h1 class="display">
+      <span class="ln"><span>Choose your</span></span>
+      <span class="ln"><span>home.</span></span>
+    </h1>
+    <p>Four homes, the same plan. Pick one on the site plan, walk it level by level, compare up to three side by side, and email yourself the ones you like.</p>
+  </div>
+</header>
+
+<section style="padding-top:0">
+  <div class="wrap fp-wide">
+
+    <div class="filters">
+      <button class="chip on" data-filter="all">All homes <span id="cAll"></span></button>
+      <button class="chip" data-filter="available"><span class="dot"></span>Available <span id="cAvail"></span></button>
+      <button class="chip" data-filter="sold"><span class="dot sold"></span>Sold <span id="cSold"></span></button>
+    </div>
+
+    <div class="selector">
+      <!-- SITE PLAN -->
+      <div class="board reveal in">
+        <div class="board-head">
+          <h3>Site plan</h3>
+          <span class="hint">Click a home to open it</span>
+        </div>
+        <div class="site-holder">
+          <svg id="siteSvg" viewBox="0 0 1672 941" aria-label="Victoria Haus site plan">
+            <image href="assets/siteplan.webp" x="0" y="0" width="1672" height="941"/>
+            <!-- Footprints measured off the drawing itself, not estimated: the party
+                 walls read as dark lines at x=885.5 and y=381.5, and the block runs
+                 x 498-1267, y 176-590. Rects are inset 1px so adjacent strokes never
+                 overlap into a neighbouring home. -->
+            <g class="unit" data-home="hinoki" tabindex="0" role="button" aria-label="Hinoki, Home A">
+              <rect class="hs" x="499" y="177" width="385" height="203"/>
+              <text class="hs-lab" x="691" y="266">Hinoki</text>
+              <text class="hs-sub" x="691" y="295">HOME A</text>
+              <text class="hs-stat" x="691" y="325">AVAILABLE</text>
+            </g>
+            <g class="unit" data-home="sakura" tabindex="0" role="button" aria-label="Sakura, Home C">
+              <rect class="hs" x="887" y="177" width="379" height="203"/>
+              <text class="hs-lab" x="1076" y="266">Sakura</text>
+              <text class="hs-sub" x="1076" y="295">HOME C</text>
+              <text class="hs-stat" x="1076" y="325">SOLD</text>
+            </g>
+            <g class="unit" data-home="momiji" tabindex="0" role="button" aria-label="Momiji, Home B">
+              <rect class="hs" x="499" y="383" width="385" height="206"/>
+              <text class="hs-lab" x="691" y="474">Momiji</text>
+              <text class="hs-sub" x="691" y="503">HOME B</text>
+              <text class="hs-stat" x="691" y="533">AVAILABLE</text>
+            </g>
+            <g class="unit" data-home="matsu" tabindex="0" role="button" aria-label="Matsu, Home D">
+              <rect class="hs" x="887" y="383" width="379" height="206"/>
+              <text class="hs-lab" x="1076" y="474">Matsu</text>
+              <text class="hs-sub" x="1076" y="503">HOME D</text>
+              <text class="hs-stat" x="1076" y="533">AVAILABLE</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- DETAIL PANEL -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="row1">
+            <h2 id="pName">Hinoki</h2>
+            <span class="letter" id="pLetter">Home A</span>
+          </div>
+          <p class="addr" id="pAddr">3992 Victoria Drive</p>
+          <div class="row2">
+            <span class="status" id="pStatus">Available</span>
+            <span class="price" id="pPrice">$1,649,900</span>
+          </div>
+        </div>
+
+        <div class="levels" id="levels">
+          <button data-lvl="1" class="on">Level 1<small>534 sq ft</small></button>
+          <button data-lvl="2">Level 2<small>528 sq ft</small></button>
+          <button data-lvl="3">Level 3<small>348 sq ft</small></button>
+          <button data-lvl="all">All<small>full sheet</small></button>
+        </div>
+
+        <div class="planbox" id="planBox">
+          <img id="pImg" src="assets/plans/hinoki-L1.webp" alt="Hinoki, level 1">
+          <span class="zi">Click to zoom</span>
+        </div>
+
+        <div class="prow" id="pRows"></div>
+        <p class="note" id="pNote"></p>
+
+        <div class="pacts">
+          <button class="btn btn-solid" id="pCmp" type="button">Add to compare</button>
+          <a class="btn" id="pPdf" href="assets/plans/hinoki.pdf" download>PDF</a>
+          <button class="icon-btn" id="pFav" type="button" aria-label="Save this home" title="Save this home">&#9825;</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:20px">Site plan v4 · floor plans draft v4. Areas are approximate and prices are illustrative for this demonstration. E.&amp;O.E.
+      <a href="assets/plans/Victoria-Haus-All-Plans.pdf" target="_blank" rel="noopener" style="color:var(--moss);font-weight:600">Download all four plans (PDF)</a></p>
+  </div>
+</section>
+
+<!-- TRAY -->
+<div class="tray" id="tray" aria-live="polite">
+  <div class="tray-in">
+    <span class="tray-lab" id="trayLab">Comparing</span>
+    <div class="slots" id="slots"></div>
+    <div class="tray-act">
+      <button class="clr" id="trayClear" type="button">Clear</button>
+      <button class="go" id="trayGo" type="button" disabled>Compare</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE OVERLAY -->
+<div class="ov" id="cmp" role="dialog" aria-modal="true" aria-label="Compare homes">
+  <div class="ov-head">
+    <div><h3>Compare homes</h3><p>Shown at the same scale. Click any plan to zoom.</p></div>
+    <button class="ov-x" id="cmpX" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ov-body"><div class="cmp-grid" id="cmpGrid"></div></div>
+</div>
+
+<!-- SAVED OVERLAY -->
+<div class="ov" id="sav" role="dialog" aria-modal="true" aria-label="Saved homes">
+  <div class="ov-head">
+    <div><h3>Your saved homes</h3><p>Send the plans to yourself and keep looking later.</p></div>
+    <button class="ov-x" id="savX" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ov-body">
+    <div class="saved-wrap">
+      <div class="saved-list" id="savList"></div>
+      <form class="mailform" data-demo id="savForm">
+        <input type="text" placeholder="Your name" aria-label="Your name" required>
+        <input type="email" placeholder="Your email address" aria-label="Email address" required>
+        <button type="submit">Email me these plans</button>
+      </form>
+      <p class="note" style="margin-top:16px">We will send the PDF of each saved home and keep you posted on availability. Unsubscribe any time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="register" id="register">
+  <div class="wrap inner">
+    <div>
+      <h2 class="display reveal">Register for<br>first access.</h2>
+      <p class="reveal d1">Four homes, released together. Register for floor plans, pricing and a private preview before we open to the public.</p>
+      <p class="reveal d2" style="margin-top:26px">
+        <b style="color:#EDEAE3">Victoria Haus</b><br>
+        Victoria Drive at East 23rd Avenue<br>
+        Vancouver, British Columbia<br>
+        604.555.0123 · hello@victoriahaus-demo.ca
+      </p>
+    </div>
+    <form data-demo class="reveal d1">
+      <input placeholder="First name" aria-label="First name" required>
+      <input placeholder="Last name" aria-label="Last name" required>
+      <input class="full" type="email" placeholder="Email address" aria-label="Email address" required>
+      <input type="tel" placeholder="Phone" aria-label="Phone">
+      <input type="text" placeholder="Postal code" aria-label="Postal code">
+      <select class="full" id="regHome" aria-label="Which home interests you?">
+        <option value="">Which home interests you?</option>
+        <option>Hinoki — 3992 Victoria Drive</option>
+        <option>Momiji — #2 East 23rd</option>
+        <option>Sakura — #3 East 23rd</option>
+        <option>Matsu — #1 East 23rd</option>
+        <option>Not sure yet</option>
+      </select>
+      <select class="full" aria-label="Are you working with a realtor?">
+        <option value="">Are you working with a realtor?</option>
+        <option>No, I am not represented</option>
+        <option>Yes, I am represented</option>
+        <option>I am a realtor</option>
+      </select>
+      <button type="submit">Register</button>
+      <p class="consent">By registering you consent to receive updates about Victoria Haus. You can unsubscribe at any time.</p>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap f-in">
+    <span><b>VICTORIA HAUS</b><br>Victoria Drive at East 23rd Avenue<br>Kensington-Cedar Cottage, Vancouver</span>
+    <span class="fl">
+      <a href="homes.html">Homes</a>
+      <a href="floorplans.html">Floor Plans</a>
+      <a href="neighbourhood.html">Neighbourhood</a>
+      <a href="team.html">Team</a>
+      <a href="#register">Register</a>
+    </span>
+  </div>
+  <div class="wrap"><p class="legend legal">
+    Renderings are artistic representations only and are not intended to form part of any contract. Floor plans are draft and approximate; dimensions, areas and prices are illustrative and subject to change. This is not an offering for sale — any such offering may only be made with a disclosure statement. E.&amp;O.E.
+    <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
+  </p></div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>
+/* ============================================================
+   Unit selector for a four-home multiplex.
+   Nothing in this category ships one — the received wisdom is that
+   four units cannot justify the build. With the plans already in
+   vector and the levels sliced automatically, it can.
+   ============================================================ */
+const HOMES = {
+  hinoki:{ name:"Hinoki", letter:"Home A", addr:"3992 Victoria Drive", status:"available",
+    price:"$1,649,900", orient:"Corner home · west and south exposure",
+    note:"The only home addressing Victoria Drive. Widest frontage on the lot and the longest run of afternoon light." },
+  momiji:{ name:"Momiji", letter:"Home B", addr:"#2 – 2017 East 23rd Avenue", status:"available",
+    price:"$1,574,900", orient:"Interior home · south exposure",
+    note:"Set back from both streets. The most sheltered garden of the four, and the quietest position on the lot." },
+  sakura:{ name:"Sakura", letter:"Home C", addr:"#3 – 2017 East 23rd Avenue", status:"sold",
+    price:"$1,599,900", orient:"North-east corner · east exposure",
+    note:"Morning light through the kitchen. Sold in the first release." },
+  matsu:{ name:"Matsu", letter:"Home D", addr:"#1 – 2017 East 23rd Avenue", status:"available",
+    price:"$1,589,900", orient:"South-east corner · east and south exposure",
+    note:"Addresses East 23rd Avenue with the shortest walk to parking." }
+};
+const ORDER = ["hinoki","momiji","sakura","matsu"];
+const LEVELS = { 1:"534 sq ft", 2:"528 sq ft", 3:"348 sq ft interior + 185 sq ft roof deck" };
+const MAX_CMP = 3;
+
+let current = "hinoki", level = "1", bag = [], fav = [], filter = "all";
+
+const $ = id => document.getElementById(id);
+
+/* ---------- counts ---------- */
+const avail = ORDER.filter(k => HOMES[k].status === "available").length;
+$("cAll").textContent   = `(${ORDER.length})`;
+$("cAvail").textContent = `(${avail})`;
+$("cSold").textContent  = `(${ORDER.length - avail})`;
+
+/* ---------- panel ---------- */
+function planSrc(key, lvl){ return lvl === "all" ? `assets/plans/${key}.webp` : `assets/plans/${key}-L${lvl}.webp`; }
+
+function renderPanel(){
+  const h = HOMES[current];
+  $("pName").textContent   = h.name;
+  $("pLetter").textContent = h.letter;
+  $("pAddr").textContent   = h.addr;
+  $("pStatus").textContent = h.status === "sold" ? "Sold" : "Available";
+  $("pStatus").className   = "status" + (h.status === "sold" ? " sold" : "");
+  $("pPrice").textContent  = h.price;
+  $("pPrice").className    = "price" + (h.status === "sold" ? " sold" : "");
+  $("pPdf").href = `assets/plans/${current}.pdf`;
+  $("pPdf").setAttribute("download", `Victoria-Haus-${h.name}.pdf`);
+
+  const img = $("pImg");
+  img.style.opacity = 0;
+  const next = planSrc(current, level);
+  const pre = new Image();
+  pre.onload = () => { img.src = next; img.alt = `${h.name}, level ${level}`; img.style.opacity = 1; };
+  pre.src = next;
+  if (pre.complete) { img.src = next; img.style.opacity = 1; }
+
+  const rows = level === "all"
+    ? [["Bedrooms","3"],["Bathrooms","2.5"],["Interior","1,410 sq ft"],["Roof deck","185 sq ft"],
+       ["Total","1,595 sq ft",true],["Orientation",h.orient]]
+    : [["This level", LEVELS[level]],["Bedrooms","3"],["Bathrooms","2.5"],
+       ["Total home","1,595 sq ft",true],["Orientation",h.orient]];
+  $("pRows").innerHTML = rows.map(([k,v,hi]) =>
+    `<div class="${hi?'hi':''}"><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+  $("pNote").textContent = h.note;
+
+  document.querySelectorAll("g.unit").forEach(g => g.classList.toggle("sel", g.dataset.home === current));
+  syncButtons();
+}
+
+function selectHome(key){
+  if (HOMES[key].status === "sold" && filter === "available") return;
+  current = key; renderPanel();
+  if (window.matchMedia("(max-width:1080px)").matches)
+    document.querySelector(".panel").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+document.querySelectorAll("g.unit").forEach(g => {
+  g.style.cursor = "pointer";
+  g.addEventListener("click", () => selectHome(g.dataset.home));
+  g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectHome(g.dataset.home); } });
+});
+
+/* ---------- level tabs ---------- */
+document.querySelectorAll("#levels button").forEach(b => {
+  b.addEventListener("click", () => {
+    level = b.dataset.lvl;
+    document.querySelectorAll("#levels button").forEach(x => x.classList.toggle("on", x === b));
+    renderPanel();
+  });
+});
+
+/* ---------- filters ---------- */
+document.querySelectorAll(".chip").forEach(c => {
+  c.addEventListener("click", () => {
+    filter = c.dataset.filter;
+    document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c));
+    document.querySelectorAll("g.unit").forEach(g => {
+      const st = HOMES[g.dataset.home].status;
+      g.classList.toggle("sold", st === "sold");
+      g.classList.toggle("dim", filter !== "all" && st !== filter);
+    });
+    if (filter !== "all" && HOMES[current].status !== filter) {
+      const first = ORDER.find(k => HOMES[k].status === filter);
+      if (first) { current = first; renderPanel(); }
+    }
+  });
+});
+document.querySelectorAll("g.unit").forEach(g =>
+  g.classList.toggle("sold", HOMES[g.dataset.home].status === "sold"));
+
+/* ---------- zoom ---------- */
+$("planBox").addEventListener("click", () => {
+  const items = level === "all"
+    ? ORDER.map(k => ({ src:planSrc(k,"all"), title:`${HOMES[k].name} · ${HOMES[k].letter}`,
+        caption:`${HOMES[k].addr} — 3 bed + 2.5 bath · 1,595 sq ft. Click or scroll to zoom, drag to pan.` }))
+    : [1,2,3].map(l => ({ src:planSrc(current,String(l)),
+        title:`${HOMES[current].name} · Level ${l}`, caption:`${LEVELS[l]} — ${HOMES[current].addr}` }));
+  const idx = level === "all" ? ORDER.indexOf(current) : Number(level) - 1;
+  Lightbox.open(items, idx);
+});
+
+/* ---------- compare + saved ---------- */
+const tray = $("tray"), slots = $("slots"), goBtn = $("trayGo");
+const inBag = k => bag.includes(k);
+const inFav = k => fav.includes(k);
+
+function renderTray(){
+  const showing = bag.length ? bag : fav;
+  const mode = bag.length ? "compare" : "saved";
+  $("trayLab").textContent = mode === "compare" ? "Comparing" : "Saved";
+  slots.innerHTML = "";
+  showing.forEach(k => {
+    const h = HOMES[k];
+    const s = document.createElement("div");
+    s.className = "slot";
+    s.innerHTML = `<img src="assets/plans/${k}-L1.webp" alt="">
+      <span class="t"><b>${h.name}</b><small>${h.letter}</small></span>
+      <button type="button" aria-label="Remove ${h.name}">&#10005;</button>`;
+    s.querySelector("button").addEventListener("click", () => {
+      if (mode === "compare") bag = bag.filter(x => x !== k); else fav = fav.filter(x => x !== k);
+      renderTray(); syncButtons();
+    });
+    slots.appendChild(s);
+  });
+  if (mode === "compare" && bag.length === 1){
+    const g = document.createElement("div");
+    g.className = "slot ghost"; g.textContent = "Pick another home to compare";
+    slots.appendChild(g);
+  }
+  if (mode === "compare"){
+    goBtn.disabled = bag.length < 2;
+    goBtn.textContent = bag.length < 2 ? "Compare" : `Compare (${bag.length})`;
+  } else {
+    goBtn.disabled = fav.length === 0;
+    goBtn.textContent = `Email me these (${fav.length})`;
+  }
+  const on = showing.length > 0;
+  tray.classList.toggle("up", on);
+  document.body.classList.toggle("tray-open", on);
+}
+
+function syncButtons(){
+  const c = $("pCmp");
+  const has = inBag(current);
+  c.textContent = has ? "Remove from compare" : (bag.length >= MAX_CMP ? `Compare full (${MAX_CMP})` : "Add to compare");
+  c.disabled = !has && bag.length >= MAX_CMP;
+  c.style.opacity = c.disabled ? .5 : 1;
+  const f = $("pFav");
+  f.classList.toggle("on", inFav(current));
+  f.innerHTML = inFav(current) ? "&#9829;" : "&#9825;";
+  f.title = inFav(current) ? "Saved — click to remove" : "Save this home";
+}
+
+$("pCmp").addEventListener("click", () => {
+  if (inBag(current)) bag = bag.filter(x => x !== current);
+  else if (bag.length < MAX_CMP) bag.push(current);
+  renderTray(); syncButtons();
+});
+$("pFav").addEventListener("click", () => {
+  if (inFav(current)) fav = fav.filter(x => x !== current); else fav.push(current);
+  renderTray(); syncButtons();
+});
+$("trayClear").addEventListener("click", () => { bag = []; fav = []; renderTray(); syncButtons(); });
+
+/* compare view */
+const cmp = $("cmp"), cmpGrid = $("cmpGrid");
+function openCompare(){
+  if (bag.length < 2) return;
+  cmpGrid.style.gridTemplateColumns = `repeat(${bag.length},1fr)`;
+  const rows = [
+    ["Status", k => HOMES[k].status === "sold" ? "Sold" : "Available"],
+    ["Price",  k => HOMES[k].price],
+    ["Bedrooms", () => "3"],
+    ["Bathrooms", () => "2.5"],
+    ["Interior", () => "1,410 sq ft"],
+    ["Roof deck", () => "185 sq ft"],
+    ["Orientation", k => HOMES[k].orient]
+  ].map(([label,fn]) => {
+    const vals = bag.map(fn);
+    return { label, vals, diff:new Set(vals).size > 1 };
+  });
+  cmpGrid.innerHTML = bag.map((k,i)=>`
+    <div class="cmp-col">
+      <h4><span>${HOMES[k].letter}</span><b>${HOMES[k].name}</b></h4>
+      <div class="cmp-plan" data-i="${i}"><img src="assets/plans/${k}.webp" alt="${HOMES[k].name} plan"></div>
+      <div class="cmp-spec">${rows.map(r=>`<div class="${r.diff?'diff':''}"><dt>${r.label}</dt><dd>${r.vals[i]}</dd></div>`).join("")}</div>
+    </div>`).join("");
+  cmpGrid.querySelectorAll(".cmp-plan").forEach(el => el.addEventListener("click", () =>
+    Lightbox.open(bag.map(k=>({src:`assets/plans/${k}.webp`,title:`${HOMES[k].name} · ${HOMES[k].letter}`,
+      caption:`${HOMES[k].addr} — 1,595 sq ft`})), +el.dataset.i)));
+  openOv(cmp);
+}
+/* saved view */
+const sav = $("sav");
+function openSaved(){
+  $("savList").innerHTML = fav.length ? fav.map(k=>`
+    <div class="s"><img src="assets/plans/${k}-L1.webp" alt="">
+      <span class="t"><b>${HOMES[k].name}</b><small>${HOMES[k].addr}</small></span>
+      <button type="button" data-k="${k}" aria-label="Remove">&#10005;</button></div>`).join("")
+    : `<p class="empty">Nothing saved yet.</p>`;
+  $("savList").querySelectorAll("button[data-k]").forEach(b =>
+    b.addEventListener("click", () => { fav = fav.filter(x => x !== b.dataset.k); renderTray(); syncButtons(); openSaved(); }));
+  openOv(sav);
+}
+function openOv(el){
+  el.classList.add("open");
+  requestAnimationFrame(() => el.classList.add("show"));
+  document.body.style.overflow = "hidden";
+}
+function closeOv(el){
+  el.classList.remove("show");
+  document.body.style.overflow = "";
+  setTimeout(() => el.classList.remove("open"), 320);
+}
+goBtn.addEventListener("click", () => bag.length ? openCompare() : openSaved());
+$("cmpX").addEventListener("click", () => closeOv(cmp));
+$("savX").addEventListener("click", () => closeOv(sav));
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape" || document.querySelector(".lb.open")) return;
+  if (cmp.classList.contains("open")) closeOv(cmp);
+  if (sav.classList.contains("open")) closeOv(sav);
+});
+
+renderPanel(); renderTray();
+</script>
+</body>
+</html>

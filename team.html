@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team — Victoria Haus</title>
+<meta name="description" content="The developer, architect, interior designer and marketing team behind Victoria Haus.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  .team{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(30px,4vw,64px);
+    margin-top:clamp(40px,5vw,72px)}
+  @media(max-width:820px){.team{grid-template-columns:1fr}}
+  .member{border-top:1px solid var(--line);padding-top:26px}
+  .member .role{font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--moss);
+    font-weight:600}
+  .member h3{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(24px,2.4vw,32px);margin-top:12px}
+  .member p{margin-top:14px;font-size:15px;line-height:1.8;color:var(--ink-2)}
+
+  .spec{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);
+    margin-top:clamp(40px,5vw,70px)}
+  .spec div{background:#fff;border:1px solid var(--line);padding:clamp(22px,2.4vw,32px)}
+  .spec dt{font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .spec dd{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(22px,2.2vw,30px);margin-top:10px}
+  @media(max-width:820px){.spec{grid-template-columns:1fr}}
+
+  .demo-note{background:var(--ink);color:var(--paper);padding:clamp(30px,4vw,56px);
+    margin-top:clamp(44px,5vw,78px)}
+  .demo-note h3{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(22px,2.4vw,32px)}
+  .demo-note p{margin-top:16px;color:#ADA79D;line-height:1.8;font-size:15.5px;max-width:70ch}
+  .demo-note a{color:#B7C2AB}
+</style>
+</head>
+<body>
+
+<nav class="solid">
+  <div class="nav-in">
+    <a class="logo" href="index.html">Victoria<b>Haus</b></a>
+    <ul>
+      <li><a class="nl" href="homes.html">Homes</a></li>
+      <li><a class="nl" href="floorplans.html">Floor Plans</a></li>
+      <li><a class="nl" href="neighbourhood.html">Neighbourhood</a></li>
+      <li><a class="nl active" href="team.html">Team</a></li>
+      <li><a class="reg" href="#register">Register</a></li>
+    </ul>
+    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <a href="homes.html">Homes</a>
+  <a href="floorplans.html">Floor Plans</a>
+  <a href="neighbourhood.html">Neighbourhood</a>
+  <a href="team.html">Team</a>
+  <a href="#register">Register</a>
+  <div class="d-meta">
+    Victoria Drive at East 23rd Avenue<br>
+    Vancouver, British Columbia<br>
+    hello@victoriahaus-demo.ca
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap">
+    <h1 class="display">
+      <span class="ln"><span>Who built</span></span>
+      <span class="ln"><span>Victoria Haus.</span></span>
+    </h1>
+    <p>A small building deserves the same team a large one gets. Everyone who touched this project is named here.</p>
+  </div>
+</header>
+
+<section style="padding-top:clamp(46px,6vw,92px)">
+  <div class="wrap">
+    <div class="kicker reveal">The team</div>
+    <h2 class="title display reveal d1">Four homes, named hands.</h2>
+
+    <div class="team">
+      <div class="member reveal">
+        <div class="role">Developer</div>
+        <h3>Victoria Haus Developments</h3>
+        <p>A Vancouver builder working exclusively on small-scale multi-unit housing since the province opened the zoning in 2024. Four to six homes at a time, on single lots, in the neighbourhoods they already live in.</p>
+      </div>
+      <div class="member reveal d1">
+        <div class="role">Architecture</div>
+        <h3>Studio Kensington</h3>
+        <p>Responsible for the massing, the genkan and the decision to put the primary suite on its own floor with a roof deck attached — the move that makes a 1,410 sq ft home live larger than it measures.</p>
+      </div>
+      <div class="member reveal">
+        <div class="role">Interior design</div>
+        <h3>Aoi Interiors</h3>
+        <p>The material palette: pale oak, lime-washed plaster, blackened hardware. A restrained scheme chosen to age slowly rather than photograph well once.</p>
+      </div>
+      <div class="member reveal d1">
+        <div class="role">Renderings &amp; floor plans</div>
+        <h3>Dreamlife &amp; Twinlines</h3>
+        <p>Every rendering on this site and every floor plan behind it were produced in-house — which is why the plans on the floor plans page are the drawing itself, not a photograph of one, and why they update the day the drawing does.</p>
+      </div>
+    </div>
+
+    <div class="spec">
+      <div class="reveal"><dt>Homes</dt><dd>Four</dd></div>
+      <div class="reveal d1"><dt>Lot</dt><dd>Corner, Victoria Dr &amp; E 23rd</dd></div>
+      <div class="reveal d2"><dt>Each home</dt><dd>1,595 sq ft</dd></div>
+    </div>
+
+    <div class="demo-note reveal">
+      <h3>About this website</h3>
+      <p>Victoria Haus is a demonstration project. The floor plans and site plan are real drawings; the renderings, the copy, the team names and the neighbourhood times are illustrative, produced to show what a small multiplex project can look like online.</p>
+      <p>It was built by <b>Dreamlife</b> as a working example of our pre-sale website service — the same site plan selector, floor plan library and registration flow we build for live projects. See the live version at <a href="https://culmena.dreamlife.org">culmena.dreamlife.org</a>.</p>
+    </div>
+  </div>
+</section>
+
+<div class="register" id="register">
+  <div class="wrap inner">
+    <div>
+      <h2 class="display reveal">Register for<br>first access.</h2>
+      <p class="reveal d1">Four homes, released together. Register for floor plans, pricing and a private preview before we open to the public.</p>
+      <p class="reveal d2" style="margin-top:26px">
+        <b style="color:#EDEAE3">Victoria Haus</b><br>
+        Victoria Drive at East 23rd Avenue<br>
+        Vancouver, British Columbia<br>
+        604.555.0123 · hello@victoriahaus-demo.ca
+      </p>
+    </div>
+    <form data-demo class="reveal d1">
+      <input placeholder="First name" aria-label="First name" required>
+      <input placeholder="Last name" aria-label="Last name" required>
+      <input class="full" type="email" placeholder="Email address" aria-label="Email address" required>
+      <input type="tel" placeholder="Phone" aria-label="Phone">
+      <input type="text" placeholder="Postal code" aria-label="Postal code">
+      <select class="full" aria-label="Are you working with a realtor?">
+        <option value="">Are you working with a realtor?</option>
+        <option>No, I am not represented</option>
+        <option>Yes, I am represented</option>
+        <option>I am a realtor</option>
+      </select>
+      <button type="submit">Register</button>
+      <p class="consent">By registering you consent to receive updates about Victoria Haus. You can unsubscribe at any time.</p>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap f-in">
+    <span><b>VICTORIA HAUS</b><br>Victoria Drive at East 23rd Avenue<br>Kensington-Cedar Cottage, Vancouver</span>
+    <span class="fl">
+      <a href="homes.html">Homes</a>
+      <a href="floorplans.html">Floor Plans</a>
+      <a href="neighbourhood.html">Neighbourhood</a>
+      <a href="team.html">Team</a>
+      <a href="#register">Register</a>
+    </span>
+  </div>
+  <div class="wrap"><p class="legend legal">
+    Renderings are artistic representations only and are not intended to form part of any contract. Floor plans are draft and approximate; dimensions and areas are subject to change. This is not an offering for sale — any such offering may only be made with a disclosure statement. E.&amp;O.E.
+    <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
+  </p></div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

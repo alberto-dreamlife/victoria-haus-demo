@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neighbourhood — Victoria Haus</title>
+<meta name="description" content="Kensington-Cedar Cottage: two blocks to Trout Lake, ten minutes to Commercial Drive, and the 20 bus at the corner.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  /* time-to-places module */
+  .times{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:clamp(40px,5vw,70px)}
+  .time{border-top:1px solid var(--line);padding-top:24px}
+  .time b{font-family:'Jost',sans-serif;font-weight:200;font-size:clamp(38px,4.4vw,64px);
+    display:block;line-height:1}
+  .time b i{font-style:normal;font-size:.36em;letter-spacing:.1em;color:var(--muted);margin-left:6px}
+  .time small{display:block;margin-top:10px;font-size:14px;color:var(--ink-2);line-height:1.6}
+  @media(max-width:860px){.times{grid-template-columns:repeat(2,1fr)}}
+
+  .nb{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap);margin-top:clamp(52px,7vw,120px)}
+  .nb .n{font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--moss);margin-bottom:14px}
+  .nb h3{font-size:clamp(24px,2.8vw,40px);line-height:1.12;font-weight:300}
+  .nb p{margin-top:16px;color:var(--ink-2);line-height:1.8;font-size:15.5px;max-width:46ch}
+  .grow{transition:transform .7s cubic-bezier(.2,.7,.2,1),box-shadow .7s}
+  .grow img{transition:transform 1.3s cubic-bezier(.2,.7,.2,1)}
+  .grow:hover{transform:translateY(-10px);box-shadow:0 34px 70px rgba(48,52,42,.18)}
+  .grow:hover img{transform:scale(1.06)}
+
+  .a .fig{grid-column:1/8;aspect-ratio:16/10}
+  .a .txt{grid-column:9/13;align-self:end;padding-bottom:6px}
+  .b .txt{grid-column:1/5;align-self:center}
+  .b .figA{grid-column:6/9;aspect-ratio:3/4}
+  .b .figB{grid-column:9/13;aspect-ratio:4/5;margin-top:clamp(28px,4vw,70px)}
+  .c .fig{grid-column:1/13;aspect-ratio:21/9}
+  .c .fig::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,rgba(18,17,14,.82) 0%,rgba(18,17,14,.44) 44%,transparent 72%)}
+  .c .over{position:absolute;z-index:2;left:clamp(24px,4vw,66px);bottom:clamp(24px,4vw,58px);
+    right:clamp(24px,4vw,66px);max-width:36ch;color:#fff}
+  .c .over p{color:#DCD8D0}
+  .c .over .n{color:#B7C2AB}
+
+  .list{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(26px,3.4vw,54px);
+    margin-top:clamp(44px,5vw,76px)}
+  .list h4{font-family:'Jost',sans-serif;font-weight:400;font-size:13px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--moss);padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .list ul{list-style:none;margin-top:6px}
+  .list li{display:flex;justify-content:space-between;gap:16px;padding:11px 0;
+    border-bottom:1px solid #E7E2D6;font-size:14.5px}
+  .list li span{color:var(--muted);white-space:nowrap}
+  @media(max-width:1000px){
+    .a .fig,.a .txt,.b .txt,.c .fig{grid-column:1/13}
+    .b .figA{grid-column:1/7}.b .figB{grid-column:7/13;margin-top:0}
+    .a .txt{align-self:start;margin-top:8px}
+    .list{grid-template-columns:1fr}
+  }
+  @media(max-width:640px){
+    .b .figA,.b .figB{grid-column:1/13}
+    .c .fig{aspect-ratio:4/5}
+    .c .fig::after{background:linear-gradient(to top,rgba(18,17,14,.88),rgba(18,17,14,.28) 62%)}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="index.html">Victoria<b>Haus</b></a>
+    <ul>
+      <li><a class="nl" href="homes.html">Homes</a></li>
+      <li><a class="nl" href="floorplans.html">Floor Plans</a></li>
+      <li><a class="nl active" href="neighbourhood.html">Neighbourhood</a></li>
+      <li><a class="nl" href="team.html">Team</a></li>
+      <li><a class="reg" href="#register">Register</a></li>
+    </ul>
+    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <a href="homes.html">Homes</a>
+  <a href="floorplans.html">Floor Plans</a>
+  <a href="neighbourhood.html">Neighbourhood</a>
+  <a href="team.html">Team</a>
+  <a href="#register">Register</a>
+  <div class="d-meta">
+    Victoria Drive at East 23rd Avenue<br>
+    Vancouver, British Columbia<br>
+    hello@victoriahaus-demo.ca
+  </div>
+</div>
+
+<header class="hero sub">
+  <div class="media">
+    <img src="assets/img/10-victoria-drive.webp" alt="Victoria Drive shops">
+    <video data-loop autoplay muted loop playsinline preload="auto" poster="assets/img/10-victoria-drive.webp">
+      <source src="assets/video/neighbourhood-loop.webm" type="video/webm">
+      <source src="assets/video/neighbourhood-loop.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="shade"></div>
+  <div class="hero-inner">
+    <h1 class="display">
+      <span class="ln"><span>Kensington-</span></span>
+      <span class="ln"><span>Cedar Cottage.</span></span>
+    </h1>
+    <p class="sub-copy">One of the last parts of Vancouver where the corner shop, the lake and the bus all sit within a few minutes' walk.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">On foot from the door</div>
+    <h2 class="title display reveal d1">Everything measured in minutes, not kilometres.</h2>
+    <div class="times">
+      <div class="time reveal"><b>2<i>min</i></b><small>To Trout Lake and John Hendry Park</small></div>
+      <div class="time reveal d1"><b>1<i>min</i></b><small>To the 20 Victoria bus at the corner</small></div>
+      <div class="time reveal d2"><b>10<i>min</i></b><small>To Commercial Drive</small></div>
+      <div class="time reveal d3"><b>12<i>min</i></b><small>To Nanaimo SkyTrain Station</small></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+
+    <div class="nb a">
+      <div class="fig frame grow reveal" data-lightbox data-title="Trout Lake"
+           data-caption="Two blocks north — swimming in July, the farmers market on Saturdays, the rink in winter.">
+        <img src="assets/img/09-trout-lake.webp" alt="Trout Lake" loading="lazy">
+        <span class="cap">Trout Lake, two blocks north</span>
+      </div>
+      <div class="txt reveal d1">
+        <div class="n">01 — The lake</div>
+        <h3 class="display">Trout Lake</h3>
+        <p>Swimming from July, the Saturday farmers market year-round, an off-leash field, and the community centre and ice rink at the north end. It is the reason people move onto these blocks and the reason they stay.</p>
+      </div>
+    </div>
+
+    <div class="nb b">
+      <div class="txt reveal">
+        <div class="n">02 — The street</div>
+        <h3 class="display">Victoria Drive</h3>
+        <p>Not a designed high street — a working one. Portuguese and Italian delis, a Vietnamese grocer, two bakeries that have been there longer than most of the residents, and coffee that does not require queueing.</p>
+      </div>
+      <div class="figA frame grow reveal d1" data-lightbox data-title="Victoria Drive"
+           data-caption="Bakeries, delis and produce shops within a few blocks.">
+        <img src="assets/img/10-victoria-drive.webp" alt="Victoria Drive shops" loading="lazy">
+      </div>
+      <div class="figB frame grow reveal d2" data-lightbox data-title="The garden patio"
+           data-caption="Every home has its own private garden at the back.">
+        <img src="assets/img/07-patio.webp" alt="Garden patio" loading="lazy">
+      </div>
+    </div>
+
+    <div class="nb c">
+      <div class="fig frame grow reveal" data-lightbox data-title="Commercial Drive"
+           data-caption="Ten minutes west on foot — restaurants, cinemas, and the Broadway–Commercial exchange.">
+        <img src="assets/img/11-the-drive.webp" alt="Commercial Drive" loading="lazy">
+        <div class="over">
+          <div class="n">03 — Connected</div>
+          <h3 class="display">Ten minutes to The Drive</h3>
+          <p>Commercial Drive to the west, the 20 at the corner, and two SkyTrain stations within a short ride. Downtown in about twenty-five minutes without touching a car.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="list">
+      <div class="reveal">
+        <h4>Parks &amp; recreation</h4>
+        <ul>
+          <li>Trout Lake / John Hendry Park <span>2 min</span></li>
+          <li>Trout Lake Community Centre <span>4 min</span></li>
+          <li>Kensington Park &amp; pool <span>11 min</span></li>
+          <li>Clark Park <span>9 min</span></li>
+          <li>Grandview Park <span>14 min</span></li>
+        </ul>
+      </div>
+      <div class="reveal d1">
+        <h4>Everyday</h4>
+        <ul>
+          <li>Trout Lake Farmers Market <span>Saturdays</span></li>
+          <li>Victoria Drive shops <span>1 min</span></li>
+          <li>Commercial Drive <span>10 min</span></li>
+          <li>Kingsway &amp; Knight <span>12 min</span></li>
+          <li>Nanaimo SkyTrain <span>12 min</span></li>
+        </ul>
+      </div>
+      <div class="reveal d2">
+        <h4>Schools</h4>
+        <ul>
+          <li>Charles Dickens Elementary <span>7 min</span></li>
+          <li>Laura Secord Elementary <span>10 min</span></li>
+          <li>Sir Charles Tupper Secondary <span>13 min</span></li>
+          <li>Windermere Secondary <span>16 min</span></li>
+          <li>Vancouver Community College <span>15 min by bus</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="note" style="margin-top:26px">Walking times are approximate and measured from the corner of Victoria Drive and East 23rd Avenue.</p>
+  </div>
+</section>
+
+<div class="register" id="register">
+  <div class="wrap inner">
+    <div>
+      <h2 class="display reveal">Register for<br>first access.</h2>
+      <p class="reveal d1">Four homes, released together. Register for floor plans, pricing and a private preview before we open to the public.</p>
+      <p class="reveal d2" style="margin-top:26px">
+        <b style="color:#EDEAE3">Victoria Haus</b><br>
+        Victoria Drive at East 23rd Avenue<br>
+        Vancouver, British Columbia<br>
+        604.555.0123 · hello@victoriahaus-demo.ca
+      </p>
+    </div>
+    <form data-demo class="reveal d1">
+      <input placeholder="First name" aria-label="First name" required>
+      <input placeholder="Last name" aria-label="Last name" required>
+      <input class="full" type="email" placeholder="Email address" aria-label="Email address" required>
+      <input type="tel" placeholder="Phone" aria-label="Phone">
+      <input type="text" placeholder="Postal code" aria-label="Postal code">
+      <select class="full" aria-label="Are you working with a realtor?">
+        <option value="">Are you working with a realtor?</option>
+        <option>No, I am not represented</option>
+        <option>Yes, I am represented</option>
+        <option>I am a realtor</option>
+      </select>
+      <button type="submit">Register</button>
+      <p class="consent">By registering you consent to receive updates about Victoria Haus. You can unsubscribe at any time.</p>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap f-in">
+    <span><b>VICTORIA HAUS</b><br>Victoria Drive at East 23rd Avenue<br>Kensington-Cedar Cottage, Vancouver</span>
+    <span class="fl">
+      <a href="homes.html">Homes</a>
+      <a href="floorplans.html">Floor Plans</a>
+      <a href="neighbourhood.html">Neighbourhood</a>
+      <a href="team.html">Team</a>
+      <a href="#register">Register</a>
+    </span>
+  </div>
+  <div class="wrap"><p class="legend legal">
+    Renderings are artistic representations only and are not intended to form part of any contract. Floor plans are draft and approximate; dimensions and areas are subject to change. This is not an offering for sale — any such offering may only be made with a disclosure statement. E.&amp;O.E.
+    <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
+  </p></div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
