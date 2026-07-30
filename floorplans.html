@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Floor Plans — Victoria Haus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B1A17">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/favicon.svg">
+<title>Floor Plans | Victoria Haus</title>
 <meta name="description" content="Choose a home on the site plan, walk it level by level, compare up to three and save the plans you like. Four three-bedroom homes of 1,595 sq ft.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -236,7 +239,10 @@
   </div>
 </header>
 
-<section style="padding-top:0">
+<!-- RK: the filter chips were pinned to the bottom of the dark page head with
+     nothing above them. They now sit in their own band with equal air above
+     and below, so they read as controls rather than as part of the header. -->
+<section style="padding-top:clamp(28px,3.4vw,48px)">
   <div class="wrap fp-wide">
 
     <div class="filters">
@@ -390,10 +396,10 @@
       <input type="text" placeholder="Postal code" aria-label="Postal code">
       <select class="full" id="regHome" aria-label="Which home interests you?">
         <option value="">Which home interests you?</option>
-        <option>Hinoki — 3992 Victoria Drive</option>
-        <option>Momiji — #2 East 23rd</option>
-        <option>Sakura — #3 East 23rd</option>
-        <option>Matsu — #1 East 23rd</option>
+        <option>Hinoki · 3992 Victoria Drive</option>
+        <option>Momiji · #2 East 23rd</option>
+        <option>Sakura · #3 East 23rd</option>
+        <option>Matsu · #1 East 23rd</option>
         <option>Not sure yet</option>
       </select>
       <select class="full" aria-label="Are you working with a realtor?">
@@ -420,7 +426,7 @@
     </span>
   </div>
   <div class="wrap"><p class="legend legal">
-    Renderings are artistic representations only and are not intended to form part of any contract. Floor plans are draft and approximate; dimensions, areas and prices are illustrative and subject to change. This is not an offering for sale — any such offering may only be made with a disclosure statement. E.&amp;O.E.
+    Renderings are artistic representations only and are not intended to form part of any contract. Floor plans are draft and approximate; dimensions, areas and prices are illustrative and subject to change. This is not an offering for sale. Any such offering may only be made with a disclosure statement. E.&amp;O.E.
     <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
   </p></div>
 </footer>
@@ -542,9 +548,9 @@ document.querySelectorAll("g.unit").forEach(g =>
 $("planBox").addEventListener("click", () => {
   const items = level === "all"
     ? ORDER.map(k => ({ src:planSrc(k,"all"), title:`${HOMES[k].name} · ${HOMES[k].letter}`,
-        caption:`${HOMES[k].addr} — 3 bed + 2.5 bath · 1,595 sq ft. Click or scroll to zoom, drag to pan.` }))
+        caption:`${HOMES[k].addr} · 3 bed + 2.5 bath · 1,595 sq ft. Click or scroll to zoom, drag to pan.` }))
     : [1,2,3].map(l => ({ src:planSrc(current,String(l)),
-        title:`${HOMES[current].name} · Level ${l}`, caption:`${LEVELS[l]} — ${HOMES[current].addr}` }));
+        title:`${HOMES[current].name} · Level ${l}`, caption:`${LEVELS[l]} · ${HOMES[current].addr}` }));
   const idx = level === "all" ? ORDER.indexOf(current) : Number(level) - 1;
   Lightbox.open(items, idx);
 });
@@ -598,7 +604,7 @@ function syncButtons(){
   const f = $("pFav");
   f.classList.toggle("on", inFav(current));
   f.innerHTML = inFav(current) ? "&#9829;" : "&#9825;";
-  f.title = inFav(current) ? "Saved — click to remove" : "Save this home";
+  f.title = inFav(current) ? "Saved, click to remove" : "Save this home";
 }
 
 $("pCmp").addEventListener("click", () => {
@@ -637,7 +643,7 @@ function openCompare(){
     </div>`).join("");
   cmpGrid.querySelectorAll(".cmp-plan").forEach(el => el.addEventListener("click", () =>
     Lightbox.open(bag.map(k=>({src:`assets/plans/${k}.webp`,title:`${HOMES[k].name} · ${HOMES[k].letter}`,
-      caption:`${HOMES[k].addr} — 1,595 sq ft`})), +el.dataset.i)));
+      caption:`${HOMES[k].addr} · 1,595 sq ft`})), +el.dataset.i)));
   openOv(cmp);
 }
 /* saved view */

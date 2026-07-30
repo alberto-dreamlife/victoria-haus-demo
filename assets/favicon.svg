@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Victoria Haus: the two pitched gables that face Victoria Drive, with the
+       dark central timber bay between them. Reads as a roofline at 16px. -->
+  <rect width="64" height="64" rx="12" fill="#1B1A17"/>
+  <path d="M12 38 24 24 36 38" fill="none" stroke="#F7F5F0" stroke-width="5.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36 38 46 26 56 38" fill="none" stroke="#F7F5F0" stroke-width="5.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="29" y="38" width="6" height="12" rx="1" fill="#B4714E"/>
+</svg>
