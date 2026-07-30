@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prueba de la barra de estado</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,sans-serif;background:#12110F;color:#F7F5F0;
+  padding:calc(env(safe-area-inset-top) + 28px) 22px 60px;line-height:1.6}
+h1{font-size:26px;font-weight:700;margin-bottom:14px}
+p{font-size:16px;color:#B8B2A8;margin-bottom:22px}
+a.card{display:block;text-decoration:none;color:#F7F5F0;background:#1E1C18;
+  border:1px solid #34302A;padding:18px 20px;margin-bottom:12px}
+a.card b{display:block;font-size:18px;margin-bottom:6px}
+a.card span{font-size:14px;color:#9E988E}
+.sky{display:inline-block;width:14px;height:14px;background:#5C7690;vertical-align:-2px;margin-right:6px}
+</style>
+</head>
+<body>
+<h1>Barra de estado en Safari</h1>
+<p>Abre las cuatro, una por una, y hazme una captura de cada una.
+Solo hay que mirar la franja de arriba: <span class="sky"></span>azul es acierto, crema es fallo.</p>
+<a class="card" href="a.html"><b>A · solo theme-color</b><span>El control. Es lo que hay ahora.</span></a>
+<a class="card" href="b.html"><b>B · tira fija de 1px</b><span>Escondida detras del hero. La menos invasiva.</span></a>
+<a class="card" href="c.html"><b>C · body del color del cielo</b><span>Lo que documenta Apple.</span></a>
+<a class="card" href="d.html"><b>D · nav con color solido</b><span>Lo mas fiable, pero se ve.</span></a>
+</body>
+</html>

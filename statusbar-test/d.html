@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>D · el nav fijo con color solido</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,sans-serif;color:#fff}
+.page{min-height:200vh;background:#5C7690}
+.hero{height:70vh;background:#5C7690;display:flex;align-items:flex-end;padding:24px}
+.hero h1{font-size:34px;font-weight:600;line-height:1.15}
+nav{position:fixed;top:0;left:0;right:0;z-index:90;padding:calc(env(safe-area-inset-top) + 14px) 20px 14px;
+    font-weight:700;letter-spacing:.14em;font-size:13px}
+.body-note{background:#12110F;padding:24px 20px;font-size:16px;line-height:1.6}
+.body-note b{color:#9DBBD4}
+.big{font-size:64px;font-weight:800;padding:20px;opacity:.25}
+a{color:#9DBBD4}
+
+nav{background-color:#5C7690}
+body{background-color:#F7F5F0}</style>
+</head>
+<body>
+
+<nav><a href="index.html" style="text-decoration:none;color:#fff">&larr; VOLVER</a></nav>
+<div class="page">
+  <div class="hero"><h1>D · el nav fijo con color solido</h1></div>
+  <div class="body-note">
+    <p>Mira <b>la franja de arriba</b>, donde estan la hora y la bateria.</p>
+    <p style="margin-top:14px">Si sale <b>azul #5C7690</b>, esta tecnica funciona.<br>
+       Si sale <b>crema o blanca</b>, no funciona.</p>
+    <p style="margin-top:14px;opacity:.75;font-size:14px">El nav fijo deja de ser transparente y lleva el color del cielo. Es lo mas fiable segun la documentacion, pero se ve una banda solida sobre el hero, asi que solo sirve si el color acierta mucho.</p>
+  </div>
+  <div class="big">D</div>
+</div>
+</body>
+</html>
