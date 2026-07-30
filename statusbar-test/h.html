@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5C7690">
+<title>H - capa fija azul + body azul</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,sans-serif;color:#12110F}
+/* nav transparente sobre el hero, igual que en la web real */
+nav{position:fixed;top:0;left:0;right:0;z-index:90;
+  padding:calc(env(safe-area-inset-top) + 14px) 20px 14px;font-weight:700;
+  letter-spacing:.14em;font-size:13px;color:#fff}
+.page{background:#F7F5F0;position:relative;z-index:0}
+.hero{height:64vh;background:#5C7690;display:flex;align-items:flex-end;padding:24px;color:#fff}
+.hero h1{font-size:30px;font-weight:600;line-height:1.15}
+.sec{padding:30px 20px;font-size:16px;line-height:1.6}
+.sec b{color:#2E4457}
+.tall{height:130vh}
+.dark{background:#12110F;color:#F7F5F0;padding:40px 20px;font-size:15px;line-height:1.6}
+a{color:#2E4457}
+.tint{position:fixed;inset:0;background-color:#5C7690;z-index:-1;pointer-events:none}
+body{background-color:#5C7690}
+</style>
+</head>
+<body>
+<div class="tint" aria-hidden="true"></div>
+<nav><a href="index.html" style="text-decoration:none;color:#fff">&larr; VOLVER</a></nav>
+<div class="page">
+  <div class="hero"><h1>H - capa fija azul + body azul</h1></div>
+  <div class="sec">
+    <p><b>La prueba:</b> sube del todo hasta el tope y suelta.</p>
+    <p style="margin-top:12px">La franja de arriba tiene que seguir <b>AZUL</b> tambien ahi parada,
+       no solo mientras haces scroll.</p>
+    <p style="margin-top:12px">Y esta zona tiene que verse <b>CREMA</b>.</p>
+    <p style="margin-top:16px;font-size:14px;opacity:.7">Igual que la G pero el body tambien azul, por si Safari cambia de fuente segun el scroll. El rebote saldra azul por arriba y por abajo.</p>
+  </div>
+  <div class="tall sec"><p style="opacity:.4">Baja del todo, y luego vuelve arriba y para en el tope.</p></div>
+  <div class="dark"><p>Pie oscuro. Haz rebotar aqui abajo tambien, a ver que color sale.</p></div>
+</div>
+</body>
+</html>
