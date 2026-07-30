@@ -64,6 +64,12 @@
     .c .fig{aspect-ratio:4/5}
     .c .fig::after{background:linear-gradient(to top,rgba(18,17,14,.88),rgba(18,17,14,.28) 62%)}
   }
+
+  /* Safari 26 ignores theme-color and takes the toolbar colour from the
+     body background instead. The body therefore carries the colour of the
+     top of this page, measured off the top 26px at iPhone width, and .page
+     carries the colour the visitor actually sees. */
+  body{background-color:#8E877E}
 </style>
 </head>
 <body>
@@ -95,6 +101,7 @@
   </div>
 </div>
 
+<div class="page">
 <header class="hero sub">
   <div class="media">
     <img src="assets/img/10-victoria-drive.webp" alt="Victoria Drive shops">
@@ -252,6 +259,7 @@
     <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
   </p></div>
 </footer>
+</div><!-- /.page -->
 
 <script src="assets/site.js"></script>
 </body>

@@ -31,6 +31,12 @@
   .split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,70px);align-items:center}
   .split .frame{aspect-ratio:4/5}
   @media(max-width:900px){.split{grid-template-columns:1fr;gap:28px}}
+
+  /* Safari 26 ignores theme-color and takes the toolbar colour from the
+     body background instead. The body therefore carries the colour of the
+     top of this page, measured off the top 26px at iPhone width, and .page
+     carries the colour the visitor actually sees. */
+  body{background-color:#5C7690}
 </style>
 </head>
 <body>
@@ -62,6 +68,7 @@
   </div>
 </div>
 
+<div class="page">
 <header class="hero">
   <div class="media">
     <img src="assets/img/01-exterior-corner.webp" alt="Victoria Haus on the corner of Victoria Drive and East 23rd Avenue">
@@ -229,6 +236,7 @@
     <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
   </p></div>
 </footer>
+</div><!-- /.page -->
 
 <script src="assets/site.js"></script>
 </body>
