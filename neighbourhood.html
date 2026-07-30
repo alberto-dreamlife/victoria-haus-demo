@@ -65,14 +65,15 @@
     .c .fig::after{background:linear-gradient(to top,rgba(18,17,14,.88),rgba(18,17,14,.28) 62%)}
   }
 
-  /* Safari 26 ignores theme-color and takes the toolbar colour from the
-     body background instead. The body therefore carries the colour of the
-     top of this page, measured off the top 26px at iPhone width, and .page
-     carries the colour the visitor actually sees. */
-  body{background-color:#8E877E}
+  /* Safari 26 ignores theme-color and samples a full-viewport fixed layer
+     instead. .tint is that layer, hidden behind the opaque .page, and this
+     is the colour of the top of this page measured at iPhone width. Putting
+     it here rather than on <body> keeps the overscroll bounce cream. */
+  body{--tint:#8E877E}
 </style>
 </head>
 <body>
+<div class="tint" aria-hidden="true"></div>
 
 <nav>
   <div class="nav-in">
