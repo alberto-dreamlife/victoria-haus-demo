@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>F - body azul + capa normal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,sans-serif;color:#12110F}
+nav{position:fixed;top:0;left:0;right:0;z-index:90;
+  padding:calc(env(safe-area-inset-top) + 14px) 20px 14px;font-weight:700;
+  letter-spacing:.14em;font-size:13px;color:#fff}
+.hero{height:64vh;background:#5C7690;display:flex;align-items:flex-end;padding:24px;color:#fff}
+.hero h1{font-size:32px;font-weight:600;line-height:1.15}
+.sec{padding:30px 20px;font-size:16px;line-height:1.6}
+.sec b{color:#2E4457}
+.dark{background:#12110F;color:#F7F5F0;padding:30px 20px;font-size:15px;line-height:1.6}
+a{color:#2E4457}
+.tall{height:120vh}
+
+body{background-color:#5C7690}
+.page{background:#F7F5F0;position:relative;z-index:0}
+</style>
+</head>
+<body>
+<nav><a href="index.html" style="text-decoration:none;color:#fff">&larr; VOLVER</a></nav>
+<div class="page">
+  <div class="hero"><h1>F - body azul + capa normal</h1></div>
+  <div class="sec">
+    <p>Dos cosas que mirar:</p>
+    <p style="margin-top:12px"><b>1.</b> La franja de arriba tiene que salir <b>AZUL</b>.</p>
+    <p style="margin-top:8px"><b>2.</b> Esta zona de texto tiene que verse <b>CREMA</b>, no azul.
+       Si se ve azul, la capa no tapa y no sirve.</p>
+    <p style="margin-top:16px;font-size:14px;opacity:.7">La version ortodoxa. Tambien funcionaria, pero obliga a envolver el contenido de las cinco paginas.</p>
+  </div>
+  <div class="tall sec"><p style="opacity:.4">Baja del todo y haz rebotar la pagina, a ver de que color sale el rebote.</p></div>
+  <div class="dark"><p>Pie oscuro, como en la web real.</p></div>
+</div>
+</body>
+</html>
