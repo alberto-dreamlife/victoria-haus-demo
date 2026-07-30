@@ -49,6 +49,31 @@ document.querySelectorAll("video[data-loop]").forEach(v => {
   })();
 });
 
+/* ---------- hero: hand over from the opener to the master ----------
+   The 25 MB master cannot start instantly, and a header that sits frozen and
+   then jumps into motion reads as broken. So a light copy plays from the first
+   moment and the master takes over silently once it can run to the end without
+   stalling. It is seeked to the opener's timestamp before the fade so the two
+   are on the same frame, and if the master never gets there nothing happens. */
+{
+  const open = document.querySelector(".hero .media video.v-open");
+  const hq   = document.querySelector(".hero .media video.v-hq");
+  if (open && hq) {
+    const handover = () => {
+      if (hq.readyState < 4) return;
+      hq.currentTime = open.currentTime % (hq.duration || 1);
+      hq.play().then(() => {
+        hq.classList.add("playing");
+        /* Keep the opener decoding until the fade is done, then drop it: two
+           1080p decoders running for the life of the page is wasted battery. */
+        setTimeout(() => { open.pause(); open.removeAttribute("src"); open.load(); }, 700);
+      }).catch(() => {});
+    };
+    hq.addEventListener("canplaythrough", handover, { once: true });
+    if (hq.readyState === 4) handover();
+  }
+}
+
 /* reveal */
 const io = new IntersectionObserver(es => {
   es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
