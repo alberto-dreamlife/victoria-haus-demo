@@ -23,19 +23,32 @@
   .chip.on .dot{background:#fff}
 
   /* ---------- SELECTOR ---------- */
-  /* The site plan is how you navigate this page, so it gets a wider shell than
-     the rest of the site — otherwise a 2560px monitor renders it at exactly the
-     same 732px as a 1440px one, and the extra screen buys nothing. */
-  .fp-wide{max-width:1880px}
-  .selector{display:grid;grid-template-columns:1.5fr 1fr;gap:var(--gap);align-items:start}
+  /* The plan is portrait now, so width is no longer the scarce resource — height
+     is. 1880px left the two columns marooned at opposite edges of a 27" screen.
+     Measured across 1400-1880: the plan and the panel grow together, and 1700 is
+     where the drawing stops feeling small without the pair drifting apart. */
+  .fp-wide{max-width:1700px}
+  /* --plan-col is solved in JS so the drawing ends exactly level with the panel.
+     The two depend on each other (a wider plan means a narrower, taller panel)
+     but the loop converges — the panel's height moves ~0.4px per px of width —
+     so four passes settle it. 520px is the pre-JS fallback. */
+  .selector{display:grid;grid-template-columns:var(--plan-col,520px) minmax(0,1fr);
+    gap:var(--gap);align-items:stretch}
   @media(max-width:1080px){.selector{grid-template-columns:1fr}}
 
-  .board{background:#fff;border:1px solid var(--line);overflow:hidden}
+  .board{background:#fff;border:1px solid var(--line);overflow:hidden;
+    display:flex;flex-direction:column}
   .board-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
-    padding:16px clamp(16px,2vw,26px);border-bottom:1px solid var(--line)}
+    padding:16px clamp(16px,2vw,26px);border-bottom:1px solid var(--line);flex:0 0 auto}
   .board-head h3{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
   .hint{font-size:12.5px;color:var(--muted)}
-  .site-holder svg{display:block;width:100%;height:auto}
+  /* flex:1 + min-height:0 lets the holder take the leftover column height; the
+     SVG's preserveAspectRatio then letterboxes rather than overflowing. */
+  .site-holder{flex:1;min-height:0;display:flex}
+  .site-holder svg{display:block;width:100%;height:100%}
+  @media(max-width:1080px){
+    .site-holder svg{height:auto;max-height:78vh;margin:0 auto}
+  }
 
   .hs{fill:rgba(58,66,50,0);stroke:rgba(255,255,255,0);stroke-width:3;cursor:pointer;
     transition:fill .3s ease,stroke .3s ease}
@@ -240,35 +253,36 @@
           <span class="hint">Click a home to open it</span>
         </div>
         <div class="site-holder">
-          <svg id="siteSvg" viewBox="0 0 1672 941" aria-label="Victoria Haus site plan">
-            <image href="assets/siteplan.webp" x="0" y="0" width="1672" height="941"/>
-            <!-- Footprints measured off the drawing itself, not estimated: the party
-                 walls read as dark lines at x=885.5 and y=381.5, and the block runs
-                 x 498-1267, y 176-590. Rects are inset 1px so adjacent strokes never
-                 overlap into a neighbouring home. -->
-            <g class="unit" data-home="hinoki" tabindex="0" role="button" aria-label="Hinoki, Home A">
-              <rect class="hs" x="499" y="177" width="385" height="203"/>
-              <text class="hs-lab" x="691" y="266">Hinoki</text>
-              <text class="hs-sub" x="691" y="295">HOME A</text>
-              <text class="hs-stat" x="691" y="325">AVAILABLE</text>
-            </g>
-            <g class="unit" data-home="sakura" tabindex="0" role="button" aria-label="Sakura, Home C">
-              <rect class="hs" x="887" y="177" width="379" height="203"/>
-              <text class="hs-lab" x="1076" y="266">Sakura</text>
-              <text class="hs-sub" x="1076" y="295">HOME C</text>
-              <text class="hs-stat" x="1076" y="325">SOLD</text>
-            </g>
+          <!-- Plan rotated 90 degrees clockwise so Victoria Drive reads across the
+               top: (x,y) -> (941-y, x), which turns rect(x,y,w,h) into
+               rect(941-y-h, x, h, w). Derived from the measured landscape
+               footprints, not re-traced, so the hotspots stay pixel-exact. -->
+          <svg id="siteSvg" viewBox="0 0 941 1672" preserveAspectRatio="xMidYMid meet"
+               aria-label="Victoria Haus site plan">
+            <image href="assets/siteplan-v.webp" x="0" y="0" width="941" height="1672"/>
             <g class="unit" data-home="momiji" tabindex="0" role="button" aria-label="Momiji, Home B">
-              <rect class="hs" x="499" y="383" width="385" height="206"/>
-              <text class="hs-lab" x="691" y="474">Momiji</text>
-              <text class="hs-sub" x="691" y="503">HOME B</text>
-              <text class="hs-stat" x="691" y="533">AVAILABLE</text>
+              <rect class="hs" x="352" y="499" width="206" height="385"/>
+              <text class="hs-lab" x="455" y="683">Momiji</text>
+              <text class="hs-sub" x="455" y="713">HOME B</text>
+              <text class="hs-stat" x="455" y="743">AVAILABLE</text>
+            </g>
+            <g class="unit" data-home="hinoki" tabindex="0" role="button" aria-label="Hinoki, Home A">
+              <rect class="hs" x="561" y="499" width="203" height="385"/>
+              <text class="hs-lab" x="662" y="683">Hinoki</text>
+              <text class="hs-sub" x="662" y="713">HOME A</text>
+              <text class="hs-stat" x="662" y="743">AVAILABLE</text>
             </g>
             <g class="unit" data-home="matsu" tabindex="0" role="button" aria-label="Matsu, Home D">
-              <rect class="hs" x="887" y="383" width="379" height="206"/>
-              <text class="hs-lab" x="1076" y="474">Matsu</text>
-              <text class="hs-sub" x="1076" y="503">HOME D</text>
-              <text class="hs-stat" x="1076" y="533">AVAILABLE</text>
+              <rect class="hs" x="352" y="887" width="206" height="379"/>
+              <text class="hs-lab" x="455" y="1068">Matsu</text>
+              <text class="hs-sub" x="455" y="1098">HOME D</text>
+              <text class="hs-stat" x="455" y="1128">AVAILABLE</text>
+            </g>
+            <g class="unit" data-home="sakura" tabindex="0" role="button" aria-label="Sakura, Home C">
+              <rect class="hs" x="561" y="887" width="203" height="379"/>
+              <text class="hs-lab" x="662" y="1068">Sakura</text>
+              <text class="hs-sub" x="662" y="1098">HOME C</text>
+              <text class="hs-stat" x="662" y="1128">SOLD</text>
             </g>
           </svg>
         </div>
@@ -658,6 +672,48 @@ document.addEventListener("keydown", e => {
 });
 
 renderPanel(); renderTray();
+
+/* ---------- MATCH THE PLAN COLUMN TO THE PANEL ---------- */
+/* The rotated plan is 941x1672, so its width is fixed by whatever height it is
+   given. We want it to finish level with the panel, but the panel's height
+   depends on its own width, which is whatever the plan column leaves behind.
+   Feeding the measurement back in converges because the panel gains only about
+   0.4px of height per px of width lost, so the correction shrinks each pass. */
+const PLAN_RATIO = 941 / 1672;
+function fitPlanColumn() {
+  const sel = document.querySelector(".selector");
+  const panel = document.querySelector(".panel");
+  const head = document.querySelector(".board-head");
+  if (!sel || !panel || getComputedStyle(sel).gridTemplateColumns.split(" ").length < 2) return;
+  if (window.innerWidth <= 1080) { sel.style.removeProperty("--plan-col"); return; }
+
+  for (let pass = 0; pass < 4; pass++) {
+    /* No viewport cap here. The board is a flex column that stretches to the
+       panel's height either way, so capping the width would not shorten the
+       section — it would only letterbox the drawing inside a box that stays
+       exactly as tall. */
+    const target = panel.getBoundingClientRect().height - head.getBoundingClientRect().height;
+    const w = Math.round(Math.max(360, Math.min(760, target * PLAN_RATIO)));
+    const prev = parseFloat(sel.style.getPropertyValue("--plan-col")) || 0;
+    if (Math.abs(w - prev) < 4) break;
+    sel.style.setProperty("--plan-col", w + "px");
+  }
+}
+/* The panel's height changes whenever the level tab or the home changes, and
+   both swap a differently-proportioned plan image in, so watch it directly
+   rather than trying to hook every call site. */
+const panelEl = document.querySelector(".panel");
+if (panelEl && "ResizeObserver" in window) {
+  let queued = false;
+  new ResizeObserver(() => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; fitPlanColumn(); });
+  }).observe(panelEl);
+}
+addEventListener("resize", fitPlanColumn);
+addEventListener("load", fitPlanColumn);
+fitPlanColumn();
 </script>
 </body>
 </html>
