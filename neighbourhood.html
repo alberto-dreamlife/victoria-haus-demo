@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731m">
+<link rel="stylesheet" href="assets/site.css?v=20260731n">
 <!-- The map iframe is lazy, so it does not compete with the header video, but
      prefetching warms it during idle time and it is ready by the time anyone
      scrolls down to it. -->
@@ -33,6 +33,11 @@
      Drive comes back into view at the bottom. The floor keeps it from
      collapsing on a phone, where cover trims the sides instead. */
   .hero.sub{height:clamp(460px,56.25vw,900px)}
+
+  /* The title rides over the video and clears out of the way on the first
+     scroll, so what is left is the neighbourhood itself. Driven from JS rather
+     than a scroll-linked animation because Safari still does not support those. */
+  .hero-inner[data-fade]{will-change:opacity,transform}
 
   /* time-to-places module */
   .times{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:clamp(40px,5vw,70px)}
@@ -133,7 +138,7 @@
 
 <div class="page">
 <header class="hero sub">
-  <div class="media" data-noparallax>
+  <div class="media" data-noparallax data-crossloop>
     <img src="assets/img/10-neigh-poster.webp" alt="Victoria Drive at Kingsway">
     <!-- Two layers, as on the other headers: the light opener starts almost at
          once so the header is never a frozen photograph, and the 12.3 Mbps master
@@ -141,16 +146,16 @@
          a .mov, which GitHub Pages serves as video/quicktime and Chrome refuses,
          so the container is mp4 now; the video stream itself is untouched.
          No loop: last frame and first differ by 40 percent of the picture. -->
-    <video class="v-open" data-loop autoplay muted playsinline preload="auto"
+    <video class="v-open" data-loop data-replay="0" autoplay muted playsinline preload="auto"
            poster="assets/img/10-neigh-poster.webp">
       <source src="assets/video/neigh-open.mp4" type="video/mp4">
     </video>
-    <video class="v-hq" data-loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
+    <video class="v-hq" data-loop data-replay="0" muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
       <source src="assets/video/neigh-loop.mp4" type="video/mp4">
     </video>
   </div>
   <div class="shade"></div>
-  <div class="hero-inner">
+  <div class="hero-inner" data-fade>
     <h1 class="display">
       <span class="ln"><span>Kensington-</span></span>
       <span class="ln"><span>Cedar Cottage.</span></span>
@@ -416,6 +421,6 @@
   }, 120);
 })();
 </script>
-<script src="assets/site.js?v=20260731m"></script>
+<script src="assets/site.js?v=20260731n"></script>
 </body>
 </html>

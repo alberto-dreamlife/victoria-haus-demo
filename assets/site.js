@@ -97,11 +97,84 @@ document.querySelectorAll("video[data-loop]").forEach(vhLoop);
         hq.classList.add("playing");
         /* Keep the opener decoding until the fade is done, then drop it: two
            1080p decoders running for the life of the page is wasted battery. */
-        setTimeout(() => { open.pause(); open.removeAttribute("src"); open.load(); }, 700);
+        if (!open.closest(".media").hasAttribute("data-crossloop")) {
+          setTimeout(() => { open.pause(); open.removeAttribute("src"); open.load(); }, 700);
+        } else {
+          setTimeout(() => open.pause(), 700);   /* kept for the loop, just idle */
+        }
       }).catch(() => {});
     };
     hq.addEventListener("canplaythrough", handover, { once: true });
     if (hq.readyState === 4) handover();
+  }
+}
+
+/* ---------- looping with motion on both sides of the seam ----------
+   The dissolve used everywhere else fades the clip out over its own opening
+   still, which works because that still is the video's first frame. On this
+   header there should be nothing frozen at all, so the two layers hand the loop
+   back and forth instead: as the visible one runs out, the other starts from
+   zero underneath and the top one fades away over it. Both are moving through
+   the whole transition, so the clip never comes to rest. Same file twice, one
+   light and one full quality, which is what these headers already load. */
+{
+  const box = document.querySelector(".hero .media[data-crossloop]");
+  if (box) {
+    const top = box.querySelector("video.v-hq");
+    const under = box.querySelector("video.v-open");
+    if (top && under) {
+      const TAIL = 0.8;
+      let live = null, armed = false;
+
+      const begin = v => {
+        live = v; armed = false;
+        v.currentTime = 0;
+        v.play().catch(() => {});
+        top.classList.toggle("fading", v !== top);
+      };
+      /* Whichever layer starts first drives the loop. Normally that is the
+         opener for a second or two, then the master takes it over for good. */
+      under.addEventListener("playing", () => { if (!live) live = under; }, { once: true });
+      top.addEventListener("playing", () => { live = top; armed = false; }, { once: true });
+
+      (function tick() {
+        requestAnimationFrame(tick);
+        if (!live || live.paused) return;
+        const d = live.duration;
+        if (!d || armed || d - live.currentTime > TAIL) return;
+        armed = true;
+        const next = live === top ? under : top;
+        if (next.readyState < 3) {          /* nothing to dissolve into yet */
+          live.currentTime = 0; armed = false; return;
+        }
+        const done = live;
+        begin(next);
+        /* Let the outgoing layer finish its own last frames under the fade
+           rather than cutting it, then park it ready for its next turn. */
+        setTimeout(() => { done.pause(); done.currentTime = 0; }, TAIL * 1000);
+      })();
+    }
+  }
+}
+
+/* ---------- the header title clears out on the first scroll ---------- */
+{
+  const cap = document.querySelector(".hero .hero-inner[data-fade]");
+  const hero = document.querySelector(".hero");
+  if (cap && hero) {
+    let queued = false;
+    const paint = () => {
+      queued = false;
+      const travel = hero.offsetHeight * 0.55;
+      const k = Math.min(1, Math.max(0, scrollY / travel));
+      cap.style.opacity = String(1 - k);
+      cap.style.transform = `translate3d(0, ${(-k * 34).toFixed(1)}px, 0)`;
+    };
+    addEventListener("scroll", () => {
+      if (queued) return;
+      queued = true; requestAnimationFrame(paint);
+    }, { passive: true });
+    paint();
   }
 }
 
