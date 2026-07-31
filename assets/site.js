@@ -89,8 +89,14 @@ document.querySelectorAll("video[data-loop]").forEach(v => {
       if (!e.isIntersecting) return;
       const v = e.target;
       o.unobserve(v);
+      /* Reveal on the first decoded frame, not only on "playing": if autoplay is
+         refused the video still has a frame to show and would otherwise sit at
+         opacity 0 behind a still that is already its own first frame. */
+      const show = () => v.classList.add("playing");
+      v.addEventListener("loadeddata", show, { once: true });
+      v.addEventListener("playing", show, { once: true });
       v.src = v.dataset.src;
-      v.addEventListener("playing", () => v.classList.add("playing"), { once: true });
+      v.load();
       v.play().catch(() => {});
     }), { rootMargin: "100% 0px" });
     vids.forEach(v => vio.observe(v));

@@ -192,8 +192,11 @@ body.menu-open > nav{background:transparent;box-shadow:none;color:var(--paper)}
 /* In-page video: sits over the still inside .frame, same box, and fades in once
    it plays. pointer-events:none so the frame keeps opening the lightbox. */
 .frame{position:relative}
+/* No z-index on purpose: DOM order alone puts the video above the still and
+   below the block's ::after scrim and its text. Giving it z-index:1 lifted it
+   over the scrim and the caption lost itsbacking. */
 .frame .fig-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:0;transition:opacity 1s ease;pointer-events:none;z-index:1}
+  opacity:0;transition:opacity 1s ease;pointer-events:none}
 .frame .fig-vid.playing{opacity:1}
 
 
