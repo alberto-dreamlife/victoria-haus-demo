@@ -31,27 +31,54 @@ if (burger && drawer) {
   matchMedia("(min-width:961px)").addEventListener("change", e => { if (e.matches) setMenu(false); });
 }
 
-/* video headers — fade in only once actually playing */
-document.querySelectorAll("video[data-loop]").forEach(v => {
+/* ---------- video loops without a cut ----------
+   None of these clips close: the last frame differs from the first by 25 to 60
+   percent of the picture, so the loop attribute produces a visible jump every
+   few seconds. Instead the clip fades out over its tail, restarts, and fades
+   back in. The still underneath every video is that video's own first frame, so
+   the fade lands exactly where the restart begins and the seam disappears.
+
+   data-loop           fade in when it starts playing
+   data-loop="0,6"     the same, and treat 6s as the end
+   data-replay="0.7"   length of the dissolve, default 0.7s, 0 disables it
+   ============================================================ */
+function vhLoop(v) {
   const show = () => v.classList.add("playing");
   v.addEventListener("playing", show, { once: true });
-  if (v.readyState >= 3) show();
+  v.addEventListener("loadeddata", show, { once: true });
+  if (v.readyState >= 2) show();
+
+  /* iOS sometimes refuses the first autoplay; one nudge on the first touch. */
   const kick = () => { v.play().catch(() => {}); };
   document.addEventListener("touchstart", kick, { once: true, passive: true });
 
-  /* Optional in-point / out-point, e.g. data-loop="0,6" plays the first six
-     seconds and restarts. timeupdate only fires ~4x a second, so the cut can
-     land up to ~250ms late; rAF checks every frame and keeps it tight. */
+  const tail = v.dataset.replay === undefined ? 0.7 : parseFloat(v.dataset.replay);
   const [inAt, outAt] = (v.dataset.loop || "").split(",").map(parseFloat);
-  if (!(outAt > 0)) return;
   const from = inAt > 0 ? inAt : 0;
-  const rewind = () => { v.currentTime = from; };
-  if (from > 0) v.addEventListener("loadedmetadata", rewind, { once: true });
+  if (from > 0) v.addEventListener("loadedmetadata", () => { v.currentTime = from; }, { once: true });
+  if (!(tail > 0)) return;                     /* explicit data-replay="0" opts out */
+
+  let armed = false;
+  const restart = () => {
+    v.currentTime = from;
+    v.play().catch(() => {});
+    /* Two frames, not one: clearing the class in the same tick as the seek lets
+       the browser fold both into a single paint and the fade never renders. */
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      v.classList.remove("fading"); armed = false;
+    }));
+  };
+  v.addEventListener("ended", restart);
   (function tick() {
-    if (v.currentTime >= outAt) rewind();
+    const end = outAt > 0 ? outAt : v.duration;
+    if (end && !v.paused) {
+      if (!armed && end - v.currentTime <= tail) { armed = true; v.classList.add("fading"); }
+      if (v.currentTime >= end && armed) restart();
+    }
     requestAnimationFrame(tick);
   })();
-});
+}
+document.querySelectorAll("video[data-loop]").forEach(vhLoop);
 
 /* ---------- hero: hand over from the opener to the master ----------
    The 25 MB master cannot start instantly, and a header that sits frozen and
@@ -92,11 +119,9 @@ document.querySelectorAll("video[data-loop]").forEach(v => {
       /* Reveal on the first decoded frame, not only on "playing": if autoplay is
          refused the video still has a frame to show and would otherwise sit at
          opacity 0 behind a still that is already its own first frame. */
-      const show = () => v.classList.add("playing");
-      v.addEventListener("loadeddata", show, { once: true });
-      v.addEventListener("playing", show, { once: true });
       v.src = v.dataset.src;
       v.load();
+      vhLoop(v);                 /* same fade-in and same seamless replay */
       /* data-rate slows playback without touching the file. Measured on this
          clip, consecutive frames differ by 1.33/255 on average, so at 0.2x each
          frame holds 208ms and the drift still reads as continuous rather than
@@ -119,7 +144,7 @@ const io = new IntersectionObserver(es => {
 document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
 /* hero parallax */
-const heroMedia = document.querySelector(".hero .media");
+const heroMedia = document.querySelector(".hero .media:not([data-noparallax])");
 if (heroMedia) {
   let ticking = false;
   window.addEventListener("scroll", () => {

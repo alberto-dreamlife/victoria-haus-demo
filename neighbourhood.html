@@ -11,8 +11,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731g">
+<link rel="stylesheet" href="assets/site.css?v=20260731k">
+<!-- The map iframe is lazy, so it does not compete with the header video, but
+     prefetching warms it during idle time and it is ready by the time anyone
+     scrolls down to it. -->
+<link rel="prefetch" href="assets/map.html" as="document">
+<link rel="prefetch" href="assets/map-data.json" as="fetch" crossorigin>
 <style>
+  /* Sky and the North Shore ridge sit in the top fifth of this clip, and the
+     header was cutting most of it: the media box is offset -12% to give the
+     parallax somewhere to travel, and on a wide, short window cover trims
+     another 11% off the top. Together that is a fifth of the frame, mountains
+     included. Here the media sits flush with the top, pinned there by
+     object-position, and the parallax is switched off so nothing can slide
+     down and expose the edge. What we lose is foreground rooftops at the
+     bottom, which the gradient was darkening anyway. */
+  .hero .media img,.hero .media video{top:0;height:100%;object-position:50% 0}
+
   /* time-to-places module */
   .times{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:clamp(40px,5vw,70px)}
   .time{border-top:1px solid var(--line);padding-top:24px}
@@ -112,7 +127,7 @@
 
 <div class="page">
 <header class="hero sub">
-  <div class="media">
+  <div class="media" data-noparallax>
     <img src="assets/img/10-neigh-poster.webp" alt="Victoria Drive at Kingsway">
     <!-- Two layers, as on the other headers: the light opener starts almost at
          once so the header is never a frozen photograph, and the 12.3 Mbps master
@@ -124,7 +139,7 @@
            poster="assets/img/10-neigh-poster.webp">
       <source src="assets/video/neigh-open.mp4" type="video/mp4">
     </video>
-    <video class="v-hq" muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
+    <video class="v-hq" data-loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
       <source src="assets/video/neigh-loop.mp4" type="video/mp4">
     </video>
   </div>
@@ -354,8 +369,11 @@
   const wait  = document.getElementById("mapWait");
   if (!frame) return;
 
+  /* Jost and Inter go in as their own <link>, not an @import inside the block:
+     an @import can only sit at the top of a stylesheet and the browser will not
+     start fetching it until it has parsed its way there. */
+  const FONTS = "https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap";
   const CSS = `
-    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap');
     :root{ --serif:'Jost',sans-serif !important; --sans:'Inter',system-ui,sans-serif !important;
            --paper:#F7F5F0 !important; --line:#DAD3C4 !important; }
     html,body{ background:transparent !important; }
@@ -376,6 +394,9 @@
     const wrap = d && d.querySelector(".wrap");
     if (!wrap) { if (++tries > 120) clearInterval(tick); return; }
     clearInterval(tick);
+    const f = d.createElement("link");
+    f.rel = "stylesheet"; f.href = FONTS;
+    d.head.appendChild(f);
     const s = d.createElement("style");
     s.textContent = CSS;
     d.head.appendChild(s);
@@ -389,6 +410,6 @@
   }, 120);
 })();
 </script>
-<script src="assets/site.js?v=20260731g"></script>
+<script src="assets/site.js?v=20260731k"></script>
 </body>
 </html>

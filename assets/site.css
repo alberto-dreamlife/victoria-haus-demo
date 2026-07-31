@@ -189,6 +189,13 @@ body.menu-open > nav{background:transparent;box-shadow:none;color:var(--paper)}
 .hero .media video.v-hq{opacity:0;transition:opacity .5s ease;z-index:2}
 .hero .media video.v-hq.playing{opacity:1}
 
+/* Replay dissolve. The clip's last frame does not match its first, so a plain
+   loop cuts. Fading out over the tail lands on the still underneath, which is
+   the video's own first frame, so restarting from there is invisible: the only
+   transition anyone sees is the end dissolving into the beginning. */
+video.fading{opacity:0 !important;transition:opacity .7s ease}
+
+
 /* In-page video: sits over the still inside .frame, same box, and fades in once
    it plays. pointer-events:none so the frame keeps opening the lightbox. */
 .frame{position:relative}
@@ -198,6 +205,7 @@ body.menu-open > nav{background:transparent;box-shadow:none;color:var(--paper)}
 .frame .fig-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;transition:opacity 1s ease;pointer-events:none}
 .frame .fig-vid.playing{opacity:1}
+.frame .fig-vid.fading{opacity:0 !important}
 
 
 @keyframes heroZoom{from{transform:scale(1.09)}to{transform:scale(1.01)}}

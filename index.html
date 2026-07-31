@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731b">
+<link rel="stylesheet" href="assets/site.css?v=20260731k">
 <style>
   .intro-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(28px,5vw,80px);align-items:end}
   @media(max-width:900px){.intro-grid{grid-template-columns:1fr;gap:26px}}
@@ -85,11 +85,11 @@
          never a frozen photograph; the 25 MB master loads behind it and, once it
          can play through, is seeked to the opener's exact timestamp and faded on
          top. Same clip, same length, so the handover lands on the same frame. -->
-    <video class="v-open" data-loop autoplay muted loop playsinline preload="auto"
+    <video class="v-open" data-loop="0,6" autoplay muted playsinline preload="auto"
            poster="assets/img/01-hero-poster.webp">
       <source src="assets/video/hero-open.mp4" type="video/mp4">
     </video>
-    <video class="v-hq" muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+    <video class="v-hq" data-loop="0,6" muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
       <!-- The 34 Mbps master, cut to its first six seconds. A container trim, not
            a re-encode: byte-identical to the master over that span. -->
       <source src="assets/video/hero-loop.mp4" type="video/mp4">
@@ -300,6 +300,6 @@
 </footer>
 </div><!-- /.page -->
 
-<script src="assets/site.js?v=20260731b"></script>
+<script src="assets/site.js?v=20260731k"></script>
 </body>
 </html>
