@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731e">
+<link rel="stylesheet" href="assets/site.css?v=20260731g">
 <style>
   /* time-to-places module */
   .times{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:clamp(40px,5vw,70px)}
@@ -113,10 +113,19 @@
 <div class="page">
 <header class="hero sub">
   <div class="media">
-    <img src="assets/img/10-victoria-drive.webp" alt="Victoria Drive shops">
-    <video data-loop autoplay muted loop playsinline preload="auto" poster="assets/img/10-victoria-drive.webp">
-      <source src="assets/video/neighbourhood-loop.webm" type="video/webm">
-      <source src="assets/video/neighbourhood-loop.mp4" type="video/mp4">
+    <img src="assets/img/10-neigh-poster.webp" alt="Victoria Drive at Kingsway">
+    <!-- Two layers, as on the other headers: the light opener starts almost at
+         once so the header is never a frozen photograph, and the 12.3 Mbps master
+         fades over it at the same timestamp when it can play through. Delivered as
+         a .mov, which GitHub Pages serves as video/quicktime and Chrome refuses,
+         so the container is mp4 now; the video stream itself is untouched.
+         No loop: last frame and first differ by 40 percent of the picture. -->
+    <video class="v-open" data-loop autoplay muted playsinline preload="auto"
+           poster="assets/img/10-neigh-poster.webp">
+      <source src="assets/video/neigh-open.mp4" type="video/mp4">
+    </video>
+    <video class="v-hq" muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
+      <source src="assets/video/neigh-loop.mp4" type="video/mp4">
     </video>
   </div>
   <div class="shade"></div>
@@ -380,6 +389,6 @@
   }, 120);
 })();
 </script>
-<script src="assets/site.js?v=20260731e"></script>
+<script src="assets/site.js?v=20260731g"></script>
 </body>
 </html>
