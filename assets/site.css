@@ -425,3 +425,15 @@ footer a:hover{color:#fff}
   .hero .sub-copy{max-width:none}
   h2.title{max-width:none}
 }
+
+/* ---------- interactive map ----------
+   The map lives in an iframe because it is a self-contained page. The frame
+   gives it the site's picture-frame treatment; the height is set from the
+   parent once the map has drawn itself. */
+.mapframe{position:relative;margin-top:clamp(30px,4vw,52px);background:#fff;
+  border:1px solid var(--line);box-shadow:0 24px 60px rgba(27,26,23,.09);overflow:hidden}
+.mapframe iframe{display:block;width:100%;height:820px;border:0;background:#fff}
+.map-wait{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;
+  background:#fff;color:var(--muted);font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+  transition:opacity .6s ease}
+@media(max-width:700px){.mapframe iframe{height:900px}}

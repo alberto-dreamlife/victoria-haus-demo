@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731b">
+<link rel="stylesheet" href="assets/site.css?v=20260731e">
 <style>
   /* time-to-places module */
   .times{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:clamp(40px,5vw,70px)}
@@ -222,6 +222,26 @@
   </div>
 </section>
 
+<!-- ============ INTERACTIVE MAP ============
+     The map ships as a self-contained page, so it goes in an iframe rather than
+     being unpicked into this document: it sets its own body styles and error
+     handlers, and inlining it would mean fighting them on every page. Same
+     origin, so the parent can reach in and restyle it to match the site. -->
+<section style="background:var(--sand);padding-top:0" id="map">
+  <div class="wrap">
+    <div class="kicker reveal">On the map</div>
+    <h2 class="title display reveal d1">Everything within a few streets.</h2>
+    <p class="lead reveal d2">Parks, schools, the shops on the Drive and the 20 bus, drawn from
+       live map data. Filter by what matters to you.</p>
+    <div class="mapframe reveal d1">
+      <iframe id="vhMap" title="Victoria Haus neighbourhood map" loading="lazy"
+              src="assets/map.html" scrolling="no"></iframe>
+      <div class="map-wait" id="mapWait">Drawing the neighbourhood</div>
+    </div>
+  </div>
+</section>
+
+
 <div class="register" id="register">
   <div class="wrap inner">
     <div>
@@ -314,6 +334,52 @@
 </footer>
 </div><!-- /.page -->
 
-<script src="assets/site.js?v=20260731b"></script>
+
+<script>
+/* The map is a bundled page that rewrites its own document after boot, so the
+   parent waits for its .wrap to appear rather than for the load event, then
+   injects the site's fonts and palette and reports its height back. Same origin,
+   so this is a plain DOM reach-in, no postMessage handshake needed. */
+(function () {
+  const frame = document.getElementById("vhMap");
+  const wait  = document.getElementById("mapWait");
+  if (!frame) return;
+
+  const CSS = `
+    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap');
+    :root{ --serif:'Jost',sans-serif !important; --sans:'Inter',system-ui,sans-serif !important;
+           --paper:#F7F5F0 !important; --line:#DAD3C4 !important; }
+    html,body{ background:transparent !important; }
+    .wrap{ max-width:none !important; padding:0 !important; }
+    .card{ border:0 !important; box-shadow:none !important; background:#fff !important;
+           padding:clamp(20px,2.4vw,32px) !important; }
+    .card > div:first-child > div:first-child{ display:none !important; }
+    .card > div:nth-child(2){ display:none !important; }
+    .chip{ border-radius:0 !important; font-size:11.5px !important; letter-spacing:.12em !important;
+           text-transform:uppercase !important; font-weight:600 !important; padding:9px 15px !important; }
+    .chip.on{ background:#5A6650 !important; border-color:#5A6650 !important; color:#fff !important; }
+    .zbtn{ border-radius:0 !important; }
+  `;
+
+  let tries = 0;
+  const tick = setInterval(() => {
+    const d = frame.contentDocument;
+    const wrap = d && d.querySelector(".wrap");
+    if (!wrap) { if (++tries > 120) clearInterval(tick); return; }
+    clearInterval(tick);
+    const s = d.createElement("style");
+    s.textContent = CSS;
+    d.head.appendChild(s);
+    if (wait) wait.style.opacity = 0;
+    /* Height is content-driven, and the legend reflows, so measure rather than
+       guess and keep measuring while the map settles. */
+    const fit = () => { frame.style.height = Math.ceil(d.documentElement.scrollHeight) + "px"; };
+    fit();
+    new ResizeObserver(fit).observe(d.documentElement);
+    addEventListener("resize", fit);
+  }, 120);
+})();
+</script>
+<script src="assets/site.js?v=20260731e"></script>
 </body>
 </html>
