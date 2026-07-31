@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731a">
+<link rel="stylesheet" href="assets/site.css?v=20260731b">
 <style>
   .intro-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(28px,5vw,80px);align-items:end}
   @media(max-width:900px){.intro-grid{grid-template-columns:1fr;gap:26px}}
@@ -239,23 +239,67 @@
 </div>
 
 <footer>
-  <div class="wrap f-in">
-    <span><b>VICTORIA HAUS</b><br>Victoria Drive at East 23rd Avenue<br>Kensington-Cedar Cottage, Vancouver</span>
-    <span class="fl">
-      <a href="homes.html">Homes</a>
-      <a href="floorplans.html">Floor Plans</a>
-      <a href="neighbourhood.html">Neighbourhood</a>
-      <a href="team.html">Team</a>
-      <a href="#register">Register</a>
-    </span>
+  <div class="wrap f-top">
+    <div class="f-brand">
+      <!-- RK: the mark must not change between the header and the footer. Same
+           two-line Jost lockup as the nav, just larger. -->
+      <a class="f-mark" href="index.html">Victoria<b>Haus</b></a>
+      <p>Four three-bedroom homes on the corner of Victoria Drive and East 23rd Avenue,
+         Kensington-Cedar Cottage. 1,595 sq ft over three levels, each with its own front
+         door, its own garden and a private roof deck.</p>
+    </div>
+    <div class="f-cols">
+      <div>
+        <h4>Explore</h4>
+        <a href="homes.html">Homes</a>
+        <a href="floorplans.html">Floor Plans</a>
+        <a href="neighbourhood.html">Neighbourhood</a>
+        <a href="team.html">Team</a>
+      </div>
+      <div>
+        <h4>The homes</h4>
+        <span>Hinoki &middot; 3992 Victoria Drive</span>
+        <span>Momiji &middot; #2 &ndash; 2017 East 23rd</span>
+        <span>Sakura &middot; #3 &ndash; 2017 East 23rd</span>
+        <span>Matsu &middot; #1 &ndash; 2017 East 23rd</span>
+      </div>
+      <div>
+        <h4>Register</h4>
+        <span>Plans and pricing before the public release.</span>
+        <a class="f-cta" href="#register">Join the list &rarr;</a>
+        <a href="mailto:hello@victoriahaus.ca">hello@victoriahaus.ca</a>
+      </div>
+    </div>
   </div>
-  <div class="wrap"><p class="legend legal">
-    Renderings are artistic representations only and are not intended to form part of any contract. Floor plans are draft and approximate; dimensions and areas are subject to change. This is not an offering for sale. Any such offering may only be made with a disclosure statement. E.&amp;O.E.
-    <br><br>A demonstration website built by <b>Dreamlife</b>. Renderings by Dreamlife · 2D floor plans by Twinlines.
-  </p></div>
+
+  <!-- Credits. Both marks are sized by their wordmark, not their bounding box:
+       Twinlines carries STUDIO underneath, so equal box heights would leave its
+       name a third smaller. Measured on the artwork, its box runs 1.619x its
+       wordmark, and Dreamlife needs 1.35x to balance against a bold serif. -->
+  <div class="wrap f-credits">
+    <span class="credit">
+      <small>Renderings by</small>
+      <a href="https://dreamlife.org" target="_blank" rel="noopener">
+        <img class="mk dl" src="assets/logos/dreamlife-white.svg" alt="Dreamlife" width="387" height="87">
+      </a>
+    </span>
+    <span class="credit">
+      <small>2D floor plans by</small>
+      <img class="mk tl" src="assets/logos/twinlines-white.png" alt="TwinLines Studio" width="820" height="225">
+    </span>
+    <span class="credit f-demo"><small>A demonstration project</small></span>
+  </div>
+
+  <div class="wrap f-legal">
+    <p>Renderings are artistic representations only and are not intended to form part of any
+       contract. Floor plans are draft and approximate; dimensions and areas are subject to
+       change. This is not an offering for sale. Any such offering may only be made with a
+       disclosure statement. E.&amp;O.E.</p>
+    <p class="f-copy">&copy; 2026 Victoria Haus</p>
+  </div>
 </footer>
 </div><!-- /.page -->
 
-<script src="assets/site.js?v=20260731a"></script>
+<script src="assets/site.js?v=20260731b"></script>
 </body>
 </html>
