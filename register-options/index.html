@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B1A17">
+<title>Register section: two options | Victoria Haus</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1B1A17; --ink-2:#3E3C36; --paper:#F7F5F0; --sand:#EDE8DE; --sand-2:#E3DCCE;
+  --line:#DAD3C4; --moss:#5A6650; --moss-lt:#7C876F; --clay:#B4714E; --muted:#7A756B;
+  --shell:1680px; --gutter:clamp(20px,4vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+.display{font-family:'Jost',sans-serif;font-weight:300;letter-spacing:-.015em}
+.wrap{width:100%;max-width:var(--shell);margin-inline:auto;padding-inline:var(--gutter)}
+
+/* --------- chrome de la comparativa --------- */
+.top{background:var(--ink);color:var(--paper);padding:clamp(28px,4vw,48px) 0}
+.top h1{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(28px,3.4vw,44px);line-height:1.08}
+.top p{color:#9E988E;margin-top:14px;max-width:74ch;font-size:15.5px}
+.jump{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.jump a{text-decoration:none;color:var(--paper);border:1px solid rgba(255,255,255,.26);
+  padding:12px 20px;font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  transition:background .3s,color .3s}
+.jump a:hover{background:var(--paper);color:var(--ink)}
+.label{background:var(--sand);border-block:1px solid var(--line);padding:28px 0}
+.label .n{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--clay)}
+.label h2{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(26px,3vw,38px);margin-top:8px}
+.label p{color:var(--muted);margin-top:12px;max-width:80ch;font-size:15.5px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.tags span{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+  border:1px solid var(--line);background:#fff;padding:7px 13px;color:var(--muted)}
+
+/* ================= D — EMPIEZA POR LA VIVIENDA ================= */
+.d{background:var(--ink);color:var(--paper);padding:clamp(60px,8vw,120px) 0}
+.d .eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--clay)}
+.d h2{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(30px,4vw,56px);line-height:1.06;margin-top:12px}
+.d .lede{color:#9E988E;margin-top:16px;max-width:52ch}
+.homes{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:clamp(30px,4vw,50px)}
+@media(max-width:1000px){.homes{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.homes{grid-template-columns:1fr}}
+/* A button lays its children out inline, so the name, address and price ran
+   together on one line. Flex column puts them back in a stack. */
+.hcard{position:relative;text-align:left;background:transparent;color:var(--paper);
+  border:1px solid rgba(255,255,255,.18);padding:22px 20px 20px;cursor:pointer;font-family:inherit;
+  display:flex;flex-direction:column;align-items:flex-start;
+  transition:border-color .35s,background .35s,transform .35s cubic-bezier(.2,.7,.2,1)}
+.hcard>span{display:block}
+.hcard .st{align-self:flex-start}
+.hcard:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.5)}
+.hcard[aria-pressed="true"]{background:var(--clay);border-color:var(--clay)}
+.hcard .jp{font-family:'Jost',sans-serif;font-weight:300;font-size:27px;line-height:1}
+.hcard .letter{display:block;font-size:10.5px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:#8E887E;margin-bottom:12px}
+.hcard[aria-pressed="true"] .letter{color:rgba(255,255,255,.75)}
+.hcard .addr{font-size:13px;color:#9E988E;margin-top:9px}
+.hcard[aria-pressed="true"] .addr{color:rgba(255,255,255,.85)}
+.hcard .price{font-family:'Jost',sans-serif;font-weight:300;font-size:20px;margin-top:16px}
+.hcard .st{display:inline-block;margin-top:14px;font-size:9.5px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;border:1px solid currentColor;padding:5px 10px;color:#9BAE8D}
+.hcard.sold{opacity:.42;cursor:not-allowed}
+.hcard.sold .st{color:#B0A99C}
+.hcard.sold:hover{transform:none;border-color:rgba(255,255,255,.18)}
+.d .after{margin-top:clamp(26px,3vw,40px);border-top:1px solid rgba(255,255,255,.16);
+  padding-top:clamp(24px,3vw,36px);
+  max-height:0;opacity:0;overflow:hidden;transition:max-height .6s cubic-bezier(.2,.7,.2,1),opacity .5s}
+.d .after.on{max-height:420px;opacity:1}
+.d .after p{color:#9E988E;font-size:15px}
+.d .after b{color:var(--paper);font-weight:500}
+.dform{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;align-items:end}
+@media(max-width:760px){.dform{grid-template-columns:1fr}}
+.uf{border-bottom:1px solid rgba(255,255,255,.24);padding-bottom:10px;transition:border-color .3s}
+.uf:focus-within{border-color:var(--clay)}
+.uf label{display:block;font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:#8E887E;margin-bottom:8px}
+.uf input{width:100%;background:transparent;border:0;outline:0;color:var(--paper);
+  font-family:inherit;font-size:16px}
+.uf input::placeholder{color:#5E594F}
+.btn-clay{background:var(--clay);color:#fff;border:1px solid var(--clay);font-family:inherit;
+  font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:17px 26px;
+  cursor:pointer;transition:background .35s,color .35s}
+.btn-clay:hover{background:transparent;color:var(--clay)}
+
+/* ================= E — LA TARJETA DE SOLICITUD ================= */
+.e{background:var(--sand);padding:clamp(60px,8vw,120px) 0}
+.card{max-width:940px;margin-inline:auto;background:var(--paper);
+  border:1px solid var(--line);padding:clamp(30px,4.6vw,70px);position:relative;
+  box-shadow:0 40px 90px rgba(27,26,23,.09)}
+/* Una regla fina que se dibuja al entrar en pantalla: el unico movimiento que
+   admite una pieza asi sin dejar de parecer papeleria. */
+.card .rule{height:1px;background:var(--line);transform:scaleX(0);transform-origin:left;
+  transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.card.in .rule{transform:scaleX(1)}
+.card .rule.d1{transition-delay:.12s}
+.card .rule.d2{transition-delay:.24s}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;
+  padding-bottom:26px}
+.chead .k{font-size:10.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--clay)}
+.chead h2{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(28px,3.4vw,46px);
+  line-height:1.06;margin-top:10px}
+.chead .seal{width:70px;height:70px;border:1px solid var(--line);border-radius:50%;
+  display:grid;place-items:center;text-align:center;font-family:'Jost',sans-serif;font-weight:300;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--moss);line-height:1.35;
+  flex-shrink:0}
+.crows{padding-block:30px}
+.crow{display:grid;grid-template-columns:180px 1fr;gap:18px;align-items:baseline;padding:14px 0}
+@media(max-width:680px){.crow{grid-template-columns:1fr;gap:8px}}
+.crow>span{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.crow input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);
+  outline:0;font-family:'Jost',sans-serif;font-weight:300;font-size:22px;color:var(--ink);
+  padding:6px 2px;transition:border-color .3s}
+.crow input:focus{border-color:var(--moss)}
+.crow input::placeholder{color:#BEB6A6}
+.picks{display:flex;gap:10px;flex-wrap:wrap}
+.pick{font-family:'Jost',sans-serif;font-weight:300;font-size:17px;background:transparent;
+  border:1px solid var(--line);padding:11px 20px;cursor:pointer;color:var(--ink);
+  transition:border-color .3s,background .3s,color .3s}
+.pick:hover{border-color:var(--moss)}
+.pick[aria-pressed="true"]{background:var(--moss);border-color:var(--moss);color:#fff}
+.cfoot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  padding-top:28px}
+.cfoot small{font-size:12.5px;color:var(--muted);max-width:44ch;line-height:1.6}
+.btn-moss{background:var(--ink);color:var(--paper);border:1px solid var(--ink);font-family:inherit;
+  font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:18px 32px;
+  cursor:pointer;transition:background .35s,color .35s}
+.btn-moss:hover{background:transparent;color:var(--ink)}
+.done{display:none;text-align:center;padding:clamp(30px,4vw,50px) 0}
+.done.on{display:block}
+.done .tick{width:62px;height:62px;border-radius:50%;border:1px solid var(--moss);color:var(--moss);
+  display:grid;place-items:center;font-size:26px;margin:0 auto 20px}
+.done h3{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(24px,2.8vw,34px)}
+.done p{color:var(--muted);margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <h1>Register section for Victoria Haus, two more directions</h1>
+    <p>Both are live. Click the homes, type in the fields. Culmena already uses the stepped
+       version, so these two deliberately go elsewhere: Robert's point is that the two projects
+       should not navigate and behave the same.</p>
+    <div class="jump">
+      <a href="#d">D &middot; Start from the home</a>
+      <a href="#e">E &middot; The enquiry card</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ D ============ -->
+<div class="label" id="d">
+  <div class="wrap">
+    <div class="n">Option D</div>
+    <h2>Start from the home</h2>
+    <p>There are only four homes, and the site plan is already the spine of this project. So the
+       registration starts where the buyer's head already is: which one. Pick a home and the form
+       opens underneath, pre-attached to it. Culmena could not do this with 107 homes, which is
+       exactly why it suits this one.</p>
+    <div class="tags"><span>Uses the product</span><span>Qualifies the lead</span><span>Only works on a small project</span></div>
+  </div>
+</div>
+<section class="d">
+  <div class="wrap">
+    <div class="eyebrow">Register</div>
+    <h2 class="display">Which one is <span style="color:var(--clay)">yours?</span></h2>
+    <p class="lede">Pick a home and we will send its plans, its price and its exposure. One email,
+       then only when something changes.</p>
+
+    <div class="homes" role="group" aria-label="Homes">
+      <button class="hcard" type="button" aria-pressed="false" data-home="Hinoki">
+        <span class="letter">Home A</span>
+        <span class="jp">Hinoki</span>
+        <span class="addr">3992 Victoria Drive</span>
+        <span class="price">$1,649,900</span>
+        <span class="st">Available</span>
+      </button>
+      <button class="hcard" type="button" aria-pressed="false" data-home="Momiji">
+        <span class="letter">Home B</span>
+        <span class="jp">Momiji</span>
+        <span class="addr">#2 &ndash; 2017 East 23rd</span>
+        <span class="price">$1,574,900</span>
+        <span class="st">Available</span>
+      </button>
+      <button class="hcard sold" type="button" disabled aria-pressed="false" data-home="Sakura">
+        <span class="letter">Home C</span>
+        <span class="jp">Sakura</span>
+        <span class="addr">#3 &ndash; 2017 East 23rd</span>
+        <span class="price">$1,599,900</span>
+        <span class="st">Sold</span>
+      </button>
+      <button class="hcard" type="button" aria-pressed="false" data-home="Matsu">
+        <span class="letter">Home D</span>
+        <span class="jp">Matsu</span>
+        <span class="addr">#1 &ndash; 2017 East 23rd</span>
+        <span class="price">$1,589,900</span>
+        <span class="st">Available</span>
+      </button>
+    </div>
+
+    <div class="after" id="dAfter">
+      <p>Sending the plans for <b id="dPick">Hinoki</b>. Change your mind by picking another.</p>
+      <form class="dform" data-demo>
+        <div class="uf"><label>Name</label><input placeholder="Alberto Sanchez" required></div>
+        <div class="uf"><label>Email</label><input type="email" placeholder="you@email.com" required></div>
+        <button class="btn-clay" type="submit">Send the plans &rarr;</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ E ============ -->
+<div class="label" id="e">
+  <div class="wrap">
+    <div class="n">Option E</div>
+    <h2>The enquiry card</h2>
+    <p>The opposite instinct. Not more graphics, but fewer: the form is set as a printed enquiry
+       card, hairline rules and generous margins, the way a gallery or an architect would send it.
+       The only motion is the rules drawing themselves in as you reach it. It reads expensive
+       precisely because it is not trying.</p>
+    <div class="tags"><span>Editorial</span><span>Restrained motion</span><span>Matches the Japandi language</span></div>
+  </div>
+</div>
+<section class="e">
+  <div class="wrap">
+    <div class="card" id="eCard">
+      <div class="chead">
+        <div>
+          <div class="k">Registration</div>
+          <h2 class="display">Four homes.<br>Released together.</h2>
+        </div>
+        <div class="seal">Victoria<br>Haus<br>2026</div>
+      </div>
+      <div class="rule"></div>
+
+      <form id="eForm">
+        <div class="crows">
+          <div class="crow"><span>Name</span><input name="name" placeholder="Alberto Sanchez"></div>
+          <div class="rule d1"></div>
+          <div class="crow"><span>Email</span><input name="email" type="email" placeholder="you@email.com"></div>
+          <div class="rule d2"></div>
+          <div class="crow"><span>Home of interest</span>
+            <div class="picks">
+              <button class="pick" type="button" aria-pressed="false">Hinoki</button>
+              <button class="pick" type="button" aria-pressed="false">Momiji</button>
+              <button class="pick" type="button" aria-pressed="false">Matsu</button>
+              <button class="pick" type="button" aria-pressed="false">Undecided</button>
+            </div>
+          </div>
+        </div>
+        <div class="rule"></div>
+        <div class="cfoot">
+          <small>Free and without obligation. We send the floor plans and the price list once,
+                 then write only when something real changes.</small>
+          <button class="btn-moss" type="submit">Submit the card &rarr;</button>
+        </div>
+      </form>
+
+      <div class="done" id="eDone">
+        <div class="tick">&#10003;</div>
+        <h3 class="display">Received.</h3>
+        <p id="eMsg">The plans and the price list are on their way.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* D: elegir vivienda abre el formulario */
+{
+  const after = document.getElementById("dAfter"), pick = document.getElementById("dPick");
+  document.querySelectorAll(".hcard:not(.sold)").forEach(b =>
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".hcard").forEach(x => x.setAttribute("aria-pressed", "false"));
+      b.setAttribute("aria-pressed", "true");
+      pick.textContent = b.dataset.home;
+      after.classList.add("on");
+      /* Only scroll if the form opened below the fold, or the page jumps for
+         someone who could already see it. */
+      const r = after.getBoundingClientRect();
+      if (r.bottom > innerHeight) after.scrollIntoView({ block: "end", behavior: "smooth" });
+    }));
+  document.querySelector(".dform").addEventListener("submit", e => {
+    e.preventDefault();
+    alert("Demo only, no data is sent. Home: " + pick.textContent);
+  });
+}
+
+/* E: las reglas se dibujan al entrar en pantalla */
+{
+  const card = document.getElementById("eCard");
+  new IntersectionObserver((es, o) => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    card.classList.add("in"); o.disconnect();
+  }), { threshold: .25 }).observe(card);
+
+  document.querySelectorAll(".pick").forEach(b =>
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", "false"));
+      b.setAttribute("aria-pressed", "true");
+    }));
+
+  document.getElementById("eForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const n = (e.target.name.value || "").trim();
+    document.getElementById("eMsg").textContent = n
+      ? n + ", the plans and the price list are on their way."
+      : "The plans and the price list are on their way.";
+    e.target.style.display = "none";
+    document.getElementById("eDone").classList.add("on");
+  });
+}
+</script>
+</body>
+</html>
