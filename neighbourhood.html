@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731k">
+<link rel="stylesheet" href="assets/site.css?v=20260731m">
 <!-- The map iframe is lazy, so it does not compete with the header video, but
      prefetching warms it during idle time and it is ready by the time anyone
      scrolls down to it. -->
@@ -27,6 +27,12 @@
      down and expose the edge. What we lose is foreground rooftops at the
      bottom, which the gradient was darkening anyway. */
   .hero .media img,.hero .media video{top:0;height:100%;object-position:50% 0}
+  /* And the header is tall enough to hold the whole 16:9 frame rather than a
+     band of it: 56.25vw is exactly nine sixteenths of the width, so at desktop
+     sizes nothing is cropped at all. The ridge stays at the top and Victoria
+     Drive comes back into view at the bottom. The floor keeps it from
+     collapsing on a phone, where cover trims the sides instead. */
+  .hero.sub{height:clamp(460px,56.25vw,900px)}
 
   /* time-to-places module */
   .times{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:clamp(40px,5vw,70px)}
@@ -410,6 +416,6 @@
   }, 120);
 })();
 </script>
-<script src="assets/site.js?v=20260731k"></script>
+<script src="assets/site.js?v=20260731m"></script>
 </body>
 </html>
