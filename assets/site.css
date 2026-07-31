@@ -49,38 +49,46 @@ body{animation:pagein .6s ease both}
 @keyframes pagein{from{opacity:0}to{opacity:1}}
 
 /* ---------- NAV ---------- */
-nav{position:fixed;inset:0 0 auto 0;z-index:90;color:#fff;transition:background .45s ease,box-shadow .45s ease}
+/* body > nav, not nav: the drawer now carries its own <nav> and the unscoped
+   rule would pin it to the top of the viewport. */
+body > nav{position:fixed;inset:0 0 auto 0;z-index:90;color:#fff;transition:background .45s ease,box-shadow .45s ease}
 
 /* viewport-fit:cover lets the page run under the notch, so anything fixed to
    the top has to add the inset back or it sits beneath the status bar. */
-nav{padding-top:env(safe-area-inset-top)}
-nav .nav-in{max-width:var(--shell);margin-inline:auto;padding:26px var(--gutter);
+body > nav{padding-top:env(safe-area-inset-top)}
+body > nav .nav-in{max-width:var(--shell);margin-inline:auto;padding:26px var(--gutter);
   display:flex;align-items:center;justify-content:space-between;gap:26px;transition:padding .45s ease}
-nav.solid{background:rgba(247,245,240,.94);backdrop-filter:blur(14px);color:var(--ink);
+body > nav.solid{background:rgba(247,245,240,.94);backdrop-filter:blur(14px);color:var(--ink);
   box-shadow:0 1px 0 rgba(0,0,0,.07)}
-nav.solid .nav-in{padding-block:16px}
+body > nav.solid .nav-in{padding-block:16px}
 /* RK: the wordmark read small and thin against the hero. Up two steps in
    size and from 300 to 500, with the tracking eased off so the extra
    weight does not make it sprawl. */
 .logo{font-family:'Jost',sans-serif;font-weight:500;font-size:clamp(20px,1.8vw,26px);
   letter-spacing:.16em;text-transform:uppercase;text-decoration:none;white-space:nowrap;line-height:1.12}
 .logo b{display:block;font-weight:500}
-nav ul{display:flex;gap:clamp(18px,2.4vw,38px);list-style:none;align-items:center}
-nav a.nl{text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.16em;
+/* RK: the two projects navigated identically. Victoria Haus is four homes, so
+   it drops the written menu at every width and keeps only the mark and the
+   button. The links are not lost, they move into a full-screen drawer that has
+   room to carry the register call and the contact details as well. */
+body > nav ul{display:none}
+body > nav a.nl{text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.16em;
   text-transform:uppercase;position:relative;padding:4px 0;white-space:nowrap}
-nav a.nl::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:currentColor;
+body > nav a.nl::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:currentColor;
   transition:width .4s cubic-bezier(.7,0,.3,1)}
-nav a.nl:hover::after,nav a.nl.active::after{width:100%}
-nav a.reg{text-decoration:none;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+body > nav a.nl:hover::after,body > nav a.nl.active::after{width:100%}
+body > nav a.reg{text-decoration:none;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   border:1px solid currentColor;padding:11px 24px;transition:background .35s,color .35s,border-color .35s;
   white-space:nowrap}
-nav a.reg:hover{background:var(--moss);border-color:var(--moss);color:#fff}
+body > nav a.reg:hover{background:var(--moss);border-color:var(--moss);color:#fff}
 
-.burger{display:none;width:44px;height:44px;border:0;background:transparent;cursor:pointer;
+.burger{display:grid;place-items:center;width:56px;height:56px;border:1px solid transparent;
+  border-radius:50%;transition:border-color .4s ease,background .4s ease;border:0;background:transparent;cursor:pointer;
   position:relative;color:inherit;flex-shrink:0;margin-right:-10px}
-.burger i{position:absolute;left:11px;width:22px;height:1.4px;background:currentColor;
+.burger:hover{border-color:currentColor}
+.burger i{position:absolute;left:17px;width:22px;height:1.4px;background:currentColor;
   transition:transform .38s cubic-bezier(.2,.7,.2,1),opacity .2s}
-.burger i:nth-child(1){top:17px}.burger i:nth-child(2){top:23px}.burger i:nth-child(3){top:29px}
+.burger i:nth-child(1){top:23px}.burger i:nth-child(2){top:29px}.burger i:nth-child(3){top:35px}
 body.menu-open .burger i:nth-child(1){transform:translateY(6px) rotate(45deg)}
 body.menu-open .burger i:nth-child(2){opacity:0}
 body.menu-open .burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
@@ -91,6 +99,23 @@ body.menu-open .burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
   transition:opacity .4s,transform .4s cubic-bezier(.2,.7,.2,1),visibility .4s}
 body.menu-open .drawer{opacity:1;visibility:visible;transform:none}
 body.menu-open{overflow:hidden}
+/* With the written menu gone this is the navigation, not a mobile fallback, so
+   it gets a column of links and a register panel rather than a plain list. */
+.drawer .d-in{width:100%;max-width:var(--shell);margin-inline:auto;
+  display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(30px,6vw,90px);align-items:center}
+.drawer .d-cta{border:1px solid rgba(255,255,255,.2);padding:clamp(24px,3vw,38px)}
+.drawer .d-cta h3{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(24px,2.4vw,32px);
+  line-height:1.15}
+.drawer .d-cta p{margin-top:12px;font-size:14.5px;line-height:1.7;color:#9E988E}
+.drawer .d-cta .d-go{display:inline-block;margin-top:22px;border:1px solid var(--clay);
+  background:var(--clay);color:#fff;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;padding:15px 28px;text-decoration:none;
+  transition:background .35s,color .35s}
+.drawer .d-cta .d-go:hover{background:transparent;color:var(--clay)}
+.drawer .d-num{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.2em;
+  color:#6E6960;margin-right:16px}
+@media(max-width:900px){.drawer .d-in{grid-template-columns:1fr;gap:28px}
+  .drawer .d-cta{display:none}}
 .drawer a{display:block;text-decoration:none;font-family:'Jost',sans-serif;font-weight:300;
   font-size:clamp(28px,7vw,42px);padding:15px 0;border-bottom:1px solid rgba(255,255,255,.14);
   opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s,color .25s}
@@ -104,11 +129,10 @@ body.menu-open .drawer a:nth-child(5){transition-delay:.33s}
 .drawer .d-meta{margin-top:38px;font-size:13.5px;line-height:1.9;color:#9A958A;opacity:0;transition:opacity .4s .4s}
 body.menu-open .drawer .d-meta{opacity:1}
 @media(max-width:960px){
-  nav ul{display:none}.burger{display:block}
   nav .nav-in{padding-block:18px}nav.solid .nav-in{padding-block:14px}
 }
-nav{z-index:95}
-body.menu-open nav{background:transparent;box-shadow:none;color:var(--paper)}
+body > nav{z-index:95}
+body.menu-open > nav{background:transparent;box-shadow:none;color:var(--paper)}
 
 /* ---------- HERO ---------- */
 .hero{position:relative;height:clamp(560px,100svh,1020px);overflow:hidden;display:flex;
