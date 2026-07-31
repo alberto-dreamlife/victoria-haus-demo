@@ -78,6 +78,25 @@ document.querySelectorAll("video[data-loop]").forEach(v => {
   }
 }
 
+/* ---------- in-page video ----------
+   A 24 MB master below the fold should not be fetched with the page, so the file
+   lives in data-src and is only attached when the block is one screen away. It
+   plays once and holds: the clip is a one-way move, so looping it would cut. */
+{
+  const vids = document.querySelectorAll("video.fig-vid[data-src]");
+  if (vids.length && "IntersectionObserver" in window) {
+    const vio = new IntersectionObserver((es, o) => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const v = e.target;
+      o.unobserve(v);
+      v.src = v.dataset.src;
+      v.addEventListener("playing", () => v.classList.add("playing"), { once: true });
+      v.play().catch(() => {});
+    }), { rootMargin: "100% 0px" });
+    vids.forEach(v => vio.observe(v));
+  }
+}
+
 /* reveal */
 const io = new IntersectionObserver(es => {
   es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });

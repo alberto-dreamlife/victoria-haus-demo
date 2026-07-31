@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260731b">
+<link rel="stylesheet" href="assets/site.css?v=20260731c">
 <style>
   .lvl{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap);
     margin-top:clamp(52px,7vw,120px);align-items:center}
@@ -104,9 +104,17 @@
 <div class="page">
 <header class="hero sub">
   <div class="media">
-    <img src="assets/img/03-living-kitchen.webp" alt="Living, dining and kitchen at Victoria Haus">
-    <video data-loop autoplay muted loop playsinline preload="auto" poster="assets/img/03-living-kitchen.webp">
-      <source src="assets/video/homes-loop.webm" type="video/webm">
+    <img src="assets/img/02-homes-poster.webp" alt="Living, dining and kitchen at Victoria Haus">
+    <!-- Two layers, same as the index hero: the light opener starts almost at once
+         so the header is never a frozen photograph, and the 18.6 Mbps master fades
+         over it, seeked to the same timestamp, when it can play through. Neither
+         loops: the clip is a one-way move whose last frame does not match its
+         first, so it plays once and rests rather than cutting every ten seconds. -->
+    <video class="v-open" data-loop autoplay muted playsinline preload="auto"
+           poster="assets/img/02-homes-poster.webp">
+      <source src="assets/video/homes-open.mp4" type="video/mp4">
+    </video>
+    <video class="v-hq" muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
       <source src="assets/video/homes-loop.mp4" type="video/mp4">
     </video>
   </div>
@@ -176,7 +184,12 @@
     <div class="lvl l3">
       <div class="fig frame reveal" data-lightbox data-title="Level 3: primary suite and roof deck"
            data-caption="The whole top floor is one suite, opening onto 185 sq ft of private roof deck.">
-        <img src="assets/img/06-roof-deck.webp" alt="Roof deck and primary suite" loading="lazy">
+        <img src="assets/img/06-roof-poster.webp" alt="Roof deck and primary suite" loading="lazy">
+        <!-- Below the fold, so the 24 MB master is only fetched once the block is
+             close to the viewport: data-src rather than src. Plays once and holds
+             on its last frame, like the header. -->
+        <video class="fig-vid" muted playsinline preload="none" aria-hidden="true" tabindex="-1"
+               data-src="assets/video/roof-loop.mp4"></video>
         <div class="over">
           <div class="num display">03</div>
           <h3 class="display">The top floor is yours</h3>
@@ -299,6 +312,6 @@
 </footer>
 </div><!-- /.page -->
 
-<script src="assets/site.js?v=20260731b"></script>
+<script src="assets/site.js?v=20260731c"></script>
 </body>
 </html>
