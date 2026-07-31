@@ -103,42 +103,68 @@ body > nav a.reg:hover{background:var(--moss);border-color:var(--moss);color:#ff
 body.menu-open .burger i:nth-child(1){transform:translateY(6px) rotate(45deg)}
 body.menu-open .burger i:nth-child(2){opacity:0}
 body.menu-open .burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-.drawer{position:fixed;inset:0;z-index:85;background:var(--ink);color:var(--paper);
-  display:flex;flex-direction:column;justify-content:center;
-  padding:env(safe-area-inset-top) var(--gutter) env(safe-area-inset-bottom);
-  opacity:0;visibility:hidden;transform:translateY(-10px);
-  transition:opacity .4s,transform .4s cubic-bezier(.2,.7,.2,1),visibility .4s}
-body.menu-open .drawer{opacity:1;visibility:visible;transform:none}
+/* ---------- MENU: side panel ----------
+   Not a full-screen takeover. It slides in from the right over a soft veil, so
+   the project stays visible behind it, and the top of the panel carries a
+   photograph that changes with the page you are on: the menu is one more place
+   the project is sold rather than a list of four words. */
+.veil{position:fixed;inset:0;z-index:84;background:rgba(27,26,23,.42);backdrop-filter:blur(2px);
+  opacity:0;visibility:hidden;transition:opacity .5s ease,visibility .5s}
+body.menu-open .veil{opacity:1;visibility:visible}
+
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:86;width:min(460px,90vw);
+  background:var(--paper);color:var(--ink);display:flex;flex-direction:column;overflow:auto;
+  transform:translateX(100%);transition:transform .55s cubic-bezier(.2,.75,.2,1);
+  box-shadow:-30px 0 70px rgba(27,26,23,.18)}
+body.menu-open .drawer{transform:none}
 body.menu-open{overflow:hidden}
-/* With the written menu gone this is the navigation, not a mobile fallback, so
-   it gets a column of links and a register panel rather than a plain list. */
-.drawer .d-in{width:100%;max-width:var(--shell);margin-inline:auto;
-  display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(30px,6vw,90px);align-items:center}
-.drawer .d-cta{border:1px solid rgba(255,255,255,.2);padding:clamp(24px,3vw,38px)}
-.drawer .d-cta h3{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(24px,2.4vw,32px);
-  line-height:1.15}
-.drawer .d-cta p{margin-top:12px;font-size:14.5px;line-height:1.7;color:#9E988E}
-.drawer .d-cta .d-go{display:inline-block;margin-top:22px;border:1px solid var(--clay);
-  background:var(--clay);color:#fff;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;padding:15px 28px;text-decoration:none;
-  transition:background .35s,color .35s}
-.drawer .d-cta .d-go:hover{background:transparent;color:var(--clay)}
-.drawer .d-num{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.2em;
-  color:#6E6960;margin-right:16px}
-@media(max-width:900px){.drawer .d-in{grid-template-columns:1fr;gap:28px}
-  .drawer .d-cta{display:none}}
-.drawer a{display:block;text-decoration:none;font-family:'Jost',sans-serif;font-weight:300;
-  font-size:clamp(28px,7vw,42px);padding:15px 0;border-bottom:1px solid rgba(255,255,255,.14);
-  opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s,color .25s}
+
+.d-pic{position:relative;height:40%;min-height:210px;flex-shrink:0;overflow:hidden;background:var(--sand)}
+.d-pic img{width:100%;height:100%;object-fit:cover;transform:scale(1.07);
+  transition:transform 1.5s cubic-bezier(.2,.7,.2,1)}
+body.menu-open .d-pic img{transform:none}
+.d-pic::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(15,14,12,.55),transparent 58%)}
+.d-pic span{position:absolute;left:clamp(20px,2.4vw,30px);bottom:16px;z-index:2;color:#fff;
+  font-family:'Jost',sans-serif;font-weight:300;font-size:19px}
+
+.d-body{padding:clamp(24px,3vw,38px);display:flex;flex-direction:column;justify-content:center;flex:1}
+.drawer a{display:flex;align-items:baseline;gap:14px;text-decoration:none;color:inherit;
+  font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(24px,3vw,30px);
+  padding:14px 0;border-bottom:1px solid var(--line);
+  opacity:0;transform:translateX(14px);
+  transition:opacity .45s ease,transform .45s cubic-bezier(.2,.7,.2,1),color .3s}
 body.menu-open .drawer a{opacity:1;transform:none}
-body.menu-open .drawer a:nth-child(1){transition-delay:.09s}
-body.menu-open .drawer a:nth-child(2){transition-delay:.15s}
-body.menu-open .drawer a:nth-child(3){transition-delay:.21s}
-body.menu-open .drawer a:nth-child(4){transition-delay:.27s}
-body.menu-open .drawer a:nth-child(5){transition-delay:.33s}
-.drawer a:hover{color:var(--moss-lt)}
-.drawer .d-meta{margin-top:38px;font-size:13.5px;line-height:1.9;color:#9A958A;opacity:0;transition:opacity .4s .4s}
+body.menu-open .d-body a:nth-of-type(1){transition-delay:.14s}
+body.menu-open .d-body a:nth-of-type(2){transition-delay:.2s}
+body.menu-open .d-body a:nth-of-type(3){transition-delay:.26s}
+body.menu-open .d-body a:nth-of-type(4){transition-delay:.32s}
+.drawer a:hover{color:var(--clay)}
+.d-num{font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.2em;
+  color:var(--muted)}
+
+.drawer a.d-go{display:inline-block;align-self:flex-start;margin-top:26px;border-bottom:0;
+  background:var(--clay);color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;padding:14px 26px;
+  transition:background .35s,color .35s,opacity .45s,transform .45s}
+body.menu-open .drawer a.d-go{transition-delay:.38s}
+.drawer a.d-go:hover{background:var(--ink);color:var(--paper)}
+.drawer .d-meta{margin-top:28px;font-size:13.5px;line-height:1.85;color:var(--muted);
+  opacity:0;transition:opacity .5s .44s}
 body.menu-open .drawer .d-meta{opacity:1}
+.drawer a.d-mail{display:inline;font-family:inherit;font-size:13.5px;padding:0;border:0;
+  color:var(--muted);opacity:1;transform:none}
+.drawer a.d-mail:hover{color:var(--ink)}
+
+/* The panel covers the header, so the burger underneath cannot close it. The
+   close button lands exactly where the burger was, reading as the same control. */
+.d-close{position:fixed;top:calc(env(safe-area-inset-top) + 26px);right:var(--gutter);z-index:96;
+  width:56px;height:56px;border:1px solid var(--line);border-radius:50%;background:var(--paper);
+  color:var(--ink);font-size:19px;cursor:pointer;display:none;place-items:center;
+  transition:background .3s,color .3s,border-color .3s}
+.d-close:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+body.menu-open .d-close{display:grid}
+@media(max-width:520px){.d-pic{height:32%;min-height:160px}}
 @media(max-width:960px){
   nav .nav-in{padding-block:18px}nav.solid .nav-in{padding-block:14px}
 }

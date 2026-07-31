@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260730d">
+<link rel="stylesheet" href="assets/site.css?v=20260731a">
 <style>
   /* ---------- FILTERS ---------- */
   .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:var(--gap)}
@@ -223,28 +223,26 @@
   </div>
 </nav>
 
-<div class="drawer" id="drawer" aria-hidden="true">
-  <div class="d-in">
-    <nav aria-label="Main">
-      <a href="homes.html"><span class="d-num">01</span>Homes</a>
-      <a href="floorplans.html"><span class="d-num">02</span>Floor Plans</a>
-      <a href="neighbourhood.html"><span class="d-num">03</span>Neighbourhood</a>
-      <a href="team.html"><span class="d-num">04</span>Team</a>
-    </nav>
-    <div class="d-cta">
-      <h3>Four homes, released together.</h3>
-      <p>Register for floor plans, pricing and a private preview before we open
-         to the public.</p>
-      <a class="d-go" href="#register">Register &rarr;</a>
-      <div class="d-meta">
-        Victoria Drive at East 23rd Avenue<br>
-        Vancouver, British Columbia<br>
-        <a href="mailto:hello@victoriahaus.ca"
-           style="font-size:inherit;padding:0;border:0;display:inline">hello@victoriahaus.ca</a>
-      </div>
+<div class="veil" id="veil"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Menu">
+  <div class="d-pic">
+    <img src="assets/img/06-roof-deck.webp" alt="" aria-hidden="true" loading="lazy">
+    <span>The roof deck</span>
+  </div>
+  <div class="d-body">
+    <a href="homes.html"><span class="d-num">01</span>Homes</a>
+    <a href="floorplans.html"><span class="d-num">02</span>Floor Plans</a>
+    <a href="neighbourhood.html"><span class="d-num">03</span>Neighbourhood</a>
+    <a href="team.html"><span class="d-num">04</span>Team</a>
+    <a class="d-go" href="#register">Register &rarr;</a>
+    <div class="d-meta">
+      Victoria Drive at East 23rd Avenue<br>
+      Vancouver, British Columbia<br>
+      <a class="d-mail" href="mailto:hello@victoriahaus.ca">hello@victoriahaus.ca</a>
     </div>
   </div>
-</div>
+</aside>
+<button class="d-close" id="dClose" aria-label="Close menu">&#10005;</button>
 
 <div class="page">
 <header class="page-head">
@@ -450,7 +448,7 @@
 </footer>
 </div><!-- /.page -->
 
-<script src="assets/site.js?v=20260730d"></script>
+<script src="assets/site.js?v=20260731a"></script>
 <script>
 /* ============================================================
    Unit selector for a four-home multiplex.

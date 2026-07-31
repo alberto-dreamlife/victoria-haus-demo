@@ -21,6 +21,10 @@ if (burger && drawer) {
   };
   burger.addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
   drawer.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+  /* The panel sits over the header, so closing needs its own control, plus the
+     veil for anyone who expects clicking outside to dismiss it. */
+  document.getElementById("dClose")?.addEventListener("click", () => setMenu(false));
+  document.getElementById("veil")?.addEventListener("click", () => setMenu(false));
   document.addEventListener("keydown", e => {
     if (e.key === "Escape" && document.body.classList.contains("menu-open")) setMenu(false);
   });
