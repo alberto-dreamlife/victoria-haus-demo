@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5C7690">
+<title>Menu: three options | Victoria Haus</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1B1A17; --ink-2:#3E3C36; --paper:#F7F5F0; --sand:#EDE8DE; --sand-2:#E3DCCE;
+  --line:#DAD3C4; --moss:#5A6650; --clay:#B4714E; --muted:#7A756B;
+  --shell:1680px; --gutter:clamp(20px,4vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+.display{font-family:'Jost',sans-serif;font-weight:300;letter-spacing:-.015em}
+.wrap{width:100%;max-width:var(--shell);margin-inline:auto;padding-inline:var(--gutter)}
+body.locked{overflow:hidden}
+
+/* ---------- cabecera de mentira, igual que la real ---------- */
+header.hero{position:relative;height:82vh;min-height:520px;overflow:hidden;display:flex;
+  align-items:flex-end;color:#fff}
+header.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+header.hero .shade{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(15,14,12,.6),rgba(15,14,12,.06) 55%,rgba(15,14,12,.28))}
+.bar{position:absolute;top:0;left:0;right:0;z-index:60;color:#fff}
+.bar::before{content:"";position:absolute;left:0;right:0;top:0;height:190%;z-index:-1;
+  background:linear-gradient(to bottom,rgba(12,14,16,.5),rgba(12,14,16,.28) 45%,rgba(12,14,16,0))}
+.bar-in{max-width:var(--shell);margin-inline:auto;padding:26px var(--gutter);
+  display:flex;align-items:center;justify-content:space-between;gap:26px}
+.logo{font-family:'Jost',sans-serif;font-weight:500;font-size:clamp(20px,1.8vw,26px);
+  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:inherit;line-height:1.12}
+.logo b{display:block;font-weight:500}
+.burger{display:grid;place-items:center;width:56px;height:56px;border:1px solid transparent;
+  border-radius:50%;background:transparent;cursor:pointer;position:relative;color:inherit;
+  transition:border-color .4s}
+.burger:hover{border-color:currentColor}
+.burger i{position:absolute;left:17px;width:22px;height:1.4px;background:currentColor;
+  transition:transform .38s cubic-bezier(.2,.7,.2,1),opacity .2s}
+.burger i:nth-child(1){top:23px}.burger i:nth-child(2){top:29px}.burger i:nth-child(3){top:35px}
+.burger.x i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.burger.x i:nth-child(2){opacity:0}
+.burger.x i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.hero-inner{position:relative;width:100%;max-width:var(--shell);margin-inline:auto;
+  padding:0 var(--gutter) clamp(46px,7vh,80px)}
+.hero-inner h1{font-size:clamp(34px,5.6vw,76px);line-height:1.05;font-weight:300}
+
+/* ---------- selector de opciones ---------- */
+.picker{background:var(--ink);color:var(--paper);padding:clamp(24px,3.4vw,40px) 0}
+.picker h2{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(22px,2.6vw,32px)}
+.picker p{color:#9E988E;margin-top:10px;max-width:70ch;font-size:15px}
+.opts{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.opts button{background:transparent;color:var(--paper);border:1px solid rgba(255,255,255,.28);
+  font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  padding:15px 24px;cursor:pointer;transition:background .3s,color .3s,border-color .3s}
+.opts button:hover{border-color:var(--clay)}
+.opts button.on{background:var(--clay);border-color:var(--clay);color:#fff}
+.note{padding:clamp(30px,4vw,52px) 0;background:var(--sand);border-block:1px solid var(--line)}
+.note h3{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(20px,2.2vw,28px)}
+.note p{color:var(--muted);margin-top:10px;max-width:78ch;font-size:15.5px}
+.filler{padding:clamp(50px,7vw,110px) 0}
+.filler p{color:var(--muted);max-width:62ch}
+
+/* =========== 1. PANEL LATERAL =========== */
+.side{position:fixed;top:0;right:0;bottom:0;width:min(440px,88vw);z-index:80;
+  background:var(--paper);color:var(--ink);padding:clamp(28px,4vw,44px);
+  display:flex;flex-direction:column;justify-content:center;
+  transform:translateX(100%);transition:transform .55s cubic-bezier(.2,.75,.2,1);
+  box-shadow:-30px 0 70px rgba(27,26,23,.16)}
+.side.on{transform:none}
+.veil{position:fixed;inset:0;z-index:70;background:rgba(27,26,23,.42);backdrop-filter:blur(2px);
+  opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+.veil.on{opacity:1;visibility:visible}
+.side a.ml{display:flex;align-items:baseline;gap:14px;text-decoration:none;color:inherit;
+  font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(26px,3.4vw,34px);
+  padding:16px 0;border-bottom:1px solid var(--line);
+  opacity:0;transform:translateX(16px);transition:opacity .45s,transform .45s,color .3s}
+.side.on a.ml{opacity:1;transform:none}
+.side.on a.ml:nth-of-type(1){transition-delay:.14s}
+.side.on a.ml:nth-of-type(2){transition-delay:.2s}
+.side.on a.ml:nth-of-type(3){transition-delay:.26s}
+.side.on a.ml:nth-of-type(4){transition-delay:.32s}
+.side a.ml:hover{color:var(--clay)}
+.side .n{font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.2em;
+  color:var(--muted)}
+.side .foot{margin-top:34px;font-size:14px;color:var(--muted);line-height:1.8;
+  opacity:0;transition:opacity .5s .42s}
+.side.on .foot{opacity:1}
+.side .cta{display:inline-block;margin-top:20px;background:var(--clay);color:#fff;
+  text-decoration:none;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;padding:14px 24px}
+
+/* =========== 2. DESPLEGABLE BAJO LA CABECERA =========== */
+.drop{position:fixed;top:0;left:0;right:0;z-index:80;background:var(--paper);color:var(--ink);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-100%);transition:transform .6s cubic-bezier(.2,.75,.2,1);
+  box-shadow:0 30px 70px rgba(27,26,23,.13)}
+.drop.on{transform:none}
+.drop-in{max-width:var(--shell);margin-inline:auto;padding:calc(26px + 56px) var(--gutter) clamp(34px,4vw,54px);
+  display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(28px,5vw,80px);align-items:end}
+@media(max-width:860px){.drop-in{grid-template-columns:1fr;gap:26px}}
+.drop a.ml{display:flex;align-items:baseline;gap:14px;text-decoration:none;color:inherit;
+  font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(26px,3.6vw,40px);
+  padding:13px 0;border-bottom:1px solid var(--line);
+  opacity:0;transform:translateY(12px);transition:opacity .4s,transform .45s,color .3s}
+.drop.on a.ml{opacity:1;transform:none}
+.drop.on a.ml:nth-of-type(1){transition-delay:.16s}
+.drop.on a.ml:nth-of-type(2){transition-delay:.22s}
+.drop.on a.ml:nth-of-type(3){transition-delay:.28s}
+.drop.on a.ml:nth-of-type(4){transition-delay:.34s}
+.drop a.ml:hover{color:var(--clay)}
+.drop .n{font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.2em;color:var(--muted)}
+.drop .aside{border-left:1px solid var(--line);padding-left:clamp(20px,3vw,40px);
+  opacity:0;transition:opacity .5s .38s}
+.drop.on .aside{opacity:1}
+.drop .aside h4{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(20px,2.2vw,26px);line-height:1.2}
+.drop .aside p{color:var(--muted);font-size:14.5px;margin-top:10px}
+.drop .cta{display:inline-block;margin-top:18px;background:var(--clay);color:#fff;text-decoration:none;
+  font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:14px 24px}
+
+/* =========== 3. PANTALLA COMPLETA, EN CREMA =========== */
+.full{position:fixed;inset:0;z-index:80;background:var(--paper);color:var(--ink);
+  display:flex;align-items:center;
+  opacity:0;visibility:hidden;transform:scale(1.01);
+  transition:opacity .5s,visibility .5s,transform .6s cubic-bezier(.2,.75,.2,1)}
+.full.on{opacity:1;visibility:visible;transform:none}
+.full-in{width:100%;max-width:var(--shell);margin-inline:auto;padding-inline:var(--gutter);
+  display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(30px,6vw,90px);align-items:center}
+@media(max-width:900px){.full-in{grid-template-columns:1fr;gap:28px}.full .aside{display:none}}
+.full a.ml{display:flex;align-items:baseline;gap:16px;text-decoration:none;color:inherit;
+  font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(30px,5vw,58px);
+  padding:14px 0;border-bottom:1px solid var(--line);
+  opacity:0;transform:translateY(16px);transition:opacity .45s,transform .5s,color .3s}
+.full.on a.ml{opacity:1;transform:none}
+.full.on a.ml:nth-of-type(1){transition-delay:.14s}
+.full.on a.ml:nth-of-type(2){transition-delay:.2s}
+.full.on a.ml:nth-of-type(3){transition-delay:.26s}
+.full.on a.ml:nth-of-type(4){transition-delay:.32s}
+.full a.ml:hover{color:var(--clay)}
+.full .n{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--muted)}
+.full .aside{border:1px solid var(--line);padding:clamp(24px,3vw,38px);opacity:0;transition:opacity .5s .4s}
+.full.on .aside{opacity:1}
+.full .aside h4{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(22px,2.4vw,30px);line-height:1.18}
+.full .aside p{color:var(--muted);font-size:14.5px;margin-top:12px}
+.full .cta{display:inline-block;margin-top:20px;background:var(--clay);color:#fff;text-decoration:none;
+  font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:14px 24px}
+/* All three panels cover the header, so none of them can be closed with the
+   burger underneath. The close button therefore lands exactly where the burger
+   was, so it reads as the same control turning into an X. */
+.closex{position:fixed;top:26px;right:var(--gutter);z-index:95;width:56px;height:56px;
+  border:1px solid var(--line);border-radius:50%;background:transparent;cursor:pointer;
+  color:var(--ink);font-size:19px;display:none;place-items:center;
+  transition:border-color .3s,background .3s,color .3s}
+.closex:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.closex.on{display:grid}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="../assets/img/01-hero-poster.webp" alt="">
+  <div class="shade"></div>
+  <div class="bar">
+    <div class="bar-in">
+      <a class="logo" href="#">Victoria<b>Haus</b></a>
+      <button class="burger" id="burger" aria-label="Open menu"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+  <div class="hero-inner">
+    <h1 class="display">Four homes,<br>one quiet corner.</h1>
+  </div>
+</header>
+
+<div class="picker">
+  <div class="wrap">
+    <h2 class="display">Three menus that are not a black takeover</h2>
+    <p>Pick one, then use the button up in the header to open and close it. The links do not go
+       anywhere here, this is only about how the menu behaves.</p>
+    <div class="opts">
+      <button data-menu="side" class="on">1 &middot; Side panel</button>
+      <button data-menu="drop">2 &middot; Drops from the header</button>
+      <button data-menu="full">3 &middot; Full screen, in cream</button>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <div class="wrap" id="noteBody">
+    <h3 class="display">1 &middot; Side panel</h3>
+    <p>Slides in from the right over a soft veil. The project stays visible behind it, so the menu
+       reads as a drawer you pulled open rather than a door slammed in front of the page. The
+       lightest of the three and the one that interrupts least.</p>
+  </div>
+</div>
+
+<div class="filler">
+  <div class="wrap">
+    <p>Scroll a little and open the menu again, to see how each one behaves once you are down the
+       page rather than at the top of it.</p>
+  </div>
+</div>
+<div class="filler" style="background:var(--sand)">
+  <div class="wrap"><p>More page, so there is something to cover.</p></div>
+</div>
+<div class="filler">
+  <div class="wrap"><p>And a little more.</p></div>
+</div>
+
+<!-- ===== 1. lateral ===== -->
+<div class="veil" id="veil"></div>
+<aside class="side" id="side" aria-hidden="true">
+  <a class="ml" href="#"><span class="n">01</span>Homes</a>
+  <a class="ml" href="#"><span class="n">02</span>Floor Plans</a>
+  <a class="ml" href="#"><span class="n">03</span>Neighbourhood</a>
+  <a class="ml" href="#"><span class="n">04</span>Team</a>
+  <div class="foot">
+    Victoria Drive at East 23rd Avenue<br>
+    Vancouver, British Columbia<br>
+    <a href="#" class="cta">Register &rarr;</a>
+  </div>
+</aside>
+
+<!-- ===== 2. desplegable ===== -->
+<div class="drop" id="drop" aria-hidden="true">
+  <div class="drop-in">
+    <nav>
+      <a class="ml" href="#"><span class="n">01</span>Homes</a>
+      <a class="ml" href="#"><span class="n">02</span>Floor Plans</a>
+      <a class="ml" href="#"><span class="n">03</span>Neighbourhood</a>
+      <a class="ml" href="#"><span class="n">04</span>Team</a>
+    </nav>
+    <div class="aside">
+      <h4>Four homes, released together.</h4>
+      <p>Floor plans, pricing and a private preview before we open to the public.</p>
+      <a href="#" class="cta">Register &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3. pantalla completa en crema ===== -->
+<div class="full" id="full" aria-hidden="true">
+  <div class="full-in">
+    <nav>
+      <a class="ml" href="#"><span class="n">01</span>Homes</a>
+      <a class="ml" href="#"><span class="n">02</span>Floor Plans</a>
+      <a class="ml" href="#"><span class="n">03</span>Neighbourhood</a>
+      <a class="ml" href="#"><span class="n">04</span>Team</a>
+    </nav>
+    <div class="aside">
+      <h4>Four homes, released together.</h4>
+      <p>Floor plans, pricing and a private preview before we open to the public.</p>
+      <a href="#" class="cta">Register &rarr;</a>
+    </div>
+  </div>
+</div>
+<button class="closex" id="closex" aria-label="Close">&#10005;</button>
+
+<script>
+const TEXTS = {
+  side:["1 · Side panel",
+    "Slides in from the right over a soft veil. The project stays visible behind it, so the menu reads as a drawer you pulled open rather than a door slammed in front of the page. The lightest of the three and the one that interrupts least."],
+  drop:["2 · Drops from the header",
+    "The panel comes down from the top and stops at the height it needs, so the hero underneath is never fully hidden. The most editorial of the three, and the one that feels least like a mobile menu bolted onto a desktop site."],
+  full:["3 · Full screen, in cream",
+    "The same shape as the black one you have now, but in the paper colour of the site with ink type. It keeps the drama of a full takeover without the abrupt switch to black, which is what was jarring."]
+};
+let mode = "side";
+const burger = document.getElementById("burger");
+const veil = document.getElementById("veil");
+const closex = document.getElementById("closex");
+const panels = { side: document.getElementById("side"), drop: document.getElementById("drop"), full: document.getElementById("full") };
+
+const close = () => {
+  Object.values(panels).forEach(p => { p.classList.remove("on"); p.setAttribute("aria-hidden","true"); });
+  veil.classList.remove("on"); burger.classList.remove("x"); closex.classList.remove("on");
+  document.body.classList.remove("locked");
+};
+const open = () => {
+  const p = panels[mode];
+  p.classList.add("on"); p.setAttribute("aria-hidden","false");
+  burger.classList.add("x");
+  /* Only the side panel needs the veil: the other two cover the page themselves. */
+  if (mode === "side") veil.classList.add("on");
+  /* Every panel covers the header, so the close button is always needed. */
+  closex.classList.add("on");
+  document.body.classList.add("locked");
+};
+burger.addEventListener("click", () => panels[mode].classList.contains("on") ? close() : open());
+veil.addEventListener("click", close);
+closex.addEventListener("click", close);
+document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+document.querySelectorAll(".ml").forEach(a => a.addEventListener("click", e => { e.preventDefault(); close(); }));
+
+document.querySelectorAll(".opts button").forEach(b =>
+  b.addEventListener("click", () => {
+    close();
+    document.querySelectorAll(".opts button").forEach(x => x.classList.remove("on"));
+    b.classList.add("on");
+    mode = b.dataset.menu;
+    const [h, p] = TEXTS[mode];
+    document.getElementById("noteBody").innerHTML =
+      '<h3 class="display">' + h + "</h3><p>" + p + "</p>";
+    setTimeout(open, 220);
+  }));
+</script>
+</body>
+</html>
