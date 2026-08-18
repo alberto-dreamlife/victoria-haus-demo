@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B1A17">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/favicon.svg">
+<title>Gallery | Victoria Haus</title>
+<meta name="description" content="Every rendering of Victoria Haus in one place: the building, the genkan, the kitchens, the roof decks and the neighbourhood.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=20260818a">
+<style>
+  /* Filters and mosaic. Square corners and hairline rules rather than pills and
+     drop shadows, because that is the language the rest of this site speaks. */
+  .gal-tools{display:flex;gap:0;flex-wrap:wrap;margin-bottom:clamp(26px,3vw,42px);
+    border-bottom:1px solid var(--line)}
+  .gfilter{background:transparent;border:0;border-bottom:2px solid transparent;
+    color:var(--muted);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+    letter-spacing:.2em;text-transform:uppercase;padding:14px 22px 13px;cursor:pointer;
+    transition:color .3s,border-color .3s}
+  .gfilter:hover{color:var(--ink)}
+  .gfilter.on{color:var(--ink);border-bottom-color:var(--clay)}
+
+  /* Columns rather than a grid: these renderings mix portrait and landscape, and
+     a masonry flow keeps each one at its own proportion instead of cropping. */
+  .gal{columns:3;column-gap:clamp(14px,1.6vw,24px)}
+  @media(max-width:1000px){.gal{columns:2}}
+  @media(max-width:600px){.gal{columns:1}}
+  .g{break-inside:avoid;margin-bottom:clamp(14px,1.6vw,24px);position:relative;display:block;
+    overflow:hidden;cursor:zoom-in;background:var(--sand)}
+  .g img{width:100%;display:block;transition:transform 1.15s cubic-bezier(.2,.7,.2,1)}
+  .g:hover img{transform:scale(1.045)}
+  .g::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .45s;
+    background:linear-gradient(to top,rgba(20,19,16,.62),transparent 48%)}
+  .g:hover::after{opacity:1}
+  .g .meta{position:absolute;left:20px;right:20px;bottom:16px;z-index:2;color:#fff;
+    opacity:0;transform:translateY(9px);transition:opacity .45s,transform .45s cubic-bezier(.2,.7,.2,1)}
+  .g:hover .meta{opacity:1;transform:none}
+  .g .meta b{display:block;font-family:'Jost',sans-serif;font-weight:300;font-size:20px}
+  .g .meta small{font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.78}
+  .g .zi{position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;
+    border:1px solid rgba(255,255,255,.5);color:#fff;display:grid;place-items:center;
+    font-size:14px;opacity:0;transform:scale(.86);transition:opacity .4s,transform .4s}
+  .g:hover .zi{opacity:1;transform:none}
+  .g.hide{display:none}
+
+  body{--tint:#1B1A17}
+</style>
+
+</head>
+<body>
+<div class="tint" aria-hidden="true"></div>
+
+<nav class="solid">
+  <div class="nav-in">
+    <a class="logo" href="index.html">Victoria<b>Haus</b></a>
+    <ul>
+      <li><a class="nl" href="homes.html">Homes</a></li>
+      <li><a class="nl" href="floorplans.html">Floor Plans</a></li>
+      <li><a class="nl" href="neighbourhood.html">Neighbourhood</a></li>
+      <li><a class="nl active" href="gallery.html">Gallery</a></li>
+      <li><a class="nl" href="team.html">Team</a></li>
+      <li><a class="reg" href="#register">Register</a></li>
+    </ul>
+    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="veil" id="veil"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Menu">
+  <div class="d-pic">
+    <img src="assets/img/01-exterior-corner.webp" alt="" aria-hidden="true" loading="lazy">
+    <span>Victoria Drive at East 23rd</span>
+  </div>
+  <div class="d-body">
+    <a href="homes.html"><span class="d-num">01</span>Homes</a>
+    <a href="floorplans.html"><span class="d-num">02</span>Floor Plans</a>
+    <a href="neighbourhood.html"><span class="d-num">03</span>Neighbourhood</a>
+    <a href="gallery.html"><span class="d-num">04</span>Gallery</a>
+    <a href="team.html"><span class="d-num">05</span>Team</a>
+    <a class="d-go" href="#register">Register &rarr;</a>
+    <div class="d-meta">
+      Victoria Drive at East 23rd Avenue<br>
+      Vancouver, British Columbia<br>
+      <a class="d-mail" href="mailto:hello@victoriahaus.ca">hello@victoriahaus.ca</a>
+    </div>
+  </div>
+</aside>
+<button class="d-close" id="dClose" aria-label="Close menu">&#10005;</button>
+
+<div class="page">
+<header class="page-head">
+  <div class="ph-media" data-depth="30"><img src="assets/img/06-roof-deck.webp" alt="The roof deck at Victoria Haus" fetchpriority="high"></div>
+  <div class="wrap">
+    <h1 class="display">
+      <span class="ln"><span>Every room,</span></span>
+      <span class="ln"><span>in one place.</span></span>
+    </h1>
+    <p>The building, the genkan, the kitchens, the roof decks and the streets around them. Click any image to open it full-screen, then click again to zoom.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="gal-tools">
+      <button class="gfilter on" data-f="all">All</button>
+      <button class="gfilter" data-f="exterior">Exterior</button>
+      <button class="gfilter" data-f="interior">Interior</button>
+      <button class="gfilter" data-f="outdoor">Outdoor</button>
+      <button class="gfilter" data-f="hood">Neighbourhood</button>
+    </div>
+    <div class="gal" id="gal">
+      <a class="g reveal" data-gal data-cat="exterior" data-title="The corner"
+         data-caption="Victoria Drive at East 23rd, seen from across the street.">
+        <img src="assets/img/01-exterior-corner.webp" alt="The corner" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Exterior</small><b>The corner</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="exterior" data-title="The entry walk"
+         data-caption="Each home keeps its own front door off the walk.">
+        <img src="assets/img/02-exterior-lane.webp" alt="The entry walk" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Exterior</small><b>The entry walk</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="interior" data-title="The genkan"
+         data-caption="The recessed entry vestibule where the street stops and the home begins.">
+        <img src="assets/img/04-genkan.webp" alt="The genkan" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Interior</small><b>The genkan</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="interior" data-title="Living and kitchen"
+         data-caption="One uninterrupted line across the ground floor, opening onto the garden.">
+        <img src="assets/img/03-living-kitchen.webp" alt="Living and kitchen" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Interior</small><b>Living and kitchen</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="interior" data-title="The primary bedroom"
+         data-caption="Top floor, with the roof deck a few steps away.">
+        <img src="assets/img/05-primary-bedroom.webp" alt="The primary bedroom" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Interior</small><b>The primary bedroom</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="interior" data-title="The ensuite"
+         data-caption="Full-height tile, a long vanity and daylight from above.">
+        <img src="assets/img/08-ensuite.webp" alt="The ensuite" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Interior</small><b>The ensuite</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="outdoor" data-title="The roof deck"
+         data-caption="Private to each home, above the trees.">
+        <img src="assets/img/06-roof-deck.webp" alt="The roof deck" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Outdoor</small><b>The roof deck</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="outdoor" data-title="The garden patio"
+         data-caption="The ground floor opens straight onto it.">
+        <img src="assets/img/07-patio.webp" alt="The garden patio" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Outdoor</small><b>The garden patio</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="hood" data-title="Trout Lake"
+         data-caption="Two blocks north, and the reason people move to this block.">
+        <img src="assets/img/09-trout-lake.webp" alt="Trout Lake" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Neighbourhood</small><b>Trout Lake</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="hood" data-title="Victoria Drive"
+         data-caption="The 20 bus at the corner, the shops a few minutes down.">
+        <img src="assets/img/10-victoria-drive.webp" alt="Victoria Drive" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Neighbourhood</small><b>Victoria Drive</b></span>
+      </a>
+      <a class="g reveal" data-gal data-cat="hood" data-title="Commercial Drive"
+         data-caption="Ten minutes away, and worth the walk.">
+        <img src="assets/img/11-the-drive.webp" alt="Commercial Drive" loading="lazy">
+        <span class="zi">&#10530;</span>
+        <span class="meta"><small>Neighbourhood</small><b>Commercial Drive</b></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f-top">
+    <div class="f-brand">
+      <!-- RK: the mark must not change between the header and the footer. Same
+           two-line Jost lockup as the nav, just larger. -->
+      <a class="f-mark" href="index.html">Victoria<b>Haus</b></a>
+      <p>Four three-bedroom homes on the corner of Victoria Drive and East 23rd Avenue,
+         Kensington-Cedar Cottage. 1,595 sq ft over three levels, each with its own front
+         door, its own garden and a private roof deck.</p>
+    </div>
+    <div class="f-cols">
+      <div>
+        <h4>Explore</h4>
+        <a href="homes.html">Homes</a>
+        <a href="floorplans.html">Floor Plans</a>
+        <a href="neighbourhood.html">Neighbourhood</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="team.html">Team</a>
+      </div>
+      <div>
+        <h4>The homes</h4>
+        <span>Hinoki &middot; 3992 Victoria Drive</span>
+        <span>Momiji &middot; #2 &ndash; 2017 East 23rd</span>
+        <span>Sakura &middot; #3 &ndash; 2017 East 23rd</span>
+        <span>Matsu &middot; #1 &ndash; 2017 East 23rd</span>
+      </div>
+      <div>
+        <h4>Register</h4>
+        <span>Plans and pricing before the public release.</span>
+        <a class="f-cta" href="#register">Join the list &rarr;</a>
+        <a href="mailto:hello@victoriahaus.ca">hello@victoriahaus.ca</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credits. Both marks are sized by their wordmark, not their bounding box:
+       Twinlines carries STUDIO underneath, so equal box heights would leave its
+       name a third smaller. Measured on the artwork, its box runs 1.619x its
+       wordmark, and Dreamlife needs 1.35x to balance against a bold serif. -->
+  <div class="wrap f-credits">
+    <span class="credit">
+      <small>Renderings by</small>
+      <a href="https://dreamlife.org" target="_blank" rel="noopener">
+        <img class="mk dl" src="assets/logos/dreamlife-white.svg" alt="Dreamlife" width="387" height="87">
+      </a>
+    </span>
+    <span class="credit">
+      <small>2D floor plans by</small>
+      <img class="mk tl" src="assets/logos/twinlines-white.png" alt="TwinLines Studio" width="820" height="225">
+    </span>
+    <span class="credit f-demo"><small>A demonstration project</small></span>
+  </div>
+
+  <div class="wrap f-legal">
+    <p>Renderings are artistic representations only and are not intended to form part of any
+       contract. Floor plans are draft and approximate; dimensions and areas are subject to
+       change. This is not an offering for sale. Any such offering may only be made with a
+       disclosure statement. E.&amp;O.E.</p>
+    <p class="f-copy">&copy; 2026 Victoria Haus</p>
+  </div>
+</footer>
+</div><!-- /.page -->
+
+<script src="assets/site.js?v=20260818a"></script>
+<script src="assets/chat.js?v=20260818a" defer></script>
+<script>
+/* The lightbox set is rebuilt from whatever is visible at the moment of the
+   click, so next and previous never walk into an image the filter has hidden. */
+const tiles = [...document.querySelectorAll("[data-gal]")];
+const visible = () => tiles.filter(t => !t.classList.contains("hide"));
+
+tiles.forEach(t => t.addEventListener("click", e => {
+  e.preventDefault();
+  const vis = visible();
+  Lightbox.open(vis.map(n => ({
+    src: n.querySelector("img").src,
+    title: n.dataset.title,
+    caption: n.dataset.caption
+  })), vis.indexOf(t));
+}));
+
+document.querySelectorAll(".gfilter").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const f = btn.dataset.f;
+    document.querySelectorAll(".gfilter").forEach(b => b.classList.toggle("on", b === btn));
+    tiles.forEach(t => {
+      const hide = f !== "all" && t.dataset.cat !== f;
+      t.classList.toggle("hide", hide);
+      if (!hide) t.classList.add("in");   /* already revealed once, do not replay it */
+    });
+  });
+});
+</script>
+</body>
+</html>
