@@ -490,7 +490,12 @@ footer a:hover{color:#fff}
 .cb.cb-tight .cb-label,.cb.open .cb-label{max-width:0;opacity:0}
 .cb.cb-tight .cb-launch,.cb.open .cb-launch{padding:16px;gap:0;border-radius:50%}
 
-.cb-panel{position:absolute;right:0;bottom:0;width:min(384px,calc(100vw - 28px));
+/* The panel is a plain div and its padding is zeroed on purpose. It used to
+   be a <section>, which picked up section{padding-block:var(--band)} from
+   this stylesheet and opened with a band of dead space above the header and
+   below the note. The widget is meant to drop into any client site, so it
+   cannot inherit the host's element defaults. */
+.cb-panel{padding:0;position:absolute;right:0;bottom:0;width:min(384px,calc(100vw - 28px));
   background:var(--cb-paper);color:var(--cb-ink);border:1px solid var(--cb-line);
   border-radius:var(--cb-radius);box-shadow:0 30px 80px rgba(0,0,0,.24);
   display:flex;flex-direction:column;overflow:hidden;
