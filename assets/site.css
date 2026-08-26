@@ -566,3 +566,11 @@ body.menu-open .cb,body.locked .cb{opacity:0;pointer-events:none}
 .cb-chip:hover{border-color:#B4714E;color:#B4714E}
 .cb-cta{color:#B4714E}
 .cb-send{color:#B4714E}
+
+/* ---------- THE MARK ----------
+   The V of towers from the brand board, traced from the artwork. It spans the
+   two lines of the lockup and inherits the text color, so the same asset works
+   over the hero, on paper and in the footer. */
+.logo,.f-mark{display:inline-flex;align-items:center;gap:.5em}
+.logo span b,.f-mark span b{display:block}
+.lmk{height:2.15em;width:auto;flex:none}
