@@ -107,3 +107,54 @@
   .ax-rule{transform:scaleX(1)}
   .ax-curtain,.ax-prog{display:none}
 }
+
+/* ============================================================
+   BUILD 023 — the page wipe, given a surface
+   ============================================================
+   The wipe between pages was a flat sheet of ink sliding across. It did its
+   job and it looked like nothing: a black rectangle, the same black rectangle
+   any site would use.
+
+   It is a material now, built from the same three things every ground on this
+   site is built from, so leaving a page looks like the site rather than like a
+   transition:
+
+     the batten   the vertical board rhythm, at the same 15px gauge
+     the rake     one soft diagonal of light across the sheet
+     the grain    the same inline turbulence, no request
+
+   Plus one thing only the wipe has: a clay hairline riding its leading edge,
+   so the sheet reads as an object with an edge rather than a fade. It travels
+   with the wipe because it is drawn on the sheet, not on the viewport.
+
+   All of it is paint on an element that already existed. Nothing new loads,
+   and the whole thing is still one composited transform.
+   ============================================================ */
+.ax-curtain{
+  background-color:var(--ax-ink);
+  background-image:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.030) 0 1px,transparent 1px 15px),
+    repeating-linear-gradient(90deg,rgba(0,0,0,.10) 0 1px,transparent 1px 15px),
+    linear-gradient(104deg,rgba(255,255,255,.05) 0%,transparent 42%,rgba(0,0,0,.10) 84%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  background-blend-mode:normal,normal,normal,overlay}
+
+/* the leading edge: clay on the way out, at the bottom of the sheet, and on
+   the way back in at the top, because the sheet arrives from the other side */
+.ax-curtain::after{content:"";position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,
+    transparent,rgba(196,124,84,.75) 18%,rgba(196,124,84,.75) 82%,transparent)}
+.ax-curtain.ax-out::after{bottom:0}
+.ax-curtain.ax-enter::after,.ax-curtain.ax-lift-off::after{top:0}
+
+/* a second sheet a beat behind the first, so the wipe has depth rather than
+   being one plane. It is the ::before of the same element — no extra node. */
+.ax-curtain::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:rgba(196,124,84,.16);
+  transform:scaleY(1);transform-origin:inherit;
+  transition:transform .55s var(--ax-ease) .06s}
+.ax-curtain.ax-lift-off::before{transform:scaleY(0)}
+
+@media(prefers-reduced-motion:reduce){
+  .ax-curtain,.ax-curtain::before,.ax-curtain::after{display:none}
+}

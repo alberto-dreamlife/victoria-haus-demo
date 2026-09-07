@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="color:#3A342C" viewBox="0 0 262 56" fill="none" role="img" aria-label="Victoria Haus Developments">
+  <path d="M6 44 L20 12 L34 44" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter"/>
+  <path d="M24 44 L38 12 L52 44" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" opacity=".55"/>
+  <path d="M3 48 H55" stroke="currentColor" stroke-width="1" opacity=".38"/>
+  <text x="72" y="25" font-family="Jost, sans-serif" font-size="15" font-weight="400" letter-spacing="3" fill="currentColor">VICTORIA HAUS</text>
+  <text x="72" y="45" font-family="Jost, sans-serif" font-size="14" font-weight="300" letter-spacing="2.8" fill="currentColor" opacity=".72">DEVELOPMENTS</text>
+</svg>

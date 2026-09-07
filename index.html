@@ -3,139 +3,1389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#5C7690">
+<meta name="theme-color" content="#191614">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/favicon.svg">
 <title>Victoria Haus | Four homes at Victoria Drive &amp; East 23rd</title>
 <meta name="description" content="Four three-bedroom homes on the corner of Victoria Drive and East 23rd Avenue, Kensington-Cedar Cottage. 1,595 sq ft over three levels, each with a private roof deck.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=20260826d">
-<link rel="stylesheet" href="assets/anim.css?v=20260826d">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..400;1,6..72,200..400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=20260907a">
+<link rel="stylesheet" href="assets/anim.css?v=20260907a">
 <style>:root{--ax-ink:#1B1A17;--ax-accent:#B4714E}</style>
 <script>
-/* What the motion layer may take over on this page. The hero keeps
-   the site's own line reveal, so the splitter is told to skip it. */
+/* This page is a deck, not a column: the shared motion layer keeps only the
+   page wipe and the progress hair, and every other move here is the deck's. */
 window.AX_CONFIG = {
-  heads: "h2, .display:not(.f-mark)",
-  skip:  ".hero, .ax-skip, .lb, .drawer, footer",
-  figs:  ".frame, figure",
-  stats: ".ax-none",
-  lifts: ".home-card, .tile"
+  heads: ".ax-none", figs: ".ax-none", stats: ".ax-none", lifts: ".ax-none",
+  skip: ".hero, .ax-skip, .lb, .drawer, footer, .panel"
 };
 </script>
 
 <style>
-  .intro-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(28px,5vw,80px);align-items:end}
-  @media(max-width:900px){.intro-grid{grid-template-columns:1fr;gap:26px}}
-  .break{height:clamp(320px,68vh,720px)}
-  .homes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);margin-top:clamp(44px,5vw,72px)}
-  @media(max-width:1000px){.homes-grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.homes-grid{grid-template-columns:1fr}}
-  .home-card{text-decoration:none;display:block;color:inherit}
-  .home-card .frame{aspect-ratio:3/4}
-  .home-card .jp{font-family:'Jost',sans-serif;font-weight:300;font-size:26px;margin-top:20px;
-    display:flex;align-items:baseline;gap:10px}
-  .home-card .jp em{font-style:normal;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--moss)}
-  .home-card p{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.6}
-  .home-card .frame::after{content:"";position:absolute;inset:0;background:rgba(20,19,16,.10);
-    opacity:0;transition:opacity .5s}
-  .home-card:hover .frame::after{opacity:1}
-  .split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,70px);align-items:center}
-  .split .frame{aspect-ratio:4/5}
-  @media(max-width:900px){.split{grid-template-columns:1fr;gap:28px}}
+/* ============================================================
+   HOMEPAGE — the deck
 
-  /* Safari 26 ignores theme-color and samples a full-viewport fixed layer
-     instead. .tint is that layer, hidden behind the opaque .page, and this
-     is the colour of the top of this page measured at iPhone width. Putting
-     it here rather than on <body> keeps the overscroll bounce cream. */
-  body{--tint:#5C7690}
+   Five full-height plates. Each rides up over the one before and locks
+   there; the plate underneath steps back and dims by exactly the amount
+   it has been covered, so the scroll reads as depth rather than length.
+
+   Everything the scroll drives is a number on the plate — --in while it
+   arrives, --out while it is covered — and CSS spends those numbers on
+   transform and opacity only, which the compositor can carry at 60fps.
+   The heavier moves (a band opening, a picture pulling into focus) are
+   one-shot transitions fired when a plate becomes the active one.
+   ============================================================ */
+:root{
+  --fog:#E9E7E1;
+  --fog-2:#DCD9D1;
+  --void:#0C0B0A;
+  --veil:#12110F;
+  --mist:#8E8A81;
+  --hair:rgba(255,255,255,.72);
+  --glass:rgba(20,19,17,.55);
+  --ease:cubic-bezier(.2,.75,.2,1);
+}
+/* Build 011: --tint is a slate blue, painted by a fixed .tint layer at
+   z-index:-1. It was invisible while every section was opaque; the moment the
+   register carried its ground on a child element instead of on the section box,
+   the blue came through the whole block. Nothing on this site should ever fall
+   back to blue — the tint is the page ground now. */
+body{--tint:#191614;background:#191614;overflow-x:clip}
+.page{background:#191614}
+/* clip, never hidden: overflow-x:hidden turns the body into a scroll
+   container and every sticky plate below stops sticking. */
+
+/* ---------- the header ----------
+   Build 004. Build 003 moved this block to assets/vh.css "because every page
+   shares it" — but index.html does not load vh.css. It never has: the homepage
+   is deliberately self-contained. So the whole header rebuild landed in a file
+   this page cannot see, which is why the pill had no pill and the label stacked
+   on top of the icon. It lives here again, and in vh.css for the other pages.
+
+   The scrolled state: site.js adds .solid past 40px, and site.css turns that
+   into a cream bar. On a page that is nothing but full-bleed pictures, a cream
+   bar is a shelf sitting on top of the photograph. It stays a floating header
+   the whole way down — a hair shorter once you are moving, over a light scrim
+   that carries white type across any plate underneath. */
+body > nav{transition:background .5s var(--ease),box-shadow .5s var(--ease),
+  transform .55s var(--ease),opacity .45s ease}
+body > nav.solid{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+  color:#F2EFE8;box-shadow:none}
+
+/* the scrim: off on the hero, light once moving */
+body > nav::before{opacity:0;height:210%;
+  background:linear-gradient(to bottom,
+    rgba(10,9,8,.40) 0%,rgba(10,9,8,.20) 40%,rgba(10,9,8,.06) 70%,rgba(10,9,8,0) 100%)}
+body > nav.solid::before{opacity:1}
+
+/* the mark: large on the hero, one step down once you are moving */
+.logo{gap:0;font-size:clamp(26px,2.5vw,35px);letter-spacing:.18em;line-height:1.14;
+  transition:font-size .55s var(--ease)}
+.logo span{display:inline-block;white-space:nowrap}
+.logo .lmk{display:none}
+body > nav .nav-in{padding-block:clamp(20px,2.4vw,28px);transition:padding .5s var(--ease)}
+body > nav.solid .logo{font-size:clamp(18px,1.5vw,22px);filter:none}
+body > nav.solid .nav-in{padding-block:11px}
+
+body > nav.away{transform:translateY(-104%);opacity:0;pointer-events:none}
+body.menu-open > nav.away{transform:none;opacity:1;pointer-events:auto}
+
+/* ---------- the menu button ----------
+   Build 004. It said "MenuClose" — both labels rendered because the grid that
+   was meant to stack them lived in a stylesheet this page does not load. The
+   swap is gone entirely: the word is "Menu", it does not change, and the icon
+   carries the open/closed state on its own.
+
+   The icon is two rules rather than three. Three stacked bars next to a word
+   is a lot of horizontal line for one control; two read as a mark, morph to a
+   clean X, and sit at the cap height of the word beside them so the pair reads
+   as one object instead of a label with a graphic bolted on. */
+.burger{width:auto;height:auto;border-radius:999px;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 19px 15px 21px;margin-right:0;
+  border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.10);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;color:inherit;line-height:1;
+  transition:background .4s var(--ease),border-color .4s var(--ease)}
+.burger:hover,.burger:focus-visible{background:rgba(255,255,255,.2);
+  border-color:rgba(255,255,255,.55)}
+/* the label says what the button will do next. Both words share one grid cell
+   so the pill does not resize as they cross-fade. */
+.burger .bl{display:grid;line-height:1}
+.burger .bl > span{grid-area:1/1;transition:opacity .3s ease}
+.burger .w-b{opacity:0}
+body.menu-open .burger .w-a{opacity:0}
+body.menu-open .burger .w-b{opacity:1}
+/* the icon box is sized off the label, so the two scale together */
+.burger .bx{position:relative;display:block;width:1.45em;height:.72em;flex:none}
+/* site.css positions three bars at top:23/29/35px inside a 56px circle. Those
+   rules still match, and an absolutely positioned box with BOTH top and height
+   set ignores bottom — so the second rule kept site.css's top:29px and landed
+   below a pill only 12px tall. That is the line sitting outside the button.
+   Every inherited offset is reset here explicitly rather than fought. */
+.burger i{position:absolute;left:0;right:auto;top:auto;bottom:auto;
+  height:1.5px;width:100%;background:currentColor;border-radius:2px;
+  transition:transform .5s var(--ease),width .5s var(--ease)}
+.burger i:nth-child(1){top:0;bottom:auto;width:100%}
+.burger i:nth-child(2){top:auto;bottom:0;width:62%}
+.burger:hover i:nth-child(2){width:100%}
+/* site.css hides the SECOND bar when the menu opens — in its three-bar design
+   that is the middle one, and dropping it is how the X is made. With two bars
+   it left a single slash. opacity is forced back on, which is the whole fix. */
+body.menu-open .burger i:nth-child(1){top:50%;bottom:auto;width:100%;opacity:1;
+  transform:translateY(-50%) rotate(45deg)}
+body.menu-open .burger i:nth-child(2){top:50%;bottom:auto;width:100%;opacity:1;
+  transform:translateY(-50%) rotate(-45deg)}
+@media(max-width:520px){
+  .burger{padding:13px 15px 13px 17px;gap:8px;font-size:10px;letter-spacing:.14em}
+}
+
+/* the hero: site.css lays a .66 shade over the bottom of the picture. The
+   headline sits on its own gradient below, so most of that was doing nothing
+   except flattening the render. */
+.hero .shade{background:linear-gradient(to top,rgba(15,14,12,.52) 0%,rgba(15,14,12,.02) 46%,rgba(15,14,12,.18) 100%)}
+
+/* Build 005: the chat launcher lives bottom-right, and the scroll cue was
+   landing on top of it. The cue moves to the left edge, under the hero's own
+   metadata line, where nothing else is competing for the corner. */
+/* Build 009: moving it to the left put it straight through the headline.
+   It goes back to the right, raised clear of the chat launcher, which is a
+   fixed pill about 50px tall sitting at the bottom-right corner. */
+.hero .scrollcue{right:var(--gutter);left:auto;bottom:clamp(126px,15vh,180px);
+  writing-mode:vertical-rl;opacity:.65}
+.hero .scrollcue::after{height:34px}
+@media(max-width:1100px){.hero .scrollcue{display:none}}
+
+/* the progress hair, down to a thread */
+.ax-prog{height:1px;opacity:.6}
+
+/* ---------- the menu ----------
+   The burger is already an X once the panel is open, so the second
+   close button goes: two circles in the same corner was the bug. The
+   panel itself is smoked glass floating clear of the edges, and the
+   page behind it goes soft rather than dark. */
+.d-close{display:none !important}
+.veil{background:rgba(10,9,8,.72)}
+body.menu-open > nav{color:#F2EFE8}
+body.menu-open .burger{background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.24)}
+/* Build 007: it floated clear of all four edges, which left a strip of page
+   above it and read as a card rather than a panel. Full height, flush right. */
+.drawer{top:0;right:0;bottom:0;width:min(430px,90vw);
+  border-radius:0;overflow:hidden;color:#F2EFE8;
+  padding-top:env(safe-area-inset-top);
+  background:linear-gradient(rgba(34,30,26,.97),rgba(20,18,16,.98));
+  border:0;border-left:1px solid rgba(255,255,255,.12);box-shadow:-40px 0 90px rgba(0,0,0,.5);
+  transform:translateX(100%);opacity:1;
+  transition:transform .6s var(--ease),opacity .5s ease}
+body.menu-open .drawer{transform:none;opacity:1}
+.d-pic{height:32%;min-height:170px;margin:0;border-radius:0;
+  background:rgba(255,255,255,.05)}
+@media(max-width:520px){.d-pic{height:24%;min-height:130px}}
+.d-pic span{font-size:17px}
+/* Build 036: the drawer picture follows the pointer down the menu. Two frames
+   stacked in the same box so the change is a cross-fade rather than a blink.
+   Both keep the existing settle-in scale, so opening the menu still behaves as
+   it did. */
+.d-pic .d-fr{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .55s ease,transform 1.6s var(--ease)}
+.d-pic .d-fr.on{opacity:1}
+.d-cap{transition:opacity .3s ease}
+.d-cap.d-swap{opacity:0}
+@media(prefers-reduced-motion:reduce){
+  .d-pic .d-fr,.d-cap{transition:none}}
+
+.d-body{padding:26px 22px 24px;gap:2px}
+.drawer a{border-bottom:0;border-radius:3px;padding:13px 14px;
+  font-size:clamp(20px,2.4vw,25px);color:rgba(242,239,232,.86);
+  transition:background .3s,color .3s,opacity .45s ease,transform .45s var(--ease)}
+.drawer a:hover{background:rgba(255,255,255,.1);color:#FBF9F4}
+.d-num{color:rgba(242,239,232,.4);font-size:9.5px}
+.drawer a.d-go{margin:14px 14px 0;border-radius:999px;background:rgba(255,255,255,.92);
+  color:#14130F;padding:14px 26px;font-weight:600}
+.drawer a.d-go:hover{background:var(--clay);color:#fff}
+.drawer .d-meta{margin:22px 14px 0;color:rgba(242,239,232,.5);font-size:12.5px}
+.drawer a.d-mail{color:rgba(242,239,232,.62);padding:0;border-radius:0}
+.drawer a.d-mail:hover{background:none;color:#FBF9F4}
+
+/* pictures are the sharp thing, and they have corners */
+.vh-plate,.vh-walk,.vh-walks{border-radius:0}
+.hcard,.vh-card{border-radius:3px}
+
+/* Build 002 — the opening letter is gone. The site lands on the hero.
+   The hero picture no longer starts blurred behind a gate. */
+.hero .media{transition:filter 2s var(--ease),transform 2.6s var(--ease)}
+
+
+/* ---------- what sits behind the deck ----------
+   This was a blurred copy of the picture you were on. Two attempts at
+   making that cheap both failed: a full-size blur repaints every frame,
+   and blurring a tiny copy and scaling it up does not work either —
+   Chrome rasterises at the scale the layer ends up at, so the blur comes
+   back sharp and the surface becomes enormous. It is paint now. The
+   sliver it has to fill is a couple of percent at the edge of a
+   receding plate, and paint fills it perfectly. */
+.deck{background:radial-gradient(120% 80% at 50% 0%,#1A1815 0%,#0C0B0A 70%)}
+
+
+/* ---------- the deck ---------- */
+.deck{position:relative;background:var(--void)}
+
+/* Build 002 — the plates no longer stack.
+   They were position:sticky, so each one parked at the top and the next
+   one climbed over it: one screen of scroll bought you a slide change
+   rather than a page move, and nothing ever felt like it was going past.
+   Now they are ordinary blocks in ordinary flow. --in still runs 0 to 1
+   as a plate rises into view and still drives the fade below; --out still
+   runs 0 to 1 as it leaves, but it moves the picture inside the frame
+   instead of moving the frame itself. Nothing covers anything. */
+.panel{--in:1;--out:0;
+  position:relative;height:100svh;overflow:hidden;isolation:isolate;z-index:1;
+  /* Build 010: the plates sat on --fog, which is cream. Harmless while every
+     picture was opaque edge to edge; the moment a photograph is masked at its
+     foot it fades to whatever is behind it, and that was a strip of white.
+     They sit on the band colour, so a picture fades into the band it meets. */
+  background:#191614}
+
+/* the covering shade is gone; the element stays in the markup and stays out
+   of the way, so nothing else has to be rewired */
+.panel > .lift{display:none}
+
+/* The drift of picture against frame is set further down, next to each
+   plate's own image rule, so it lands after them in the cascade. The focus
+   plate is left out of it: its soft and sharp copies have to stay in exact
+   register for the clip-path band to read as one picture. */
+
+/* The shared sheet's .cap is an absolutely placed pill for photo captions.
+   On this page a caption is a line of type sitting in its own row, so the
+   placement and the pill both come off. */
+.panel .cap{position:static;left:auto;bottom:auto;background:none;padding:0;border-radius:0}
+
+/* content answers the plate's own arrival, each piece a beat behind the last */
+/* Build 002 — the rise finishes at 78% of the plate's arrival rather than
+   at 100%, so a line is settled and readable well before the plate has
+   filled the screen. */
+.rise{--s:0;--k:clamp(0,calc((var(--in) - var(--s)) / (.78 - var(--s))),1);
+  opacity:var(--k);transform:translate3d(0,calc((1 - var(--k)) * 26px),0)}
+
+/* ---------- 1. hero ---------- */
+.hero.panel{height:100svh;min-height:0;max-height:none}
+/* site.js drifts this layer down as you scroll; it is oversized here by more
+   than that drift so the top edge can never open onto the plate's own ground */
+.hero .media img,.hero .media video{top:-16%;height:132%}
+.hero .hero-inner{padding-bottom:clamp(74px,11vh,132px)}
+.hero h1{font-weight:200;letter-spacing:-.02em;color:rgba(247,245,240,.74)}
+.hero h1 em{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:200;
+  color:#FBF8F2}
+.vh-meta{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px 20px;
+  font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(255,255,255,.74)}
+.vh-meta span{display:flex;align-items:center;gap:20px}
+.vh-meta span+span::before{content:"";width:1px;height:11px;background:rgba(255,255,255,.36)}
+
+/* ============================================================
+   THE SEAM — where one section meets the next
+   ============================================================
+   Build 010, and the fifth attempt. Sawtooth, wide radius, square step,
+   then a straight edge with nothing. Every one of those was the same
+   category of answer — cut a silhouette into the boundary — and the last
+   was just giving up. Researched properly this time, against how studios
+   who publish full-bleed photography actually handle it.
+
+   Nobody good cuts a shape. What they do instead:
+
+     Herzog & de Meuron  a gradient backdrop at the FOOT of every plate,
+                         so the picture ends by fading rather than stopping
+     111 West 57th       full-bleed plates alternating with inset ones, so
+                         a band of ground appears between them; one hairline
+                         token at 20% opacity is the entire divider language
+     Snøhetta            a fixed full-width overlay that never stops, so
+                         there is no seam — only a change of ground behind
+                         a constant frame
+
+   All three are the same idea: articulate the boundary with STROKE and
+   GROUND, never with silhouette. So there are three devices here, and
+   they compose:
+
+   1. THE REVEAL BAND — the architectural shadow gap, literally. The plates
+      no longer butt together and no longer overlap; a band of page ground
+      opens between them. The hairline sits FLUSH TO THE TOP of that band
+      rather than centred in it, because a symmetric empty band reads as
+      nothing — the asymmetry plus one piece of type is what makes it a
+      detail instead of a gap. The band carries a plate index, the way an
+      architecture monograph numbers its plates.
+
+   2. THE DATUM — two hairlines at the gutters, fixed, running the whole
+      height of the page. They never stop, so nothing ever fully divides:
+      the ground changes behind a constant frame. Over photography a 1px
+      white line at 13% either vanishes or reads as a screen artifact, so
+      each carries a half-pixel dark shadow underneath it — a stroke
+      sandwich — which holds it on a bright sky and a dark brick alike.
+
+   3. THE BLEED — the picture above the band fades into it over its last
+      few percent, via a mask rather than an overlay, so the fade is in the
+      image's own alpha and nothing is being painted on top of it. Short:
+      past about 15% it stops reading as a detail and starts reading as a
+      smudge.
+
+   Content never overlaps. Nothing is clipped. Nothing can collide with a
+   floating control, because every device sits in its own band or runs the
+   full height of the page.                                               */
+
+/* ---------- 1. the reveal band ----------
+   Build 011. The band was right; one rule straight across it was not — a
+   full-width border is the most ordinary mark there is, and four of them
+   down a page is a table, not a detail.
+
+   Three strokes per band instead, and none of them spans the width:
+
+     the long stroke   left gutter to a stopping point that changes band to
+                       band — 58%, 71%, 44%, 66%. It stops in open ground,
+                       which is what stops it reading as a border-top.
+     the short stroke  a second, much shorter rule out at the right, dropped
+                       a few pixels below the first, so the two overlap in
+                       the horizontal but never meet. Two lines at different
+                       heights is the oldest trick in a technical drawing
+                       for saying "these are the same line, continued".
+     the vector        a fine hairline running on a slight angle between the
+                       two heights. Not a diagonal division — an 8px rise
+                       over 40px, the angle of a drawn leader line.
+
+   The plate index hangs off the long stroke on a short tick.               */
+.seam{position:relative;z-index:2;
+  height:clamp(64px,9vh,116px);
+  background:#191614;
+  display:flex;align-items:flex-start;
+  --run:58%;   /* where the long stroke stops */
+  --drop:7px}  /* how far the short stroke sits below it */
+.seam:nth-of-type(2n){--run:71%;--drop:5px}
+.seam:nth-of-type(3n){--run:44%;--drop:9px}
+.seam:nth-of-type(4n){--run:66%;--drop:6px}
+
+.seam-in{position:relative;width:100%;max-width:var(--shell);
+  margin-inline:auto;padding-inline:var(--gutter)}
+
+/* the long stroke — stops in open ground rather than reaching the edge */
+.seam-in::before{content:"";position:absolute;left:var(--gutter);
+  width:calc(var(--run) - var(--gutter));top:0;height:1px;
+  background:linear-gradient(90deg,
+    rgba(196,124,84,.5) 0%,rgba(196,124,84,.5) 82%,rgba(196,124,84,0) 100%)}
+
+/* the short stroke, dropped and out to the right */
+.seam-in::after{content:"";position:absolute;right:var(--gutter);
+  width:clamp(70px,11vw,190px);top:var(--drop);height:1px;
+  background:linear-gradient(90deg,
+    rgba(240,236,228,0) 0%,rgba(240,236,228,.26) 34%,rgba(240,236,228,.26) 100%)}
+
+/* the vector between the two heights: a leader line, not a division */
+.seam-v{position:absolute;top:0;height:var(--drop);
+  left:calc(var(--run) + 2%);width:clamp(26px,3.6vw,56px);
+  overflow:visible;pointer-events:none}
+.seam-v::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(to bottom right,
+    transparent calc(50% - .5px),rgba(196,124,84,.34) calc(50% - .5px),
+    rgba(196,124,84,.34) calc(50% + .5px),transparent calc(50% + .5px))}
+
+.seam-lab{position:relative;display:inline-flex;align-items:baseline;gap:14px;
+  padding-top:17px;
+  font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(240,236,228,.46)}
+.seam-lab b{font-weight:600;color:var(--clay);font-variant-numeric:tabular-nums}
+/* the tick that hangs the label off the long stroke */
+.seam-lab::before{content:"";position:absolute;left:0;top:calc(-1 * 17px);
+  width:1px;height:17px;background:rgba(196,124,84,.42)}
+
+@media(max-width:640px){
+  .seam{height:clamp(52px,7vh,72px);--run:74%}
+  .seam-in::after,.seam-v{display:none}
+}
+
+/* ---------- 2. the datum ---------- */
+/* above the sections (the tail sits at 20), below the header at 95 */
+/* Build 028: the datum is off — the vertical gutter hairlines. The language
+   here is horizontal, and a vertical stroke should be a local decision inside
+   a section that earns it, not a permanent frame. (Mirrored in vh.css, which
+   this page does not load.) */
+.datum{display:none}
+.datum i{position:absolute;top:0;bottom:0;width:1px;
+  background:rgba(255,255,255,.13);
+  /* the stroke sandwich: without it the line disappears into a bright sky
+     and reads as a rendering artifact over a dark one */
+  box-shadow:0 0 0 .5px rgba(8,7,6,.32)}
+.datum i:nth-child(1){left:var(--gutter)}
+.datum i:nth-child(2){right:var(--gutter)}
+@media(max-width:820px){.datum{display:none}}
+
+/* ---------- 3. the bleed ---------- */
+/* the last of the picture goes to nothing, in the image's own alpha */
+.bleed-end{-webkit-mask-image:linear-gradient(to bottom,#000 87%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 87%,transparent 100%)}
+
+/* the bleed, wired to each plate that ends on a band. The mask goes on the
+   picture, never on the section, so the words and the buttons over it stay at
+   full strength while the image alone goes to nothing. */
+.hero .media,
+.vh-walk .fr,
+.vh-plate > img,
+.vh-walks > img{
+  -webkit-mask-image:linear-gradient(to bottom,#000 88%,rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(to bottom,#000 88%,rgba(0,0,0,0) 100%)}
+/* the four-homes plate is a solid ground rather than a photograph, so it fades
+   with a gradient on its own ground instead — a mask there would take the
+   cards with it */
+.vh-homes .bg{background-image:
+  repeating-linear-gradient(90deg,rgba(255,255,255,.021) 0 1px,transparent 1px 15px),
+  linear-gradient(to bottom,rgba(25,22,20,0) 88%,#191614 100%),
+  radial-gradient(92% 74% at 50% 0%,#2E2A25 0%,#1E1B18 68%)}
+
+@media(prefers-reduced-motion:reduce){
+  /* the bleed is not motion, so it stays; nothing to disable here */
+}
+
+/* ============================================================
+   TEXTURE — for the grounds with no photograph on them
+   ============================================================
+   From the building again: the homes are vertical cedar over grey brick, so
+   the two textures are a fine vertical batten rhythm and a horizontal brick
+   course, plus the grain the footer already uses. All laid at an opacity you
+   would not name if asked — they exist to stop a large flat fill reading as
+   flat fill, and to give the gradients something to sit on so they stop
+   banding on a wide screen. */
+.tex-batten{background-image:
+  repeating-linear-gradient(90deg,
+    rgba(255,255,255,.021) 0 1px, transparent 1px 15px)}
+.tex-brick{background-image:
+  repeating-linear-gradient(0deg,
+    rgba(255,255,255,.016) 0 1px, transparent 1px 10px),
+  repeating-linear-gradient(90deg,
+    rgba(255,255,255,.010) 0 1px, transparent 1px 34px)}
+/* the grain rides the ground layer, so it takes the same rounded corners
+   rather than printing a hard rectangle over them */
+.tex-grain{isolation:isolate}
+.tex-grain::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  opacity:.30;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+
+/* ---------- 2. the entry walk ----------
+   Build 005. Two problems: it was reading as a continuation of the hero — same
+   full-bleed picture, same corner-set type, nothing between them but a scroll —
+   and the words were legible only because the render underneath had been
+   flattened by a .88 wash.
+
+   Both are solved the same way. The picture is inset from the frame, so a band
+   of ground shows above it and the header floats over that rather than over the
+   photograph. And the words move onto their own panel of smoked glass, which
+   means the type is carried by the panel instead of by darkening the render —
+   the wash behind it is now a third of what it was. */
+/* Build 006: the ground is a ::before so the roofline can be cut into it
+   without clipping the section — the words panel below runs a backdrop-filter,
+   and a filtered element cannot sample through a clipped ancestor. */
+.vh-walk{background:transparent;
+  padding:clamp(78px,9vh,120px) 0 clamp(30px,4vh,52px)}
+.vh-walk .lap-g{background-color:#211E1A;
+  background-image:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.021) 0 1px,transparent 1px 15px),
+    linear-gradient(to bottom,rgba(25,22,20,0) 82%,#191614 100%)}
+.vh-walk .fr{position:absolute;z-index:1;
+  inset:clamp(78px,9vh,120px) var(--gutter) clamp(30px,4vh,52px);
+  border-radius:3px;overflow:hidden}
+.vh-walk > .fr > img{position:absolute;inset:0;width:100%;height:112%;top:-6%;
+  object-fit:cover;transform:translate3d(0,calc(var(--out) * -4.5%),0)}
+/* barely anything — the words have their own glass, so this only has to keep
+   the corner caption off a bright patch of brick */
+.vh-walk .grad{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to bottom,rgba(14,13,11,.30),rgba(14,13,11,0) 26%),
+             linear-gradient(to top,rgba(14,13,11,.22),rgba(14,13,11,0) 30%)}
+.vh-walk .words{position:absolute;z-index:2;left:clamp(20px,3vw,42px);bottom:clamp(20px,3vw,42px);
+  display:grid;gap:16px;justify-items:start;
+  max-width:min(50ch,calc(100% - 2 * clamp(20px,3vw,42px)));
+  padding:clamp(24px,2.6vw,34px);border-radius:3px;
+  background:rgba(18,16,14,.52);
+  -webkit-backdrop-filter:blur(16px) saturate(1.05);backdrop-filter:blur(16px) saturate(1.05);
+  border:1px solid rgba(255,255,255,.12)}
+.vh-walk .n{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--clay)}
+.vh-walk h2{font-family:'Jost',sans-serif;font-weight:200;letter-spacing:-.02em;
+  font-size:clamp(26px,3.2vw,46px);line-height:1.1;color:#F7F5F0;text-wrap:balance}
+.vh-walk h2 em{color:#FBF8F2}
+.vh-walk .words p{font-size:clamp(14px,1.25vw,16px);line-height:1.6;
+  color:rgba(240,236,228,.8);max-width:44ch}
+@media(max-width:820px){
+  .vh-walk .words{left:clamp(12px,3vw,20px);right:clamp(12px,3vw,20px);
+    bottom:clamp(12px,3vw,20px);max-width:none}
+}
+.vh-walk .cap{position:absolute;z-index:2;left:auto;right:clamp(20px,3vw,42px);
+  top:clamp(20px,3vw,42px);
+  font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+  color:rgba(247,245,240,.9);text-shadow:0 1px 18px rgba(12,11,10,.7)}
+
+/* ---------- 3. a plate that comes into focus ---------- */
+.vh-plate{background:#191614}
+.vh-plate > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* cut oversize so the drift can never open an edge */
+.vh-plate > img{top:-6%;height:112%;transform:translate3d(0,calc(var(--out) * -4.5%),0)}
+.vh-plate .grad{position:absolute;inset:0;
+  /* the words sit on this, so it does the work the blur used to do */
+  background:linear-gradient(100deg,rgba(14,13,11,.66) 0%,rgba(14,13,11,.26) 42%,rgba(14,13,11,0) 72%),
+             linear-gradient(to top,rgba(14,13,11,.32),rgba(14,13,11,0) 30%)}
+/* Held at the middle, not the foot: the next plate rises from the bottom, so
+   anything sitting down there is covered before it has been read. */
+.vh-plate .words{position:absolute;z-index:2;left:var(--gutter);right:var(--gutter);
+  top:50%;transform:translateY(-50%);
+  color:#F7F5F0;display:grid;gap:20px;justify-items:start;align-content:center}
+.vh-plate h2{font-family:'Jost',sans-serif;font-weight:200;letter-spacing:-.02em;
+  font-size:clamp(30px,4.2vw,56px);line-height:1.08;text-wrap:balance;max-width:15ch}
+.vh-plate h2 em{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:200}
+.vh-plate .cap{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.26em;
+  text-transform:uppercase;color:rgba(247,245,240,.72)}
+
+/* ---------- 4. the four homes ----------
+   A grid, not a carousel. See the note in the markup. This plate is the one
+   allowed to grow past 100svh, because squeezing four cards into a phone
+   screen would undo the reason for having them all visible. */
+.vh-homes{background:transparent;height:auto;min-height:100svh;
+  display:grid;align-items:center;color:#F2EFE8;
+  padding:clamp(96px,12vh,150px) 0 clamp(64px,8vh,110px)}
+.vh-homes .bg{background-color:#1E1B18;
+  background-image:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.021) 0 1px,transparent 1px 15px),
+    radial-gradient(92% 74% at 50% 0%,#2E2A25 0%,#1E1B18 68%)}
+.hm-in{position:relative;z-index:2;width:100%;
+  padding-inline:var(--gutter);margin-inline:auto;max-width:1320px}
+
+.hm-head{text-align:center;margin-bottom:clamp(34px,4.5vw,60px)}
+.hm-kick{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(242,239,232,.46)}
+.hm-head h2{margin-top:13px;font-family:'Jost',sans-serif;font-weight:200;
+  letter-spacing:-.02em;font-size:clamp(30px,4.4vw,60px);line-height:1.06;
+  color:rgba(244,241,234,.86)}
+.hm-head h2 em{font-family:'Newsreader',Georgia,serif;font-style:italic;
+  font-weight:200;color:#FBF8F2}
+
+.hm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,1.6vw,24px)}
+@media(max-width:1080px){.hm-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.hm-grid{grid-template-columns:1fr;gap:16px}}
+
+/* Build 007. The rollover was a lift, a zoom and a rule — correct pieces,
+   but they all ran on the same 0.6s curve, so the card changed state rather
+   than coming alive. It is staged now: the picture and its scrim lead on a
+   long ease, the plate and its type follow a beat later, the rule draws
+   last. Nothing snaps, and the card settles rather than stopping. */
+.hcard{position:relative;display:flex;flex-direction:column;text-decoration:none;
+  color:inherit;border-radius:3px;overflow:hidden;background:#282420;
+  border:1px solid rgba(255,255,255,.10);
+  transition:transform .85s var(--ease),border-color .6s ease,
+             box-shadow .85s var(--ease),background .6s ease}
+.hcard:hover,.hcard:focus-visible{transform:translateY(-10px);
+  border-color:rgba(255,255,255,.32);background:#332E28;
+  box-shadow:0 40px 90px rgba(0,0,0,.5)}
+.hcard:focus-visible{outline:2px solid var(--clay);outline-offset:4px}
+/* the rule draws last, and out from the middle rather than in from a corner */
+.hcard::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;z-index:4;
+  background:var(--clay);transform:scaleX(0);transform-origin:center;
+  transition:transform .8s var(--ease) .12s}
+.hcard:hover::after,.hcard:focus-visible::after{transform:scaleX(1)}
+
+.hc-pic{display:block;position:relative;aspect-ratio:4/5;overflow:hidden;flex:none}
+@media(max-width:600px){.hc-pic{aspect-ratio:16/10}}
+.hc-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform 1.8s var(--ease)}
+/* the resting scrim lifts, so the picture gains on hover rather than the card
+   simply moving. Keeps the grid calm at rest without darkening the render. */
+.hc-pic::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to top,rgba(16,14,12,.44),rgba(16,14,12,0) 56%);
+  opacity:1;transition:opacity .8s var(--ease)}
+.hcard:hover .hc-pic::after{opacity:.18}
+.hcard:hover .hc-pic img{transform:scale(1.08)}
+/* a slow sheen crossing the picture — the one flourish, and it is off under
+   reduced motion with everything else */
+.hc-pic::before{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;z-index:2;
+  pointer-events:none;transform:skewX(-14deg);
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.13),rgba(255,255,255,0));
+  opacity:0;transition:none}
+.hcard:hover .hc-pic::before{opacity:1;animation:hcSheen 1.15s var(--ease) .1s}
+@keyframes hcSheen{from{transform:translateX(0) skewX(-14deg)}
+                   to{transform:translateX(330%) skewX(-14deg)}}
+
+.hc-body{display:block;padding:18px 18px 20px;
+  transition:transform .8s var(--ease) .06s}
+.hcard:hover .hc-body{transform:translateY(-4px)}
+.hc-nm{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.hc-nm b{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(21px,1.7vw,26px);
+  color:#F4F1EA;letter-spacing:.005em}
+.hc-nm i{font-style:normal;font-family:'Inter',sans-serif;font-size:9.5px;
+  letter-spacing:.22em;text-transform:uppercase;color:rgba(242,239,232,.44)}
+.hc-addr{display:block;margin-top:9px;font-family:'Inter',sans-serif;font-size:12px;
+  letter-spacing:.02em;color:rgba(242,239,232,.74)}
+.hc-note{display:block;margin-top:6px;font-family:'Inter',sans-serif;font-size:12.5px;
+  line-height:1.55;color:rgba(242,239,232,.5)}
+.hc-fig{display:flex;flex-wrap:wrap;gap:5px 13px;margin-top:13px;
+  font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(242,239,232,.52);font-variant-numeric:tabular-nums}
+.hc-go{display:inline-flex;align-items:center;gap:9px;margin-top:16px;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--clay);transition:color .4s ease}
+.hcard:hover .hc-go{color:#E8A97E}
+.hc-go .arr{transition:transform .45s var(--ease)}
+.hcard:hover .hc-go .arr{transform:translateX(7px)}
+
+.hm-foot{margin-top:clamp(30px,4vw,50px);display:flex;justify-content:center}
+
+/* ---------- 5. the walk times ----------
+   The lake picture is the ground; the numbers are the section. */
+.vh-walks{background:#191614;height:auto;min-height:100svh;
+  display:grid;align-items:center;color:#F2EFE8;
+  padding:clamp(96px,12vh,150px) 0 clamp(64px,8vh,110px)}
+.vh-walks > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vh-walks > img{top:-6%;height:112%;transform:translate3d(0,calc(var(--out) * -4.5%),0)}
+.vh-walks .grad{position:absolute;inset:0;z-index:1;
+  background:radial-gradient(84% 72% at 50% 46%,rgba(12,11,10,.30),rgba(12,11,10,.74))}
+.wk-in{position:relative;z-index:2;width:100%;
+  padding-inline:var(--gutter);margin-inline:auto;max-width:1180px;text-align:center}
+
+.wk-kick{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(242,239,232,.5)}
+.wk-head h2{margin-top:14px;font-family:'Jost',sans-serif;font-weight:200;
+  letter-spacing:-.02em;font-size:clamp(30px,4.6vw,62px);line-height:1.06;
+  color:rgba(247,245,240,.86);text-wrap:balance}
+.wk-head h2 em{font-family:'Newsreader',Georgia,serif;font-style:italic;
+  font-weight:200;color:#FBF8F2}
+
+.wk-grid{display:grid;grid-template-columns:repeat(4,1fr);
+  gap:clamp(18px,2.4vw,38px);margin-top:clamp(40px,6vw,76px);text-align:left}
+@media(max-width:860px){.wk-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.wk-grid{grid-template-columns:1fr;gap:14px}}
+.wk{border-top:1px solid rgba(240,236,228,.2);padding-top:20px}
+.wk dt{display:flex;align-items:baseline;gap:7px}
+.wk-n{font-family:'Jost',sans-serif;font-weight:200;letter-spacing:-.02em;
+  font-size:clamp(40px,5vw,68px);line-height:1;color:#F4F1EA;
+  font-variant-numeric:tabular-nums}
+.wk-u{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:rgba(240,236,228,.46)}
+.wk dd{margin:11px 0 0;font-family:'Inter',sans-serif;font-size:12.5px;
+  line-height:1.55;color:rgba(240,236,228,.66)}
+
+.wk-foot{margin-top:clamp(34px,4.6vw,58px)}
+
+/* ---------- buttons ----------
+   Build 007. site.css draws these as hard rectangles, which put square
+   corners next to a pill Menu, pill Continue and pill Register — three
+   different button shapes on one page. They are all pills now, and the
+   hover fills from the left rather than swapping colour on a switch, so
+   the fill reads as a movement instead of a state change. */
+.btn{position:relative;overflow:hidden;border-radius:999px;
+  padding:16px 30px;isolation:isolate;
+  transition:color .45s var(--ease),border-color .45s var(--ease)}
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:var(--paper);transform:scaleX(0);transform-origin:left center;
+  transition:transform .55s var(--ease)}
+.btn:hover::before,.btn:focus-visible::before{transform:scaleX(1)}
+.btn-light{border-color:rgba(247,245,240,.5);color:#F7F5F0}
+.btn-light:hover,.btn-light:focus-visible{background:transparent;color:var(--ink);
+  border-color:var(--paper)}
+.btn .arr{transition:transform .45s var(--ease)}
+.btn:hover .arr{transform:translateX(6px)}
+
+/* ---------- the reveal ----------
+   Build 004. Two complaints answered here. Things were animating before you
+   reached them, because half the page was still on the deck's --in, which
+   starts the moment a plate's edge enters the viewport — by the time you had
+   scrolled to a line it had already finished moving. Everything is now on one
+   observer with a real threshold, so a thing moves when you are looking at it.
+
+   And it is no longer one move. Three, picked per element:
+
+     data-rv          rise and fade        — copy, captions, cards, rows
+     data-rv="mask"   wipes up out of a    — headlines. The line is clipped at
+                      clipped edge           its own baseline and released, so
+                                             it reads as type being set rather
+                                             than a block sliding.
+     data-rv="zoom"   the picture settles  — images inside a card, easing off a
+                      out of an oversize     small overscale so the card feels
+                                             like it is coming to rest
+
+   Hidden state is applied by the script (body.rv-on), so no JS means a plain
+   readable page rather than a blank one.                                   */
+body.rv-on [data-rv]{opacity:0;transform:translate3d(0,26px,0)}
+body.rv-on [data-rv="mask"]{opacity:1;transform:none;
+  clip-path:inset(0 0 102% 0)}
+body.rv-on [data-rv="zoom"]{opacity:1;transform:none}
+body.rv-on [data-rv="zoom"] img{transform:scale(1.10);opacity:.82}
+
+body.rv-on [data-rv].rv-in{opacity:1;transform:none;
+  transition:opacity .85s var(--ease) var(--d,0ms),transform .95s var(--ease) var(--d,0ms)}
+body.rv-on [data-rv="mask"].rv-in{clip-path:inset(0 0 -6% 0);
+  transition:clip-path 1.15s var(--ease) var(--d,0ms)}
+body.rv-on [data-rv="zoom"].rv-in img{transform:none;opacity:1;
+  transition:transform 1.5s var(--ease) var(--d,0ms),opacity 1s ease var(--d,0ms)}
+
+/* the counters get a touch more than the row they sit in */
+body.rv-on .wk.rv-in .wk-n{animation:wkPop .9s var(--ease) var(--d,0ms) both}
+@keyframes wkPop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+@media(prefers-reduced-motion:reduce){
+  body.rv-on [data-rv],
+  body.rv-on [data-rv="mask"],
+  body.rv-on [data-rv="zoom"],
+  body.rv-on [data-rv="zoom"] img{opacity:1 !important;transform:none !important;
+    clip-path:none !important;transition:none !important;animation:none !important}
+}
+
+/* ---------- the tail: the only part that lets go ---------- */
+/* Build 006: the tail used to paint its own ink ground and cast a straight
+   shadow across the seam. Both would have filled the setback step cut into the
+   register below it, so the step would have revealed the tail rather than the
+   lake. The tail is a positioning context now and nothing else; the register
+   and the footer each carry their own ground. */
+.tail{position:relative;z-index:20;background:transparent}
+
+/* ---------- register ----------
+   Build 003. Three changes. It is no longer the darkest block on the page —
+   a warm charcoal with a single lit corner, so the one place that asks the
+   visitor to do work does not look like the place the page gave up. The live
+   receipt down the left is gone; the left column now carries the reason to
+   register rather than an echo of what you just typed. And the summary moved
+   to where a summary belongs: after submit, once, checkable. */
+.vh-reg{position:relative;color:#EDEAE3;overflow:hidden;background:transparent;
+  padding:clamp(64px,7.5vw,104px) 0 clamp(60px,7vw,96px)}
+/* the ground, cut by the setback step, coursed like the brick */
+.vh-reg .lap-g{background-color:#2A2621;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.016) 0 1px,transparent 1px 10px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.010) 0 1px,transparent 1px 34px),
+    linear-gradient(to bottom,rgba(25,22,20,0) 90%,#191614 100%),
+    linear-gradient(168deg,#332E28 0%,#2A2621 54%,#242019 100%)}
+.rg-glow{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(74% 60% at 82% 12%,rgba(206,132,88,.30),transparent 64%),
+             radial-gradient(64% 54% at 4% 94%,rgba(126,146,120,.18),transparent 66%)}
+.rg-in{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1.02fr;
+  gap:clamp(32px,4.4vw,72px);align-items:center}
+@media(max-width:900px){.rg-in{grid-template-columns:1fr;gap:44px}}
+
+.rg-eyebrow{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.32em;
+  text-transform:uppercase;color:var(--clay)}
+/* Build 014: this is the headline of the one section that asks for something,
+   and it was set smaller than the plate headlines it sits between. Up to the
+   same scale as those, and the eyebrow above it given room. */
+.rg-say h2{margin-top:20px;font-family:'Jost',sans-serif;font-weight:200;letter-spacing:-.025em;
+  font-size:clamp(36px,5vw,68px);line-height:1.02;color:#F7F4EE}
+.rg-say h2 em{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:200}
+.rg-say > p{margin-top:16px;font-size:15px;line-height:1.75;
+  color:rgba(237,234,227,.66);max-width:38ch}
+
+/* what the list actually buys you — the argument the receipt was occupying */
+/* Build 004: three short facts, not three sentences. A rule and four words
+   each — the form beside it is where the reading effort belongs. */
+/* Build 014: three short facts set in the body face directly under a large
+   Jost headline read as two unrelated voices. They take the headline's family
+   at a small size instead, so the column is one piece of typography — and the
+   rules that mark them line up with the headline's left edge. */
+.rg-why{list-style:none;margin:clamp(26px,3vw,38px) 0 0;padding:0;display:grid;gap:2px}
+.rg-why li{position:relative;padding:11px 0 11px 34px;
+  font-family:'Jost',sans-serif;font-weight:300;
+  font-size:clamp(16px,1.5vw,19px);letter-spacing:.005em;line-height:1.3;
+  color:rgba(240,236,228,.88);
+  border-bottom:1px solid rgba(240,236,228,.10)}
+.rg-why li:last-child{border-bottom:0}
+.rg-why li::before{content:"";position:absolute;left:0;top:1.05em;
+  width:20px;height:1px;background:var(--clay)}
+
+/* Build 005: a bare underlined mailto in a field of empty space read as an
+   afterthought. It is a quiet outlined control now, sized to the copy. */
+.rg-contact{margin-top:clamp(26px,3vw,38px)}
+/* Build 014: a real button, the same shape and weight as Continue, so the two
+   ways of getting in touch look like two ways of getting in touch. */
+.rg-contact a{position:relative;overflow:hidden;isolation:isolate;
+  display:inline-flex;align-items:center;gap:12px;text-decoration:none;
+  font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:#F7F4EE;padding:15px 28px;border-radius:999px;
+  border:1px solid rgba(240,236,228,.42);
+  transition:color .45s var(--ease),border-color .45s var(--ease)}
+.rg-contact a::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:#F4F1EA;transform:scaleX(0);transform-origin:left center;
+  transition:transform .55s var(--ease)}
+.rg-contact a:hover::before,.rg-contact a:focus-visible::before{transform:scaleX(1)}
+.rg-contact a:hover,.rg-contact a:focus-visible{color:#1B2724;border-color:#F4F1EA}
+
+/* the form itself */
+.rg-form{position:relative;border:1px solid rgba(237,234,227,.16);border-radius:4px;
+  background:rgba(255,255,255,.055);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:0 40px 90px rgba(10,9,8,.4);
+  padding:clamp(26px,3vw,40px);display:grid;gap:20px;align-content:start}
+/* the plain-language position, for anyone who does not read a progress rail */
+.rg-count{margin:-4px 0 -2px;font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.22em;
+  text-transform:uppercase;color:rgba(237,234,227,.45)}
+.rg-rail{display:flex;gap:6px}
+.rg-rail i{flex:1;height:2px;border-radius:2px;background:rgba(237,234,227,.16);
+  transition:background .55s var(--ease)}
+.rg-rail i.on{background:var(--clay)}
+
+.rg-steps{display:grid;min-height:0}
+.rg-done[hidden],.rg-acts[hidden],.rg-err[hidden]{display:none}
+.rg-step{grid-area:1/1;border:0;padding:0;margin:0;min-width:0;display:grid;gap:clamp(30px,3.4vw,46px);align-content:start;
+  opacity:0;visibility:hidden;transform:translateY(14px);
+  transition:opacity .5s ease,transform .55s var(--ease),visibility .55s}
+.rg-step.is-on{opacity:1;visibility:visible;transform:none}
+/* Build 011: I raised this gap three times and it never moved, because a
+   <legend> is not a grid item — the browser lays it out specially against the
+   fieldset border, so `gap` on the fieldset never applies between the question
+   and the fields under it. Floating it makes it an ordinary block in the flow,
+   and then its own margin is what does the work. */
+.rg-step legend{float:left;width:100%;margin-bottom:clamp(30px,3.6vw,48px);
+  padding:0;font-family:'Jost',sans-serif;font-weight:200;letter-spacing:-.01em;
+  font-size:clamp(21px,2.2vw,30px);line-height:1.2;color:#F4F1EA}
+.rg-hint{font-size:12.5px;color:rgba(237,234,227,.5);margin:-18px 0 0}
+.rg-two{clear:both;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.rg-two{grid-template-columns:1fr}}
+.rg-form input{clear:both;width:100%;background:none;border:0;border-bottom:1px solid rgba(237,234,227,.3);
+  color:#F4F1EA;font-family:'Inter',sans-serif;font-size:16px;padding:2px 2px 13px;
+  transition:border-color .4s ease}
+.rg-form input::placeholder{color:rgba(237,234,227,.34)}
+.rg-form input:focus{outline:0;border-bottom-color:var(--clay)}
+
+.chips{clear:both;display:flex;flex-wrap:wrap;gap:9px}
+.chips button{font-family:'Inter',sans-serif;font-size:12px;letter-spacing:.08em;
+  padding:11px 18px;border-radius:999px;cursor:pointer;
+  border:1px solid rgba(237,234,227,.26);background:none;color:rgba(237,234,227,.8);
+  transition:background .35s,color .35s,border-color .35s,transform .35s}
+.chips button:hover{border-color:rgba(237,234,227,.7);transform:translateY(-1px)}
+.chips button[aria-pressed="true"]{background:#F4F1EA;border-color:#F4F1EA;color:var(--ink)}
+
+.rg-err{min-height:17px;margin:-8px 0 0;font-size:12.5px;color:#E0916F;
+  opacity:0;transition:opacity .3s}
+.rg-err.on{opacity:1}
+.rg-acts{display:flex;align-items:center;gap:14px;margin-top:4px}
+.rg-back{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;background:none;border:0;cursor:pointer;padding:12px 2px;
+  color:rgba(237,234,227,.5);opacity:0;pointer-events:none;transition:opacity .4s,color .3s}
+.rg-back.on{opacity:1;pointer-events:auto}
+.rg-back:hover{color:#F4F1EA}
+.rg-go{margin-left:auto;display:inline-flex;align-items:center;gap:12px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;padding:15px 30px;border-radius:999px;border:1px solid #F4F1EA;
+  background:#F4F1EA;color:var(--ink);transition:background .35s,color .35s,border-color .35s}
+.rg-go:hover{background:var(--moss);border-color:var(--moss);color:#fff}
+.rg-go .arr{transition:transform .35s}
+.rg-go:hover .arr{transform:translateX(5px)}
+.rg-consent{margin:0;font-size:11.5px;line-height:1.65;color:rgba(237,234,227,.38)}
+
+.rg-done{grid-area:1/1;display:grid;gap:18px;align-content:center;justify-items:start;
+  min-height:280px;animation:rgIn .8s var(--ease) both}
+.rg-done h3{font-family:'Jost',sans-serif;font-weight:200;font-size:clamp(26px,3vw,40px);
+  line-height:1.12;color:#F4F1EA}
+.rg-done p{font-size:15px;line-height:1.75;color:rgba(237,234,227,.62);max-width:38ch}
+.rg-done .tick{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid var(--clay);color:var(--clay);font-size:19px}
+/* the summary: shown once, after submit, so it can be checked rather than
+   watched being filled in */
+.rg-sum{margin:4px 0 0;display:grid;gap:1px;width:100%;
+  background:rgba(237,234,227,.12);border-block:1px solid rgba(237,234,227,.12)}
+.rg-sum > div{display:grid;grid-template-columns:11ch 1fr;gap:16px;align-items:baseline;
+  background:#232019;padding:12px 2px}
+.rg-sum dt{font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:rgba(237,234,227,.42)}
+.rg-sum dd{margin:0;font-size:14.5px;color:#F4F1EA}
+.rg-edit{background:none;border:0;padding:6px 2px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:11.5px;letter-spacing:.04em;
+  color:rgba(237,234,227,.5);text-decoration:underline;text-underline-offset:4px;
+  transition:color .3s}
+.rg-edit:hover{color:#F4F1EA}
+.rg-done:focus-visible{outline:2px solid var(--clay);outline-offset:8px}
+
+@media(prefers-reduced-motion:reduce){
+  .rg-step,.rg-done{transition:none !important;animation:none !important}
+}
+
+/* ---------- the footer ----------
+   Build 004. It had no material: a flat charcoal panel of link columns landing
+   straight after the form. Now it is built in layers — picture, wash, grain —
+   with the wordmark oversized and bleeding off the left edge, so the page ends
+   on something made rather than something left over.
+
+   The grain is an inline SVG turbulence, not an image request: it stops the
+   big gradient banding on a wide screen, and it is what stops the surface
+   reading as flat CSS. */
+footer{position:relative;isolation:isolate;background:transparent;color:#ADA79D;
+  overflow:hidden}
+/* Build 007: the stacked-clip trick that drew the clay edge is gone with the
+   clip-path it was working around. A border follows a radius on its own. */
+
+.fx-bg{overflow:hidden;background-color:#1A1714}
+.fx-bg img{position:absolute;inset:0;width:100%;height:118%;top:-9%;
+  object-fit:cover;object-position:50% 34%;
+  transform:translate3d(0,calc(var(--fp,0) * 5%),0)}
+/* the wash: dark enough to read type on, warm enough to keep the dusk in the
+   picture rather than turning it into grey */
+.fx-wash{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(18,16,13,.72) 0%,rgba(24,20,17,.80) 44%,rgba(16,14,12,.90) 100%),
+             radial-gradient(78% 60% at 14% 8%,rgba(196,124,84,.20),transparent 60%),
+             radial-gradient(60% 50% at 92% 96%,rgba(120,138,116,.14),transparent 62%)}
+.fx-grain{position:absolute;inset:-50%;opacity:.42;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+
+.fx-body{position:relative;z-index:2;
+  padding:clamp(64px,8vw,110px) 0 clamp(34px,4vw,52px)}
+
+/* the lead */
+.f-lead{display:grid;grid-template-columns:1fr auto;gap:clamp(26px,4vw,64px);
+  align-items:end;padding-bottom:clamp(40px,5vw,68px)}
+@media(max-width:860px){.f-lead{grid-template-columns:1fr;align-items:start;gap:28px}}
+.f-kick{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--clay);margin-bottom:16px}
+.f-lead-say h2{font-family:'Jost',sans-serif;font-weight:200;letter-spacing:-.025em;
+  font-size:clamp(34px,5.4vw,74px);line-height:1.02;color:#F7F4EE}
+.f-lead-say h2 em{font-family:'Newsreader',Georgia,serif;font-style:italic;
+  font-weight:200;color:#FBF8F2}
+.f-lead-say p{margin-top:20px;font-size:14px;line-height:1.8;color:rgba(240,236,228,.58)}
+.f-lead-act{display:grid;gap:18px;justify-items:start}
+@media(min-width:861px){.f-lead-act{justify-items:end}}
+.f-mail{font-family:'Inter',sans-serif;font-size:13px;letter-spacing:.02em;
+  color:rgba(240,236,228,.7) !important;text-decoration:none;
+  border-bottom:1px solid rgba(240,236,228,.28);transition:border-color .35s}
+.f-mail:hover{border-color:var(--clay)}
+
+/* Build 005: an oversized wordmark used to sit here, bleeding off the left
+   edge between two rules. Read as the name printed twice with lines through
+   it. Gone — the footer carries one proper lockup, in the brand column. */
+
+/* the utility rows */
+.f-top{padding-top:clamp(40px,5vw,66px)}
+.f-brand p{color:rgba(240,236,228,.5)}
+.f-mark{color:#F4F1EA}
+.f-cols h4{color:var(--clay);opacity:.9}
+.f-cols a{color:rgba(240,236,228,.8)}
+.f-cols span{color:rgba(240,236,228,.5)}
+.f-cols a:not(.f-cta){position:relative;width:fit-content}
+.f-cols a:not(.f-cta)::after{content:"";position:absolute;left:0;bottom:3px;height:1px;
+  width:0;background:currentColor;transition:width .45s var(--ease)}
+.f-cols a:not(.f-cta):hover::after{width:100%}
+
+/* the credit line Robert asked for, as a single link */
+.credit-dl{display:flex;align-items:center;gap:14px;text-decoration:none}
+/* Build 033: was .credit-dl only, so the TwinLines credit had no hover even
+   once it became a link. Any credit that leads somewhere now responds. */
+a.credit small{transition:color .3s}
+a.credit:hover small{color:var(--clay)}
+a.credit .mk{transition:opacity .35s ease}
+a.credit:hover .mk{opacity:1}
+/* Build 017: the marks were sized to fit rather than to be seen */
+.f-credits{--mark:30px;border-top:1px solid rgba(240,236,228,.1);
+  padding-top:clamp(26px,3vw,40px);margin-top:clamp(30px,3.6vw,50px)}
+.f-legal{color:rgba(240,236,228,.32);border-top-color:rgba(240,236,228,.09)}
+
+@media(prefers-reduced-motion:reduce){
+  .fx-bg img{transform:none !important}
+}
+
+/* ---------- the chat launcher ----------
+   Build 011. Its accent is #1B1A17 — near-black on a site that is now dark
+   everywhere, so on half the sections it was a black pill on a black ground
+   and you could not find it. It goes to paper with dark type: the only fully
+   light object on the page, which is what a persistent floating control on a
+   dark site should be. */
+.cb{--cb-accent:#F4F1EA;--cb-on-accent:#1B1A17}
+.cb-launch{box-shadow:0 16px 40px rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.2)}
+.cb-launch:hover{box-shadow:0 22px 52px rgba(0,0,0,.5)}
+/* the panel keeps the dark accent on its own header, where it has paper
+   behind it and does not need to be found */
+.cb-head{background:#1B1A17 !important;color:#F7F5F0 !important}
+
+/* ---------- one more pass on the light ----------
+   Still reading dark overall. The remaining weight was in the grounds rather
+   than the washes this time, so it is the grounds that come up. */
+.seam{background:#1D1A17}
+.panel,.vh-plate,.vh-walks{background:#1D1A17}
+.vh-walk .lap-g{background-color:#262220}
+.vh-homes .bg{background-color:#252220}
+.hcard{background:#2C2825}
+.hcard:hover,.hcard:focus-visible{background:#38332C}
+.vh-reg .lap-g{background-color:#302B25}
+
+/* ---------- more texture ----------
+   The batten and the brick were at .021 and .016, which on a lifted ground is
+   below the threshold of doing anything. Roughly doubled, plus a third layer
+   the grounds did not have: a wide, very soft vertical banding that breaks up
+   the flat middle of a large fill the way light falls across a real wall. */
+.vh-walk .lap-g{background-image:
+  repeating-linear-gradient(90deg,rgba(255,255,255,.040) 0 1px,transparent 1px 15px),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.055) 0 1px,transparent 1px 15px),
+  linear-gradient(100deg,rgba(255,255,255,.035) 0%,transparent 34%,rgba(0,0,0,.05) 74%),
+  linear-gradient(to bottom,rgba(29,26,23,0) 82%,#1D1A17 100%)}
+.vh-homes .bg{background-image:
+  repeating-linear-gradient(90deg,rgba(255,255,255,.038) 0 1px,transparent 1px 15px),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 1px,transparent 1px 15px),
+  linear-gradient(to bottom,rgba(29,26,23,0) 88%,#1D1A17 100%),
+  radial-gradient(92% 74% at 50% 0%,#332E29 0%,#221F1C 68%)}
+/* Build 013: registration is the one thing the page is asking for, and it was
+   a brown-black barely separable from the plates either side of it. It gets the
+   only real colour on the site — the moss the buttons already use, deepened to
+   a ground and warmed at one corner by the clay. */
+.vh-reg .lap-g{background-color:#20302B;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.030) 0 1px,transparent 1px 10px),
+    repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 10px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 34px),
+    linear-gradient(to bottom,rgba(29,26,23,0) 90%,#1D1A17 100%),
+    linear-gradient(158deg,#2A3D36 0%,#20302B 52%,#1B2724 100%)}
+.rg-glow{background:
+  radial-gradient(72% 58% at 84% 10%,rgba(206,132,88,.34),transparent 62%),
+  radial-gradient(58% 48% at 4% 94%,rgba(150,176,142,.16),transparent 64%)}
+.rg-form{background:rgba(255,255,255,.07);border-color:rgba(237,234,227,.2)}
+.vh-reg .rg-eyebrow{color:#E8A97E}
+.rg-why li::before{background:#E8A97E}
+.rg-rail i.on{background:#E8A97E}
+.rg-form input:focus{border-bottom-color:#E8A97E}
+.chips button[aria-pressed="true"]{background:#F4F1EA;border-color:#F4F1EA;color:#1B2724}
+/* the bands get the batten too, so they read as a material rather than a gap */
+.seam{background-image:
+  repeating-linear-gradient(90deg,rgba(255,255,255,.026) 0 1px,transparent 1px 15px),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.04) 0 1px,transparent 1px 15px)}
+.tex-grain::after{opacity:.42}
+
+
+/* ============================================================
+   BUILD 014 — mobile
+   ============================================================
+   Everything below 720px had been laid out by the desktop rules collapsing
+   rather than by anything deciding what a phone should get. Three places
+   showed it: the lightbox threw away its rule, registration hung off the
+   left edge, and the footer stacked into one long undifferentiated column.
+   ============================================================ */
+
+/* ---------- the lightbox rule stays ----------
+   It was dropped below 640px on the theory that there was no room. There is:
+   the rule is what separates the caption from the picture, and without it the
+   type just floats on the gradient. It runs shorter and sits directly above
+   the counter instead of beside it. */
+@media(max-width:640px){
+  .lb-bar{padding:clamp(64px,14vh,140px) var(--gutter) calc(env(safe-area-inset-bottom) + 20px)}
+  .lb-bar::before{display:block;left:var(--gutter);right:auto;
+    width:clamp(90px,42vw,190px);
+    bottom:auto;top:calc(clamp(64px,14vh,140px) - 26px);
+    background:linear-gradient(90deg,rgba(196,124,84,.6),rgba(196,124,84,.1))}
+  .lb-count{position:static;display:block;margin:0 0 12px;
+    font-size:9.5px;letter-spacing:.26em}
+  .lb-cap b{font-size:clamp(19px,5.4vw,26px)}
+  .lb-cap{font-size:12.5px;line-height:1.6}
+  .lb-prev,.lb-next{width:44px;height:44px;font-size:18px}
+  .lb-close{width:42px;height:42px}
+}
+
+/* ---------- registration ----------
+   The section is full-bleed and .rg-in is a .wrap, so the gutter was there —
+   what was missing was the list resetting its own indent, which put the
+   bullets and their text outside everyone else's margin. Beyond that the
+   whole block needed to be told what it is on a phone: one column, the form
+   as the thing that matters, and the reasons above it rather than beside. */
+@media(max-width:720px){
+  .vh-reg{padding:clamp(48px,11vw,72px) 0 clamp(44px,10vw,68px)}
+  .rg-in{grid-template-columns:1fr;gap:clamp(28px,7vw,40px);align-items:start}
+  .rg-say h2{font-size:clamp(29px,8.6vw,42px);line-height:1.04}
+  .rg-say > p{max-width:none}
+  .rg-why{margin-top:clamp(20px,5.5vw,28px);gap:0}
+  .rg-why li{padding:10px 0 10px 28px;font-size:clamp(15px,4.4vw,17px)}
+  .rg-why li::before{width:16px;top:1em}
+  .rg-contact{margin-top:clamp(24px,6vw,32px)}
+  /* the email button goes full width, like Continue — two ways in, one shape */
+  .rg-contact a{width:100%;justify-content:center;font-size:11px;
+    padding:15px 22px;letter-spacing:.14em}
+  .rg-form{padding:clamp(20px,5.5vw,30px);gap:18px}
+  .rg-step{gap:clamp(22px,6vw,32px)}
+  .rg-step legend{margin-bottom:clamp(22px,6vw,32px);font-size:clamp(20px,5.6vw,26px)}
+  .rg-two{grid-template-columns:1fr;gap:20px}
+  /* a full-width Continue reads as the next step rather than as a corner button */
+  .rg-acts{flex-wrap:wrap;gap:10px}
+  .rg-go{margin-left:0;width:100%;justify-content:center;padding:17px 26px}
+  .rg-back{order:2;width:100%;text-align:center;padding-top:4px}
+  .rg-consent{font-size:11px;line-height:1.6}
+  .rg-sum > div{grid-template-columns:9ch 1fr;gap:12px}
+}
+
+/* ---------- the footer ----------
+   It stacked into one column with every row the same weight, so the last
+   screen of the site was a wall of links. It gets a hierarchy: the lead
+   stays large, the three utility columns become two, the credits sit on
+   their own line at a size that reads, and the legal type gets out of the
+   way at the bottom. */
+@media(max-width:860px){
+  .fx-body{padding:clamp(48px,12vw,80px) 0 clamp(26px,6vw,40px)}
+  .f-lead{gap:clamp(22px,6vw,32px);padding-bottom:clamp(30px,8vw,44px)}
+  .f-lead-say h2{font-size:clamp(32px,9.4vw,52px);line-height:1.02}
+  .f-lead-say p{margin-top:14px;font-size:13.5px}
+  .f-lead-act{width:100%;gap:14px}
+  .f-lead-act .btn{width:100%;justify-content:center}
+  .f-top{padding-top:clamp(30px,8vw,46px);
+    grid-template-columns:1fr;gap:clamp(26px,7vw,38px)}
+  .f-brand p{font-size:13.5px;max-width:none}
+  /* two columns, not three squeezed or one long list */
+  .f-cols{grid-template-columns:1fr 1fr;gap:clamp(22px,6vw,34px) clamp(18px,5vw,28px)}
+  .f-cols > div:last-child{grid-column:1 / -1}
+  .f-cols h4{font-size:9.5px;letter-spacing:.2em;margin-bottom:10px}
+  .f-cols a,.f-cols span{font-size:13.5px;padding:6px 0}
+}
+@media(max-width:520px){
+  .f-cols{grid-template-columns:1fr}
+  .f-cols > div:last-child{grid-column:auto}
+}
+@media(max-width:860px){
+  .f-credits{--mark:19px;flex-wrap:wrap;gap:clamp(18px,5vw,26px);
+    margin-top:clamp(26px,7vw,38px);padding-top:clamp(22px,6vw,32px)}
+  .credit{gap:11px}
+  .credit small{font-size:9.5px;letter-spacing:.16em}
+  .f-legal{flex-direction:column;align-items:flex-start;gap:12px;
+    margin-top:clamp(22px,6vw,32px);padding-top:18px}
+  .f-legal p{font-size:11px;line-height:1.65}
+  .f-copy{white-space:normal}
+  .f-mail{font-size:12.5px}
+}
+
+/* ---------- the bands, on a phone ----------
+   The plate index is the one piece of type on the band, so it stays; the
+   band itself comes down so it does not eat a quarter of a small screen. */
+@media(max-width:640px){
+  .seam{height:clamp(46px,12vw,64px)}
+  .seam-lab{padding-top:13px;font-size:9px;letter-spacing:.22em;gap:11px}
+  .seam-lab::before{height:13px;top:-13px}
+}
+
+/* ---------- the header must not swallow the page ----------
+   Build 018. `body > nav` is `position:fixed; inset:0 0 auto 0` — a strip
+   across the full width of every page, containing a wordmark on the left and a
+   pill on the right and nothing in between. It has no background, so it looks
+   like nothing; it still takes every click that lands in it. Anything in the
+   top ~90px of any page — a link, a card, the first row of a drawer — was
+   unreachable, and it looked like the link was broken rather than covered.
+
+   The strip is transparent to the pointer now and only the two things actually
+   in it take clicks. The drawer also moves above the header, so a full-height
+   panel can never have its top rows covered by the strip it opens from. */
+body > nav{pointer-events:none}
+body > nav .logo,body > nav .burger,body > nav ul,body > nav a{pointer-events:auto}
+.drawer{z-index:97}
+.veil{z-index:96}
+
+/* ============================================================
+   BUILD 019 — one theme per page
+   ============================================================
+   018 lit the reading sections and left the reveal bands hard-coded at
+   #1D1A17. So every page came out striped: cream, black bar, cream, black
+   bar. That is not a design, it is two designs fighting, and it was my
+   mistake — I changed the sections and forgot the thing between them.
+
+   A page now picks ONE base and everything on it follows:
+
+     body.t-dark    the photographic pages — index, homes, gallery
+     body.t-light   the reading pages — floor plans, neighbourhood, team
+
+   Every ground, every band and every rule reads from the same four
+   variables, so there is no way for one of them to be left behind again.
+   The registration block keeps its moss on both, because it is the one
+   place that is meant to interrupt.
+   ============================================================ */
+body.t-dark{
+  --ground:#1D1A17; --ground-2:#211E1A; --band:#171512;
+  --edge:rgba(196,124,84,.42); --hair:rgba(240,236,228,.14);
+  --tx:#F4F1EA; --tx-2:rgba(240,236,228,.68); --tx-3:rgba(240,236,228,.44);
+  --kick:#C4805A; --panel:rgba(255,255,255,.05); --panel-line:rgba(240,236,228,.14);
+  --batten-a:rgba(255,255,255,.040); --batten-b:rgba(0,0,0,.055);
+  --rake:rgba(255,255,255,.035); --grain:.42;
+}
+body.t-light{
+  --ground:#EDE9E1; --ground-2:#E5E0D6; --band:#DDD7CB;
+  --edge:rgba(154,107,69,.5); --hair:rgba(43,38,32,.16);
+  --tx:#1B1A17; --tx-2:#4E483F; --tx-3:#7A7367;
+  --kick:#9A6B45; --panel:rgba(255,255,255,.62); --panel-line:rgba(43,38,32,.14);
+  --batten-a:rgba(43,38,32,.045); --batten-b:rgba(255,255,255,.55);
+  --rake:rgba(255,255,255,.5); --grain:.16;
+}
+
+body{background:var(--ground)}
+.page{background:var(--ground)}
+
+/* ---------- the bands take the page's base ---------- */
+.seam{background-color:var(--band);
+  background-image:
+    repeating-linear-gradient(90deg,var(--batten-a) 0 1px,transparent 1px 15px),
+    repeating-linear-gradient(90deg,var(--batten-b) 0 1px,transparent 1px 15px)}
+.seam-in::before{background:linear-gradient(90deg,
+  var(--edge) 0%,var(--edge) 82%,transparent 100%)}
+.seam-in::after{background:linear-gradient(90deg,
+  transparent 0%,var(--hair) 34%,var(--hair) 100%)}
+.seam-v::before{background:linear-gradient(to bottom right,
+  transparent calc(50% - .5px),var(--edge) calc(50% - .5px),
+  var(--edge) calc(50% + .5px),transparent calc(50% + .5px))}
+.seam-lab{color:var(--tx-3)}
+.seam-lab b{color:var(--kick)}
+.seam-lab::before{background:var(--edge)}
+
+/* ---------- the reading sections ---------- */
+.pg{background-color:var(--ground);color:var(--tx);
+  background-image:
+    repeating-linear-gradient(90deg,var(--batten-a) 0 1px,transparent 1px 15px),
+    repeating-linear-gradient(90deg,var(--batten-b) 0 1px,transparent 1px 15px),
+    linear-gradient(100deg,var(--rake) 0%,transparent 38%,var(--batten-a) 78%)}
+.pg:nth-of-type(even){background-color:var(--ground-2)}
+.pg::after{opacity:var(--grain)}
+
+.pg .kicker,.pg .num,.pg .n,.pg .sq,.pg .lvl,.pg .role{color:var(--kick)}
+.pg .kicker::before{background:var(--kick)}
+.pg h2,.pg h3,.pg h2.title,.pg .display,.pg h2 em,.pg h3 em{color:var(--tx)}
+.pg .lead,.pg p,.pg li,.pg dd,.pg .txt{color:var(--tx-2)}
+.pg .cap,.pg .note,.pg .hint,.pg .hs-sub,.pg small{color:var(--tx-3)}
+.pg .frame,.pg .fig,.pg .figA,.pg .figB,.pg .board,.pg .unit,.pg .spec div,
+/* Build 026: .list dropped out of this — a grid with no padding was being given
+   a white plate and a border, so its rules ran into the edges. */
+.pg .hs,.pg .member{background:var(--panel);border:1px solid var(--panel-line)}
+.pg .board-head{border-bottom:1px solid var(--panel-line)}
+.pg .board-head h3{color:var(--tx)}
+.pg .spec dt,.pg .list dt{color:var(--tx-3)}
+.pg .spec dd,.pg .list dd{color:var(--tx)}
+.pg .list > *,.pg .spec > *{border-color:var(--panel-line)}
+.pg .gfilter{color:var(--tx-3)}
+.pg .gfilter:hover,.pg .gfilter.on{color:var(--tx)}
+.pg .gfilter.on{border-bottom-color:var(--kick)}
+.pg .chip{background:var(--panel);border:1px solid var(--panel-line);color:var(--tx-2)}
+.pg .chip.on{background:var(--tx);border-color:var(--tx);color:var(--ground)}
+.pg .btn,.pg .btn-light{border-color:var(--tx);color:var(--tx);opacity:.92}
+.pg .btn::before{background:var(--tx)}
+.pg .btn:hover,.pg .btn:focus-visible{color:var(--ground);opacity:1}
+
+/* photographs keep a dark mount on either base — a picture wants a dark edge */
+.pg .gal .g{background:#211E1A;border:0}
+.pg .gal .g .meta b{color:#F7F5F0}
+.pg .gal .g .meta small{color:#E8A97E}
+
+/* ---------- the team cards ---------- */
+.pg .member .mk{color:var(--tx)}
+.pg .member .mk-pair{background:none;padding:0;border-radius:0}
+.pg .member .mk-pair i{background:var(--panel-line)}
+.pg .member .role{border-top-color:var(--panel-line)}
+.pg a.member:hover{border-color:var(--tx-3)}
+
+/* ---------- the closing note ---------- */
+.demo-note{border-top:1px solid var(--panel-line)}
+.pg .demo-note h3{color:var(--tx)}
+.pg .demo-note p{color:var(--tx-2)}
+.dn-credit small{color:var(--tx-3)}
+.dn-credit:hover small{color:var(--kick)}
+
+/* ---------- the deck, on a light page ---------- */
+body.t-light .deck .nb-plate{background-color:var(--ground);color:var(--tx)}
+body.t-light .deck .nb-plate:nth-of-type(even){background-color:var(--ground-2)}
+body.t-light .deck .nb-times{background-color:var(--ground-2);color:var(--tx)}
+body.t-light .nb-times h2,body.t-light .nb-times .kicker{color:var(--tx)}
+body.t-light .nb-times .kicker{color:var(--kick)}
+body.t-light .deck .time b,body.t-light .wk-n{color:var(--tx)}
+body.t-light .deck .time small,body.t-light .deck .time b i{color:var(--tx-3)}
+body.t-light .deck .time{border-top-color:var(--panel-line)}
+body.t-light .hero.sub,body.t-light .page-head{background:var(--band)}
+
+/* the map frame belongs to the page, not to itself */
+.mapframe{border:1px solid var(--panel-line);background:#faf9f5}
+
+/* ---------- the footer follows the page too ----------
+   On a light page a full-dark footer is another black bar, which is the thing
+   this build exists to remove. The picture stays; the wash over it goes pale,
+   and the type inverts with it. On a dark page nothing changes. */
+body.t-light footer{color:#4E483F}
+body.t-light .fx-bg{background-color:#E5E0D6}
+body.t-light .fx-wash{
+  background:linear-gradient(180deg,rgba(237,233,225,.90) 0%,rgba(232,227,217,.94) 44%,rgba(226,220,209,.97) 100%),
+             radial-gradient(72% 58% at 82% 10%,rgba(196,124,84,.16),transparent 62%)}
+body.t-light .fx-grain{opacity:.2}
+body.t-light .f-lead{border-bottom-color:var(--panel-line)}
+body.t-light .f-kick{color:var(--kick)}
+body.t-light .f-lead-say h2,body.t-light .f-lead-say h2 em,
+body.t-light .f-mark,body.t-light .f-cols a{color:var(--tx)}
+body.t-light .f-lead-say p,body.t-light .f-brand p,
+body.t-light .f-cols span{color:var(--tx-2)}
+body.t-light .f-cols h4{color:var(--kick)}
+body.t-light .f-legal{color:var(--tx-3);border-top-color:var(--panel-line)}
+body.t-light .f-mail{color:var(--tx-2) !important;border-bottom-color:var(--panel-line)}
+body.t-light .f-credits{border-top-color:var(--panel-line)}
+body.t-light .credit small{color:var(--tx-3)}
+/* the two credit marks are white artwork, so a light footer takes the dark pair */
+body.t-light .credit .mk.dl,body.t-light .credit .mk.tl{filter:invert(1)}
+body.t-light .f-mark .lmk{color:var(--tx)}
+body.t-light .btn-light{border-color:var(--tx);color:var(--tx)}
+body.t-light .btn-light::before{background:var(--tx)}
+body.t-light .btn-light:hover{color:var(--ground)}
+
+/* the deck's own plates, so nothing in it can be left on the old literal */
+body.t-light .deck .panel{background-color:var(--ground)}
+body.t-dark .deck .panel{background-color:#211E1A}
+
+/* ---------- Build 020: the bands stop being bands ----------
+   A band in its own colour is a strip, and on a page whose whole point is one
+   continuous ground that is exactly what it looked like — the section stopped,
+   a darker rectangle ran across, the section started again.
+
+   The band takes the page ground now. Nothing changes colour at a seam: the
+   grey runs from under the header straight through to the texture below it,
+   and what marks the joint is the three strokes and the plate index, which is
+   all it ever needed to be.
+
+   The band before the footer is gone from the markup entirely — registration
+   butts straight onto it, which is where a page should end. */
+.seam{background-color:var(--ground)}
+.seam + .pg,.seam + section{background-color:var(--ground)}
+/* a seam that follows an even section keeps that section's tone, so the run
+   reads as one surface rather than alternating across the joint */
+.pg:nth-of-type(even) + .seam{background-color:var(--ground-2)}
+.vh-reg{margin-bottom:0}
+.vh-reg + footer{margin-top:0}
+
+
+/* Build 023: the map loading plate is gone — the map is a static drawing
+   and should simply be there. */
+
+/* Build 026: cookie-bar styling removed with the bar. */
+
+/* ---------- reduced motion, and the focus rules ----------
+   Build 003. Everything scroll-driven on this page is decorative except the
+   walk-time counters, which print their final number instead of counting.
+   Nothing is left hidden: the reveal's hidden state is only ever applied by
+   script, and it is overridden here as well, so a reader who asks for less
+   motion still gets the whole page. */
+@media(prefers-reduced-motion:reduce){
+  .hero .media,.vh-plate > img,.vh-walk > img,.vh-walks > img,
+  body > nav,.hcard,.hc-pic img{transition:none !important}
+  .rise{opacity:1 !important;transform:none !important}
+  .vh-plate > img,.vh-walk > img,.vh-walks > img{filter:none;transform:none !important}
+  /* the card keeps its colour and border changes on hover — those carry the
+     affordance — and loses every movement: the lift, the zoom, the sheen,
+     the drawn rule and the body's follow. */
+  .hcard:hover{transform:none}
+  .hcard:hover .hc-pic img,.hcard:hover .hc-body{transform:none}
+  .hcard::after{transition:none}
+  .hcard:hover .hc-pic::before{animation:none;opacity:0}
+  .btn::before{transition:none}
+}
+
+/* a visible focus ring on everything a keyboard can reach, over pictures as
+   well as over the dark plates */
+a:focus-visible,button:focus-visible,input:focus-visible,
+.hcard:focus-visible,.burger:focus-visible{
+  outline:2px solid var(--clay);outline-offset:3px;border-radius:3px}
+
+/* the skip link has to clear the header, which floats over the first plate */
+.ax-skip:focus{top:calc(env(safe-area-inset-top) + 12px)}
+
 </style>
 </head>
-<body>
+<body class="t-dark">
 <div class="tint" aria-hidden="true"></div>
+<div class="datum" aria-hidden="true"><i></i><i></i></div>
 
 <nav>
   <div class="nav-in">
-    <a class="logo" href="index.html"><svg class="lmk" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 988.000000 916.000000" fill="currentColor"><g transform="translate(0.000000,916.000000) scale(0.100000,-0.100000)"
-fill="currentColor" stroke="none">
-<path d="M4620 8355 c-393 -315 -735 -588 -759 -606 -23 -19 -48 -39 -55 -45
--6 -5 -51 -42 -101 -82 -49 -39 -107 -86 -129 -104 -21 -18 -46 -37 -55 -42
--9 -5 -32 -23 -52 -40 -81 -69 -133 -111 -148 -120 -14 -8 -56 -42 -113 -91
--17 -14 -18 -168 -18 -2967 -1 -2581 -2 -2955 -15 -2972 -8 -11 -15 -26 -15
--33 0 -8 -18 -51 -40 -95 -22 -45 -40 -87 -40 -93 0 -5 -18 -46 -40 -89 -22
--43 -40 -82 -40 -87 0 -26 -21 -58 -35 -53 -13 5 -72 120 -145 279 -10 22 -43
-92 -73 155 -30 63 -65 138 -77 165 -12 28 -42 93 -67 145 -25 52 -53 113 -63
-135 -10 22 -43 92 -73 155 -30 63 -65 138 -77 165 -12 28 -42 93 -67 145 -25
-52 -53 113 -63 135 -10 22 -41 87 -68 145 -28 58 -62 132 -77 165 -15 33 -47
-103 -72 155 -25 52 -53 113 -63 135 -10 22 -43 92 -73 155 -30 63 -65 138 -77
-165 -12 28 -42 93 -67 145 -25 52 -53 113 -63 135 -10 22 -43 92 -73 155 -30
-63 -65 138 -77 165 -12 28 -42 93 -67 145 -25 52 -53 113 -63 135 -10 22 -46
-97 -79 166 -34 69 -61 129 -61 133 0 4 -27 64 -61 134 -33 70 -70 147 -81 172
--11 25 -27 59 -36 75 -8 17 -21 75 -28 130 -8 55 -16 118 -20 140 -6 44 -17
-31 194 232 18 18 30 38 27 44 -9 14 -1034 1 -1052 -13 -17 -13 -5 -36 26 -53
-15 -7 40 -27 57 -43 16 -15 86 -74 155 -130 124 -100 127 -103 173 -194 25
--51 46 -96 46 -101 0 -4 36 -81 80 -172 44 -91 80 -169 80 -174 0 -5 27 -62
-60 -126 33 -64 60 -122 60 -127 0 -5 27 -66 61 -136 33 -70 69 -145 79 -167
-10 -22 46 -97 79 -167 34 -70 61 -129 61 -133 0 -4 27 -63 61 -133 33 -70 67
--140 74 -157 7 -16 43 -92 79 -167 36 -75 66 -141 66 -146 0 -4 27 -62 60
--128 33 -65 60 -123 60 -127 0 -5 27 -65 61 -135 33 -70 69 -145 79 -167 10
--22 46 -97 79 -167 34 -70 61 -130 61 -135 0 -4 27 -62 60 -127 33 -66 60
--123 60 -128 0 -5 36 -82 80 -173 44 -91 80 -168 80 -173 0 -5 27 -62 60 -128
-33 -65 60 -123 60 -127 0 -5 27 -65 61 -135 33 -70 67 -140 74 -157 7 -16 43
--92 79 -167 36 -75 66 -141 66 -146 0 -6 27 -63 60 -127 33 -64 60 -121 60
--126 0 -5 18 -46 39 -92 21 -45 42 -90 45 -100 12 -37 49 -16 69 38 11 28 23
-57 27 66 5 9 23 54 41 100 18 46 39 93 46 104 7 11 13 26 13 35 1 8 9 33 20
-55 11 22 19 44 20 48 0 5 6 23 14 40 8 18 26 61 41 97 14 36 35 82 46 102 10
-20 19 44 19 52 0 14 10 38 61 152 11 23 19 46 19 52 0 10 11 37 56 137 7 17
-20 49 29 72 36 102 47 127 60 147 8 11 15 27 15 36 0 8 9 32 20 53 11 20 20
-43 20 50 0 7 9 29 20 50 11 20 20 45 20 55 0 10 7 27 15 38 8 12 22 41 31 65
-28 76 50 133 61 159 52 121 63 149 63 158 0 6 6 23 14 39 29 59 56 124 56 136
-0 6 7 26 16 42 9 17 21 46 29 65 18 49 83 209 100 247 8 17 15 34 15 38 0 4 6
-21 14 38 8 18 26 61 41 97 14 36 35 82 46 102 10 20 19 44 19 52 0 14 10 38
-61 152 11 23 19 46 19 52 0 10 11 37 56 137 7 17 21 50 30 75 35 99 45 124 59
-144 8 11 15 30 15 41 0 11 9 34 20 50 11 17 20 37 20 45 0 8 9 32 20 53 11 20
-20 45 20 55 0 10 7 27 15 38 8 12 22 41 31 65 28 76 50 133 61 159 52 121 63
-149 63 158 0 6 6 23 14 39 27 53 66 150 66 165 0 8 4 18 9 23 5 6 24 48 41 95
-38 98 66 164 86 202 8 14 14 31 14 38 0 7 6 26 14 43 8 18 26 61 41 97 14 36
-35 82 46 102 10 20 19 44 19 52 0 14 10 38 56 141 7 17 20 48 28 70 37 104 48
-129 61 149 8 11 15 28 15 38 0 18 26 82 61 150 10 20 19 45 19 55 0 10 9 32
-20 48 11 17 20 37 20 45 0 8 9 32 20 53 11 20 20 44 20 52 0 9 9 33 19 53 30
-57 71 158 71 174 0 8 4 18 9 24 5 5 16 27 25 49 8 22 26 72 40 110 l26 70 5
-400 c7 618 7 2093 0 2105 -3 5 -9 10 -13 9 -4 -1 -329 -259 -722 -574z M5530
-3272 c0 -2342 3 -3031 12 -3040 9 -9 75 -12 235 -12 l223 0 9 23 c5 13 10 305
-10 648 0 343 4 1595 7 2781 l7 2158 -234 235 c-129 129 -242 235 -251 235 -17
-0 -18 -151 -18 -3028z M6214 5589 c-8 -14 -19 -5308 -10 -5343 l6 -26 165 0
-165 0 10 26 c6 16 10 807 10 2177 0 1184 0 2158 0 2165 0 18 20 15 44 -8 12
--11 42 -39 69 -62 l48 -43 -1 -2102 c0 -1305 4 -2112 10 -2127 l9 -25 173 -3
-c202 -3 225 3 246 68 7 21 38 91 68 154 31 63 64 133 73 155 10 22 40 85 66
-140 26 55 53 114 60 130 7 17 33 73 58 125 25 52 60 129 79 170 18 41 52 112
-76 159 23 46 42 88 42 94 0 6 27 67 61 136 33 69 69 144 79 166 10 22 39 85
-65 140 26 55 53 114 60 130 8 17 38 82 68 145 30 63 69 147 85 185 17 39 47
-101 66 138 20 38 36 73 36 80 0 6 27 67 61 136 33 69 69 144 79 166 10 22 39
-85 65 140 26 55 53 114 60 130 8 17 38 82 68 145 30 63 69 147 85 185 17 39
-47 101 66 138 20 38 36 73 36 78 0 6 27 67 61 137 33 70 69 145 79 167 10 22
-46 97 79 167 34 70 61 131 61 137 0 5 16 40 36 78 19 37 57 118 84 178 27 61
-65 141 84 178 20 38 36 73 36 78 0 6 26 65 59 132 32 67 63 134 69 148 17 43
-68 94 144 145 116 77 178 128 178 147 0 9 -960 0 -992 -9 -21 -6 -24 -29 -5
--43 6 -6 38 -33 69 -60 31 -27 69 -58 83 -67 47 -31 57 -64 45 -156 -5 -46
--10 -103 -10 -128 0 -33 -11 -67 -40 -124 -22 -43 -40 -84 -40 -89 0 -6 -18
--49 -41 -96 -22 -47 -49 -104 -59 -126 -10 -22 -37 -79 -59 -126 -23 -47 -41
--92 -41 -100 0 -8 -6 -23 -14 -34 -7 -11 -37 -74 -66 -140 -29 -66 -59 -129
--65 -140 -7 -11 -16 -31 -20 -45 -4 -14 -32 -76 -61 -138 -30 -62 -54 -117
--54 -122 0 -5 -18 -43 -40 -85 -22 -42 -40 -82 -40 -90 0 -8 -18 -48 -40 -90
--22 -42 -40 -80 -40 -85 0 -5 -21 -54 -46 -107 -25 -54 -49 -107 -54 -118 -5
--11 -29 -64 -54 -118 -25 -53 -46 -102 -46 -107 0 -5 -18 -43 -40 -85 -22 -42
--40 -81 -40 -88 0 -7 -18 -48 -40 -91 -22 -43 -40 -83 -40 -87 0 -5 -27 -65
--60 -134 -33 -69 -60 -131 -60 -138 0 -7 -6 -21 -14 -32 -7 -11 -37 -74 -66
--140 -29 -66 -59 -129 -65 -140 -7 -11 -16 -31 -20 -45 -3 -14 -22 -59 -42
--100 -19 -41 -43 -93 -53 -115 -10 -22 -36 -77 -59 -123 -22 -46 -41 -90 -41
--97 0 -7 -18 -49 -39 -92 -22 -43 -52 -107 -67 -143 -26 -62 -62 -120 -73
--120 -3 0 -5 813 -4 1806 2 1425 0 1810 -10 1829 -6 13 -73 86 -147 162 -74
-76 -151 157 -169 178 -19 22 -112 119 -205 215 -94 96 -214 221 -266 278 -93
-100 -112 113 -126 91z"/>
-</g></svg><span>Victoria<b>Haus</b></span></a>
+    <a class="logo" href="index.html"><span>Victoria<b>Haus</b></span></a>
     <ul>
       <li><a class="nl" href="homes.html">Homes</a></li>
       <li><a class="nl" href="floorplans.html">Floor Plans</a></li>
@@ -144,23 +1394,24 @@ c202 -3 225 3 246 68 7 21 38 91 68 154 31 63 64 133 73 155 10 22 40 85 66
       <li><a class="nl" href="team.html">Team</a></li>
       <li><a class="reg" href="#register">Register</a></li>
     </ul>
-    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span class="bl"><span class="w-a">Menu</span><span class="w-b">Close</span></span><span class="bx" aria-hidden="true"><i></i><i></i></span></button>
   </div>
 </nav>
 
 <div class="veil" id="veil"></div>
 <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Menu">
   <div class="d-pic">
-    <img src="assets/img/02-exterior-lane.webp" alt="" aria-hidden="true" loading="lazy">
-    <span>The entry walk</span>
+    <img class="d-fr on" src="assets/img/02-exterior-lane.webp" alt="" aria-hidden="true" loading="lazy">
+    <img class="d-fr" alt="" aria-hidden="true" loading="lazy">
+    <span class="d-cap">The entry walk</span>
   </div>
   <div class="d-body">
-    <a href="homes.html"><span class="d-num">01</span>Homes</a>
-    <a href="floorplans.html"><span class="d-num">02</span>Floor Plans</a>
-    <a href="neighbourhood.html"><span class="d-num">03</span>Neighbourhood</a>
-    <a href="gallery.html"><span class="d-num">04</span>Gallery</a>
-    <a href="team.html"><span class="d-num">05</span>Team</a>
-    <a class="d-go" href="#register">Register &rarr;</a>
+    <a href="homes.html" data-pic="assets/img/03-living-kitchen.webp" data-cap="Living, dining, kitchen"><span class="d-num">01</span>Homes</a>
+    <a href="floorplans.html" data-pic="assets/img/12-siteplan.webp" data-cap="The site plan"><span class="d-num">02</span>Floor Plans</a>
+    <a href="neighbourhood.html" data-pic="assets/img/09-trout-lake.webp" data-cap="Trout Lake, two blocks north"><span class="d-num">03</span>Neighbourhood</a>
+    <a href="gallery.html" data-pic="assets/img/06-roof-deck.webp" data-cap="The roof deck"><span class="d-num">04</span>Gallery</a>
+    <a href="team.html" data-pic="assets/img/14-under-construction.webp" data-cap="Under construction on Victoria Drive"><span class="d-num">05</span>Team</a>
+    <a class="d-go" href="#register" data-pic="assets/img/04-genkan.webp" data-cap="The genkan">Register &rarr;</a>
     <div class="d-meta">
       Victoria Drive at East 23rd Avenue<br>
       Vancouver, British Columbia<br>
@@ -171,174 +1422,323 @@ c202 -3 225 3 246 68 7 21 38 91 68 154 31 63 64 133 73 155 10 22 40 85 66
 <button class="d-close" id="dClose" aria-label="Close menu">&#10005;</button>
 
 <div class="page">
-<header class="hero">
-  <div class="media">
-    <img src="assets/img/01-hero-poster.webp" alt="Victoria Haus on the corner of Victoria Drive and East 23rd Avenue">
-    <!-- Two layers. The 1.4 MB opener starts almost immediately so the header is
-         never a frozen photograph; the 25 MB master loads behind it and, once it
-         can play through, is seeked to the opener's exact timestamp and faded on
-         top. Same clip, same length, so the handover lands on the same frame. -->
-    <video class="v-open" data-loop="0,6" autoplay muted playsinline preload="auto"
-           poster="assets/img/01-hero-poster.webp">
-      <source src="assets/video/hero-open.mp4" type="video/mp4">
-    </video>
-    <video class="v-hq" data-loop="0,6" muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
-      <!-- The 34 Mbps master, cut to its first six seconds. A container trim, not
-           a re-encode: byte-identical to the master over that span. -->
-      <source src="assets/video/hero-loop.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="shade"></div>
-  <div class="hero-inner">
-    <h1 class="display">
-      <span class="ln"><span>Four homes,</span></span>
-      <span class="ln"><span>one quiet corner.</span></span>
-    </h1>
-    <p class="sub-copy">Three-bedroom homes over three levels at Victoria Drive and East 23rd. Each with its own front door, its own garden, and a roof deck of its own above the trees.</p>
-  </div>
-  <span class="scrollcue">Scroll</span>
-</header>
+<div class="deck" id="deck">
 
-<section>
-  <div class="wrap">
-    <div class="intro-grid">
-      <div>
-        <div class="kicker reveal">Victoria Drive at East 23rd</div>
-        <h2 class="title display reveal d1">A small building that knows its street.</h2>
-      </div>
-      <p class="lead reveal d2">Four homes on a single corner lot in Kensington-Cedar Cottage, the kind of quiet, tree-lined block that made this part of Vancouver worth living in. Two blocks from Trout Lake, ten minutes from The Drive, and close enough to the 20 that you can leave the car behind.</p>
+
+  <!-- 1 -->
+  <header class="hero panel">
+    <span class="lift" aria-hidden="true"></span>
+    <div class="media">
+      <img src="assets/img/01-hero-poster.webp" alt="Victoria Haus on the corner of Victoria Drive and East 23rd Avenue">
+      <video class="v-open" data-loop="0,6" autoplay muted playsinline preload="auto"
+             poster="assets/img/01-hero-poster.webp">
+        <source src="assets/video/hero-open.mp4" type="video/mp4">
+      </video>
+      <video class="v-hq" data-loop="0,6" muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
+        <source src="assets/video/hero-loop.mp4" type="video/mp4">
+      </video>
     </div>
-    <div class="stats">
-      <div class="stat reveal"><b><span data-count="4">0</span></b><small>Homes</small></div>
-      <div class="stat reveal d1"><b>3</b><small>Bedrooms, 2.5 baths</small></div>
-      <div class="stat reveal d2"><b><span data-count="1595">0</span></b><small>Sq. ft. total</small></div>
-      <div class="stat reveal d3"><b>3</b><small>Levels, each home</small></div>
-    </div>
-  </div>
-</section>
-
-<div class="bleed break reveal">
-  <div class="bleed-media" data-depth="30">
-    <img src="assets/img/02-exterior-lane.webp" alt="The entry walk at Victoria Haus" loading="lazy">
-  </div>
-  <span class="cap">The entry walk</span>
-</div>
-
-<section>
-  <div class="wrap">
-    <div class="split">
-      <div>
-        <div class="kicker reveal">The genkan</div>
-        <h2 class="title display reveal d1">You take your shoes off here.</h2>
-        <p class="lead reveal d2">Every home opens into a genkan, the recessed entry vestibule of a Japanese house, where the street stops and the home begins. It is a small idea, and it changes how the whole ground floor works: coats, boots and bicycles have somewhere to live, and the living room stays a living room.</p>
-        <p class="lead reveal d2" style="margin-top:18px">Beyond it, the ground floor runs the full depth of the home: kitchen, dining and living in one uninterrupted line, opening onto a private garden patio.</p>
-      </div>
-      <div class="frame reveal d1" data-lightbox data-title="The genkan"
-           data-caption="The recessed entry vestibule that opens every home.">
-        <img src="assets/img/04-genkan.webp" alt="The genkan entry vestibule" loading="lazy">
+    <div class="shade"></div>
+    <div class="hero-inner" data-fade>
+      <h1 class="display">
+        <span class="ln"><span>Four homes,</span></span>
+        <span class="ln"><span>one quiet <em>corner</em>.</span></span>
+      </h1>
+      <div class="vh-meta">
+        <span>1,595 sq ft</span>
+        <span>3 levels</span>
+        <span>3 bed, 2.5 bath</span>
+        <span>Private roof deck</span>
       </div>
     </div>
+    <span class="scrollcue">Scroll</span>
+  </header>
+
+  <div class="seam" aria-hidden="true">
+    <div class="seam-in"><span class="seam-v" aria-hidden="true"></span><span class="seam-lab"><b>01</b>The approach</span></div>
   </div>
-</section>
 
-<section style="background:var(--sand);">
-  <div class="wrap">
-    <div class="kicker reveal">The homes</div>
-    <h2 class="title display reveal d1">Four homes. Four trees.</h2>
-    <p class="lead reveal d2">The four are the same size and the same plan. What separates them is where they sit on the lot: which street they face, where the light comes from, and how the garden falls. Each is named for a tree that grows here.</p>
-
-    <div class="homes-grid">
-      <a class="home-card reveal" href="floorplans.html#hinoki">
-        <div class="frame"><img src="assets/img/05-primary-bedroom.webp" alt="Hinoki" loading="lazy"></div>
-        <div class="jp">Hinoki <em>Home A</em></div>
-        <p>3992 Victoria Drive. The corner home, with two exposures and the widest frontage.</p>
-      </a>
-      <a class="home-card reveal d1" href="floorplans.html#momiji">
-        <div class="frame"><img src="assets/img/07-patio.webp" alt="Momiji" loading="lazy"></div>
-        <div class="jp">Momiji <em>Home B</em></div>
-        <p>#2 – 2017 East 23rd. Set back from both streets, with the most sheltered garden.</p>
-      </a>
-      <a class="home-card reveal d2" href="floorplans.html#sakura">
-        <div class="frame"><img src="assets/img/03-living-kitchen.webp" alt="Sakura" loading="lazy"></div>
-        <div class="jp">Sakura <em>Home C</em></div>
-        <p>#3 – 2017 East 23rd. North-east corner, morning light through the kitchen.</p>
-      </a>
-      <a class="home-card reveal d3" href="floorplans.html#matsu">
-        <div class="frame"><img src="assets/img/06-roof-deck.webp" alt="Matsu" loading="lazy"></div>
-        <div class="jp">Matsu <em>Home D</em></div>
-        <p>#1 – 2017 East 23rd. Addresses East 23rd, with the shortest walk to parking.</p>
-      </a>
-    </div>
-
-    <div style="margin-top:clamp(38px,4vw,60px)" class="reveal">
-      <a class="btn" href="floorplans.html">See the floor plans <span class="arr">&rarr;</span></a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="split">
-      <div class="frame reveal" data-lightbox data-title="Trout Lake"
-           data-caption="Two blocks north. Swimming in summer, the farmers market on Saturdays.">
-        <img src="assets/img/09-trout-lake.webp" alt="Trout Lake" loading="lazy">
+  <!-- 2 -->
+  <!-- Build 003. This was two copies of the same picture, one blurred, with a
+       clip-path band opening over the sharp one. It read as a rendering you
+       could not see: 80% of the frame was permanently out of focus. The
+       picture is now simply the picture, full bleed and sharp, with the words
+       on a gradient that only darkens the side they sit on. -->
+  <section class="panel vh-walk lap-a tex-grain">
+    <span class="lift" aria-hidden="true"></span>
+    <div class="lap-g" aria-hidden="true"></div>
+    <div class="fr">
+      <img src="assets/img/02-exterior-lane.webp" alt="The entry walk at Victoria Haus, set back from Victoria Drive" loading="lazy">
+      <div class="grad" aria-hidden="true"></div>
+      <div class="words">
+        <div class="n" data-rv>The approach</div>
+        <h2 data-rv="mask" style="--d:90ms">Set back from the street.<br>The walk is the <em>welcome</em>.</h2>
+        <p data-rv style="--d:260ms">Each home keeps its own front door and its own path in, a few paces of garden between the sidewalk and the threshold.</p>
       </div>
-      <div>
-        <div class="kicker reveal">The neighbourhood</div>
-        <h2 class="title display reveal d1">Two blocks to the lake.</h2>
-        <p class="lead reveal d2">Trout Lake sits at the top of the street: swimming in July, the Saturday farmers market year-round, and the community centre and rink beside it. Victoria Drive itself carries the bakeries, the produce shops and the coffee. Commercial Drive is ten minutes west on foot.</p>
-        <div style="margin-top:32px" class="reveal d2">
-          <a class="btn" href="neighbourhood.html">Explore the neighbourhood <span class="arr">&rarr;</span></a>
+      <span class="cap" data-rv style="--d:380ms">The entry walk</span>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true">
+    <div class="seam-in"><span class="seam-v" aria-hidden="true"></span><span class="seam-lab"><b>02</b>The genkan</span></div>
+  </div>
+
+  <!-- 3 -->
+  <section class="panel vh-plate">
+    <span class="lift" aria-hidden="true"></span>
+    <img src="assets/img/04-genkan.webp" alt="The genkan entry vestibule" loading="lazy">
+    <div class="grad" aria-hidden="true"></div>
+    <div class="words">
+      <h2 data-rv="mask">You take your shoes <em>off</em> here.</h2>
+      <p class="cap" data-rv style="--d:240ms">The genkan &middot; every home</p>
+      <a class="btn btn-light" data-rv style="--d:360ms" href="gallery.html">Explore the interiors <span class="arr">&rarr;</span></a>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true">
+    <div class="seam-in"><span class="seam-v" aria-hidden="true"></span><span class="seam-lab"><b>03</b>The homes</span></div>
+  </div>
+
+  <!-- 4 -->
+  <!-- Build 003. This was a four-card 3D coverflow. Two problems, and the
+       research is unambiguous on both: a carousel shows one of four homes at a
+       time (NN/g: ~1% of visitors click a carousel and ~84% of those only ever
+       see slide one), and it was the ONLY route to the other three — Baymard's
+       exact failure case. With four items there is no space to save. All four
+       are on screen at once now, each a real link to its plan, which also gives
+       the floor plans page four crawlable ways in. The motion is a staggered
+       arrival, which hides nothing. -->
+  <section class="panel vh-homes lap-b tex-grain" aria-labelledby="homes-h">
+    <span class="lift" aria-hidden="true"></span>
+    <div class="bg lap-g" aria-hidden="true"></div>
+
+    <div class="hm-in">
+      <div class="hm-head">
+        <div class="hm-kick" data-rv>One plan &middot; four corners of one lot</div>
+        <h2 id="homes-h" data-rv="mask" style="--d:80ms">Four homes. Four <em>trees</em>.</h2>
+      </div>
+
+      <div class="hm-grid">
+        <a class="hcard" href="floorplans.html#hinoki" data-rv style="--d:0ms">
+          <span class="hc-pic" data-rv="zoom"><img src="assets/img/05-primary-bedroom.webp" alt="Hinoki, Home A at Victoria Haus" loading="lazy"></span>
+          <span class="hc-body">
+            <span class="hc-nm"><b>Hinoki</b><i>Home A</i></span>
+            <span class="hc-addr">3992 Victoria Drive</span>
+            <span class="hc-note">The corner home, with two exposures and the widest frontage.</span>
+            <span class="hc-fig"><span>1,595 sq ft</span><span>3 bed</span><span>2.5 bath</span></span>
+            <span class="hc-go">View floor plan <span class="arr">&rarr;</span></span>
+          </span>
+        </a>
+        <a class="hcard" href="floorplans.html#momiji" data-rv style="--d:90ms">
+          <span class="hc-pic" data-rv="zoom"><img src="assets/img/07-patio.webp" alt="Momiji, Home B at Victoria Haus" loading="lazy"></span>
+          <span class="hc-body">
+            <span class="hc-nm"><b>Momiji</b><i>Home B</i></span>
+            <span class="hc-addr">#2 – 2017 East 23rd</span>
+            <span class="hc-note">Set back from both streets, the most sheltered garden.</span>
+            <span class="hc-fig"><span>1,595 sq ft</span><span>3 bed</span><span>2.5 bath</span></span>
+            <span class="hc-go">View floor plan <span class="arr">&rarr;</span></span>
+          </span>
+        </a>
+        <a class="hcard" href="floorplans.html#sakura" data-rv style="--d:180ms">
+          <span class="hc-pic" data-rv="zoom"><img src="assets/img/03-living-kitchen.webp" alt="Sakura, Home C at Victoria Haus" loading="lazy"></span>
+          <span class="hc-body">
+            <span class="hc-nm"><b>Sakura</b><i>Home C</i></span>
+            <span class="hc-addr">#3 – 2017 East 23rd</span>
+            <span class="hc-note">North-east corner, morning light through the kitchen.</span>
+            <span class="hc-fig"><span>1,595 sq ft</span><span>3 bed</span><span>2.5 bath</span></span>
+            <span class="hc-go">View floor plan <span class="arr">&rarr;</span></span>
+          </span>
+        </a>
+        <a class="hcard" href="floorplans.html#matsu" data-rv style="--d:270ms">
+          <span class="hc-pic" data-rv="zoom"><img src="assets/img/06-roof-deck.webp" alt="Matsu, Home D at Victoria Haus" loading="lazy"></span>
+          <span class="hc-body">
+            <span class="hc-nm"><b>Matsu</b><i>Home D</i></span>
+            <span class="hc-addr">#1 – 2017 East 23rd</span>
+            <span class="hc-note">Addresses East 23rd, the shortest walk to parking.</span>
+            <span class="hc-fig"><span>1,595 sq ft</span><span>3 bed</span><span>2.5 bath</span></span>
+            <span class="hc-go">View floor plan <span class="arr">&rarr;</span></span>
+          </span>
+        </a>
+      </div>
+
+      <div class="hm-foot" data-rv style="--d:380ms">
+        <a class="btn btn-light" href="floorplans.html">All floor plans <span class="arr">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true">
+    <div class="seam-in"><span class="seam-v" aria-hidden="true"></span><span class="seam-lab"><b>04</b>The neighbourhood</span></div>
+  </div>
+
+  <!-- 5 -->
+  <!-- Build 003. One line and a button was not an argument for the location,
+       it was a caption. The case for this corner is the walk times, so the
+       walk times are the section: they count up as you arrive, which is the
+       one place on this page where animation carries information rather than
+       decorating it. Under prefers-reduced-motion they simply appear. -->
+  <section class="panel vh-walks" aria-labelledby="walks-h">
+    <span class="lift" aria-hidden="true"></span>
+    <img src="assets/img/09-trout-lake.webp" alt="Trout Lake, two blocks north of Victoria Haus" loading="lazy">
+    <div class="grad" aria-hidden="true"></div>
+
+    <div class="wk-in">
+      <div class="wk-head">
+        <div class="wk-kick" data-rv data-rv-late>On foot from the front door</div>
+        <h2 id="walks-h" data-rv="mask" data-rv-late style="--d:80ms">Measured in minutes,<br>not <em>kilometres</em>.</h2>
+      </div>
+
+      <dl class="wk-grid">
+        <div class="wk" data-rv data-rv-late style="--d:160ms">
+          <dt><b class="wk-n" data-count="2">2</b><span class="wk-u">min</span></dt>
+          <dd>Trout Lake and John Hendry Park</dd>
+        </div>
+        <div class="wk" data-rv data-rv-late style="--d:240ms">
+          <dt><b class="wk-n" data-count="1">1</b><span class="wk-u">min</span></dt>
+          <dd>The 20 Victoria bus, at the corner</dd>
+        </div>
+        <div class="wk" data-rv data-rv-late style="--d:320ms">
+          <dt><b class="wk-n" data-count="10">10</b><span class="wk-u">min</span></dt>
+          <dd>Commercial Drive</dd>
+        </div>
+        <div class="wk" data-rv data-rv-late style="--d:400ms">
+          <dt><b class="wk-n" data-count="12">12</b><span class="wk-u">min</span></dt>
+          <dd>Nanaimo SkyTrain Station</dd>
+        </div>
+      </dl>
+
+      <div class="wk-foot" data-rv style="--d:480ms">
+        <a class="btn btn-light" href="neighbourhood.html">The neighbourhood <span class="arr">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true">
+    <div class="seam-in"><span class="seam-v" aria-hidden="true"></span><span class="seam-lab"><b>05</b>Registration</span></div>
+  </div>
+
+</div><!-- /.deck -->
+
+<div class="tail">
+<!-- Build 003. The old version put a live receipt down the left, so every
+     answer was echoed back while you were still answering — busywork on the
+     page and a column of em-dashes for the whole first half of the form. The
+     brief was right: walk people through, then summarise at the end. The left
+     column is now just the reason to register, the form is the walkthrough,
+     and the summary appears once, on submit, where it can actually be checked.
+     The whole section also came up out of near-black; it was the darkest thing
+     on the page and it is the one thing that asks for work. -->
+<section class="vh-reg lap-c tex-grain" id="register" aria-labelledby="reg-h">
+  <div class="lap-g" aria-hidden="true"></div>
+  <div class="rg-glow" aria-hidden="true"></div>
+  <div class="wrap rg-in">
+
+    <div class="rg-say">
+      <div class="rg-eyebrow" data-rv>Registration</div>
+      <h2 id="reg-h" data-rv="mask" style="--d:70ms">Register for<br>first <em>access</em>.</h2>
+
+      <ul class="rg-why" data-rv style="--d:180ms">
+        <li>Plans and pricing first</li>
+        <li>A private preview</li>
+        <li>Four homes only</li>
+      </ul>
+
+      <div class="rg-contact" data-rv style="--d:250ms">
+        <a href="mailto:hello@victoriahaus.ca">hello@victoriahaus.ca</a>
+      </div>
+    </div>
+
+    <form class="rg-form" id="regForm" novalidate data-rv style="--d:120ms">
+      <div class="rg-rail" id="rgRail" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <p class="rg-count" id="rgCount" aria-live="polite">Step 1 of 4</p>
+
+      <div class="rg-steps">
+        <fieldset class="rg-step is-on" data-step="0">
+          <legend>What should we call you?</legend>
+          <div class="rg-two">
+            <input id="rgFirst" placeholder="First name" autocomplete="given-name" aria-label="First name">
+            <input id="rgLast" placeholder="Last name" autocomplete="family-name" aria-label="Last name">
+          </div>
+        </fieldset>
+
+        <fieldset class="rg-step" data-step="1">
+          <legend>Where do the plans go?</legend>
+          <input id="rgEmail" type="email" placeholder="you@example.com" autocomplete="email" aria-label="Email address">
+          <p class="rg-hint">Plans, pricing and the preview date. Nothing else.</p>
+        </fieldset>
+
+        <fieldset class="rg-step" data-step="2">
+          <legend>Which home draws you?</legend>
+          <div class="chips" id="rgHomes" role="group" aria-label="Which home">
+            <button type="button" data-v="Hinoki &middot; Home A">Hinoki</button>
+            <button type="button" data-v="Momiji &middot; Home B">Momiji</button>
+            <button type="button" data-v="Sakura &middot; Home C">Sakura</button>
+            <button type="button" data-v="Matsu &middot; Home D">Matsu</button>
+            <button type="button" data-v="Still deciding">Still deciding</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="rg-step" data-step="3">
+          <legend>Are you working with a realtor?</legend>
+          <div class="chips" id="rgRep" role="group" aria-label="Representation">
+            <button type="button" data-v="Not represented">No</button>
+            <button type="button" data-v="Represented">Yes</button>
+            <button type="button" data-v="A realtor">I am a realtor</button>
+          </div>
+          <input id="rgPhone" type="tel" placeholder="Phone (optional)" autocomplete="tel" aria-label="Phone">
+        </fieldset>
+
+        <div class="rg-done" id="rgDone" hidden tabindex="-1">
+          <span class="tick" aria-hidden="true">&#10003;</span>
+          <h3 id="rgDoneH">You are on the list.</h3>
+          <p id="rgDoneP">Plans and pricing come to you before anything is said publicly.</p>
+          <dl class="rg-sum" id="rgSum"></dl>
+          <button type="button" class="rg-edit" id="rgEdit">Something wrong? Go back and change it</button>
         </div>
       </div>
-    </div>
+
+      <p class="rg-err" id="rgErr" role="alert"></p>
+
+      <div class="rg-acts" id="rgActs">
+        <button type="button" class="rg-back" id="rgBack">&larr; Back</button>
+        <button type="submit" class="rg-go" id="rgGo">Continue <span class="arr">&rarr;</span></button>
+      </div>
+
+      <p class="rg-consent">By registering you consent to receive updates about Victoria Haus. Unsubscribe at any time.</p>
+    </form>
+
   </div>
 </section>
 
-<div class="register" id="register">
-  <div class="wrap inner">
-    <div>
-      <h2 class="display reveal">Register for<br>first access.</h2>
-      <p class="reveal d1">Four homes, released together. Register for floor plans, pricing and a private preview before we open to the public.</p>
-      <p class="reveal d2" style="margin-top:26px">
-        <b style="color:#EDEAE3">Victoria Haus</b><br>
-        Victoria Drive at East 23rd Avenue<br>
-        Vancouver, British Columbia<br>
-        604.555.0123 · hello@victoriahaus.ca
-      </p>
-    </div>
-    <form data-demo class="reveal d1">
-      <input placeholder="First name" aria-label="First name" required>
-      <input placeholder="Last name" aria-label="Last name" required>
-      <input class="full" type="email" placeholder="Email address" aria-label="Email address" required>
-      <input type="tel" placeholder="Phone" aria-label="Phone">
-      <input type="text" placeholder="Postal code" aria-label="Postal code">
-      <select class="full" aria-label="Are you working with a realtor?">
-        <option value="">Are you working with a realtor?</option>
-        <option>No, I am not represented</option>
-        <option>Yes, I am represented</option>
-        <option>I am a realtor</option>
-      </select>
-      <select class="full" aria-label="How did you hear about us?">
-        <option value="">How did you hear about Victoria Haus?</option>
-        <option>Walked or drove past</option>
-        <option>Online search</option>
-        <option>Social media</option>
-        <option>Friend or family</option>
-        <option>My realtor</option>
-      </select>
-      <button type="submit">Register</button>
-      <p class="consent">By registering you consent to receive updates about Victoria Haus. You can unsubscribe at any time.</p>
-    </form>
-  </div>
-</div>
+<!-- The footer is a place rather than a panel: the roof-deck render sits
+     behind the whole thing, drifting on scroll, with a grain layer over it so
+     the gradient never bands. It follows the page's theme — pale wash and dark
+     type on a light page — and registration butts straight onto it, with no
+     band between them. -->
 
-<footer>
-  <div class="wrap f-top">
-    <div class="f-brand">
-      <!-- RK: the mark must not change between the header and the footer. Same
-           two-line Jost lockup as the nav, just larger. -->
-      <a class="f-mark" href="index.html"><svg class="lmk" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 988.000000 916.000000" fill="currentColor"><g transform="translate(0.000000,916.000000) scale(0.100000,-0.100000)"
+<footer id="site-foot" class="lap-d">
+  <div class="fx-bg lap-g" aria-hidden="true">
+    <img src="assets/img/06-roof-deck.webp" alt="" loading="lazy" decoding="async">
+    <span class="fx-wash"></span>
+    <span class="fx-grain"></span>
+  </div>
+
+  <div class="fx-body">
+    <div class="wrap f-lead" data-rv>
+      <div class="f-lead-say">
+        <div class="f-kick">Registration open</div>
+        <h2 data-rv="mask" style="--d:80ms">Four homes.<br>One <em>corner</em>.</h2>
+        <p>Victoria Drive at East 23rd Avenue, Kensington&#8209;Cedar Cottage.<br>Spring 2027.</p>
+      </div>
+      <div class="f-lead-act">
+        <a class="btn btn-light" href="#register">Register for first access <span class="arr">&rarr;</span></a>
+        <a class="f-mail" href="mailto:hello@victoriahaus.ca">hello@victoriahaus.ca</a>
+      </div>
+    </div>
+
+    <div class="wrap f-top" data-rv style="--d:90ms">
+      <div class="f-brand">
+        <a class="f-mark" href="index.html"><svg class="lmk" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 988.000000 916.000000" fill="currentColor"><g transform="translate(0.000000,916.000000) scale(0.100000,-0.100000)"
 fill="currentColor" stroke="none">
 <path d="M4620 8355 c-393 -315 -735 -588 -759 -606 -23 -19 -48 -39 -55 -45
 -6 -5 -51 -42 -101 -82 -49 -39 -107 -86 -129 -104 -21 -18 -46 -37 -55 -42
@@ -416,64 +1816,475 @@ c202 -3 225 3 246 68 7 21 38 91 68 154 31 63 64 133 73 155 10 22 40 85 66
 76 -151 157 -169 178 -19 22 -112 119 -205 215 -94 96 -214 221 -266 278 -93
 100 -112 113 -126 91z"/>
 </g></svg><span>Victoria<b>Haus</b></span></a>
-      <p>Four three-bedroom homes on the corner of Victoria Drive and East 23rd Avenue,
-         Kensington-Cedar Cottage. 1,595 sq ft over three levels, each with its own front
-         door, its own garden and a private roof deck.</p>
+        <p>Four three-bedroom homes on the corner of Victoria Drive and East 23rd Avenue,
+           Kensington-Cedar Cottage. 1,595 sq ft over three levels, each with its own front
+           door, its own garden and a private roof deck.</p>
+      </div>
+      <div class="f-cols">
+        <div>
+          <h4>Explore</h4>
+          <a href="homes.html">Homes</a>
+          <a href="floorplans.html">Floor Plans</a>
+          <a href="neighbourhood.html">Neighbourhood</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="team.html">Team</a>
+        </div>
+        <div>
+          <h4>The homes</h4>
+          <a href="floorplans.html#hinoki">Hinoki &middot; 3992 Victoria Drive</a>
+          <a href="floorplans.html#momiji">Momiji &middot; #2 &ndash; 2017 East 23rd</a>
+          <a href="floorplans.html#sakura">Sakura &middot; #3 &ndash; 2017 East 23rd</a>
+          <a href="floorplans.html#matsu">Matsu &middot; #1 &ndash; 2017 East 23rd</a>
+        </div>
+        <div>
+          <h4>The project</h4>
+          <span>1,595 sq ft over three levels</span>
+          <span>3 bed &middot; 2.5 bath</span>
+          <span>Own front door, garden and roof deck</span>
+          <a class="f-cta" href="#register">Join the list &rarr;</a>
+        </div>
+      </div>
     </div>
-    <div class="f-cols">
-      <div>
-        <h4>Explore</h4>
-        <a href="homes.html">Homes</a>
-        <a href="floorplans.html">Floor Plans</a>
-        <a href="neighbourhood.html">Neighbourhood</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="team.html">Team</a>
-      </div>
-      <div>
-        <h4>The homes</h4>
-        <span>Hinoki &middot; 3992 Victoria Drive</span>
-        <span>Momiji &middot; #2 &ndash; 2017 East 23rd</span>
-        <span>Sakura &middot; #3 &ndash; 2017 East 23rd</span>
-        <span>Matsu &middot; #1 &ndash; 2017 East 23rd</span>
-      </div>
-      <div>
-        <h4>Register</h4>
-        <span>Plans and pricing before the public release.</span>
-        <a class="f-cta" href="#register">Join the list &rarr;</a>
-        <a href="mailto:hello@victoriahaus.ca">hello@victoriahaus.ca</a>
-      </div>
-    </div>
-  </div>
 
-  <!-- Credits. Both marks are sized by their wordmark, not their bounding box:
-       Twinlines carries STUDIO underneath, so equal box heights would leave its
-       name a third smaller. Measured on the artwork, its box runs 1.619x its
-       wordmark, and Dreamlife needs 1.35x to balance against a bold serif. -->
-  <div class="wrap f-credits">
-    <span class="credit">
-      <small>Renderings by</small>
-      <a href="https://dreamlife.org" target="_blank" rel="noopener">
+    <div class="wrap f-credits" data-rv style="--d:140ms">
+      <a class="credit credit-dl" href="https://dreamlife.org/" target="_blank" rel="noopener">
+        <small>Branding, visualization &amp; website by</small>
         <img class="mk dl" src="assets/logos/dreamlife-white.svg" alt="Dreamlife" width="387" height="87">
       </a>
-    </span>
-    <span class="credit">
-      <small>2D floor plans by</small>
-      <img class="mk tl" src="assets/logos/twinlines-white.png" alt="TwinLines Studio" width="820" height="225">
-    </span>
-  </div>
+      <a class="credit credit-tl" href="https://twinlines.ca/" target="_blank" rel="noopener">
+        <small>2D floor plans by</small>
+        <img class="mk tl" src="assets/logos/twinlines-white.svg" alt="TwinLines Studio" width="820" height="225">
+      </a>
+    </div>
 
-  <div class="wrap f-legal">
-    <p>Renderings are artistic representations only and are not intended to form part of any
-       contract. Floor plans are draft and approximate; dimensions and areas are subject to
-       change. This is not an offering for sale. Any such offering may only be made with a
-       disclosure statement. E.&amp;O.E.</p>
-    <p class="f-copy">&copy; 2026 Victoria Haus</p>
+    <div class="wrap f-legal" data-rv style="--d:180ms">
+      <p>Renderings are artistic representations only and are not intended to form part of any
+         contract. Floor plans are draft and approximate; dimensions and areas are subject to
+         change. This is not an offering for sale. Any such offering may only be made with a
+         disclosure statement. E.&amp;O.E.</p>
+      <p class="f-copy">&copy; 2026 Victoria Haus</p>
+    </div>
   </div>
 </footer>
+
+</div><!-- /.tail -->
 </div><!-- /.page -->
 
-<script src="assets/site.js?v=20260826d"></script>
-<script src="assets/anim.js?v=20260826d" defer></script>
-<script src="assets/chat.js?v=20260826d" defer></script>
+<!-- Build 026: the cookie line is gone. The site sets no analytics cookie,
+     so there was nothing to ask permission for. -->
+
+
+<script>
+/* ---------- the footer picture ----------
+   Build 004: one number, --fp, running 0 to 1 while the footer crosses the
+   window, drifting the picture behind it. Same shape as the deck's --out, kept
+   separate because the footer is outside the deck and has no plate of its own.
+   Off entirely under reduced motion. */
+(function(){
+  var foot = document.getElementById("site-foot");
+  if (!foot) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var queued = false;
+  function paint(){
+    queued = false;
+    var r = foot.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    var k = 1 - (r.top / innerHeight);
+    foot.style.setProperty("--fp", Math.max(0, Math.min(k, 1)).toFixed(3));
+  }
+  addEventListener("scroll", function(){
+    if (queued) return;
+    queued = true; requestAnimationFrame(paint);
+  }, { passive: true });
+  addEventListener("resize", paint, { passive: true });
+  paint();
+})();
+
+/* Build 026: the cookie line and its script were removed. */
+
+
+/* ---------- the scroll engine ----------
+   Build 002: the numbers are unchanged, what they drive is not. The
+   plates used to be sticky and --out slid one over the top of the last.
+   They are ordinary blocks now, so:
+
+     --in   0 to 1 while the plate rises into view — fades its content in
+     --out  0 to 1 while the plate leaves — drifts the picture in its frame
+
+   Both are eased toward their target rather than snapped to the raw
+   scroll position, which is what turns a trackpad's stepping into a
+   glide. The loop parks itself once every plate has settled.        */
+(function(){
+  var panels = [].slice.call(document.querySelectorAll(".deck .panel"));
+  if (!panels.length) return;
+  var calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var tops = [], cur = [], running = false, act = -1;
+  var grounds = [].slice.call(document.querySelectorAll(".bleed img"));
+
+  panels.forEach(function(){ cur.push({ i: 1, o: 0 }); });
+
+  function measure(){
+    tops = panels.map(function(p){ return p.offsetTop; });
+    wake(true);
+  }
+
+  function paint(snap){
+    var vh = innerHeight, y = scrollY, moving = false;
+    for (var i = 0; i < panels.length; i++){
+      var p = panels[i], t = tops[i];
+      var tin  = (y - t + vh) / vh;
+      var tout = (y - t) / vh;
+      tin  = tin  < 0 ? 0 : tin  > 1 ? 1 : tin;
+      tout = tout < 0 ? 0 : tout > 1 ? 1 : tout;
+      var c = cur[i];
+      if (snap || calm){ c.i = tin; c.o = tout; }
+      else {
+        c.i += (tin  - c.i) * 0.14;
+        c.o += (tout - c.o) * 0.14;
+        if (Math.abs(tin - c.i) > 0.0006 || Math.abs(tout - c.o) > 0.0006) moving = true;
+      }
+      /* snap the ends so a plate never sits at 0.998 and keeps the loop alive */
+      if (Math.abs(c.i - tin)  < 0.0015) c.i = tin;
+      if (Math.abs(c.o - tout) < 0.0015) c.o = tout;
+      p.style.setProperty("--in",  c.i.toFixed(4));
+      p.style.setProperty("--out", c.o.toFixed(4));
+
+      /* the plate you are actually on: locked, and not yet half covered */
+      if (tin === 1 && tout < 0.5 && act !== i){
+        if (act > -1) panels[act].classList.remove("act");
+        panels[i].classList.add("act");
+        if (grounds[i]){
+          grounds.forEach(function(g){ g.classList.remove("on"); });
+          grounds[i].classList.add("on");
+        }
+        act = i;
+      }
+    }
+    return moving;
+  }
+
+  function frame(){
+    running = paint(false);
+    if (running) requestAnimationFrame(frame);
+  }
+  function wake(snap){
+    if (snap) { paint(true); return; }
+    if (running) return;
+    running = true; requestAnimationFrame(frame);
+  }
+
+  addEventListener("scroll", function(){ wake(false); }, { passive: true });
+  addEventListener("resize", measure, { passive: true });
+  addEventListener("load", measure);
+  measure();
+})();
+
+/* ---------- the header ----------
+   Out of the way while you are going down, back the moment you ask for
+   it, and reduced to the mark once the first plate is behind you. */
+(function(){
+  var nav = document.querySelector("body > nav");
+  if (!nav) return;
+  var last = scrollY, queued = false;
+  function paint(){
+    queued = false;
+    var y = scrollY;
+    if (document.body.classList.contains("menu-open")) { last = y; return; }
+    var down = y > last + 5, up = y < last - 5;
+    if (down && y > innerHeight * 0.5) nav.classList.add("away");
+    else if (up || y < 80) nav.classList.remove("away");
+    if (down || up) last = y;
+  }
+  addEventListener("scroll", function(){
+    if (queued) return;
+    queued = true; requestAnimationFrame(paint);
+  }, { passive: true });
+})();
+
+/* ---------- the reveal, and the counters ----------
+   Build 003. Everything marked data-rv arrives on entering view: a short
+   rise and fade, staggered by its own --d. Two rules make this safe rather
+   than fragile:
+
+     1. The element is visible by default. The hidden state is added by this
+        script (body.rv-on), so if the JS never runs, or an observer is
+        unsupported, the page is simply a page with all its content in it —
+        never a screen of invisible divs.
+     2. Under prefers-reduced-motion nothing is hidden at all and the
+        counters print their final number immediately.
+
+   The walk-time numbers count up because the number IS the content there;
+   it is the one animation on this page carrying meaning rather than
+   decoration, so it is the one that earns the extra code.              */
+(function(){
+  var calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var items = [].slice.call(document.querySelectorAll("[data-rv]"));
+  if (!items.length) return;
+
+  function settle(el){
+    el.classList.add("rv-in");
+    /* Build 015: this used to look only inside .wk, so the homepage's walk
+       board counted and the neighbourhood's identical board did not. Any
+       revealed element that contains a [data-count] now counts. */
+    [].forEach.call(el.querySelectorAll("[data-count]"), count);
+    if (el.hasAttribute("data-count")) count(el);
+  }
+
+  function count(el){
+    var to = parseInt(el.getAttribute("data-count"), 10);
+    if (isNaN(to)) return;
+    if (calm){ el.textContent = to; return; }
+    var t0 = null, ms = 900;
+    /* the delay the card already carries, so the number starts with its card */
+    var wait = parseFloat((el.closest("[data-rv]") || el).style.getPropertyValue("--d")) || 0;
+    el.textContent = "0";
+    setTimeout(function(){
+      requestAnimationFrame(function step(t){
+        if (t0 === null) t0 = t;
+        var k = Math.min((t - t0) / ms, 1);
+        k = 1 - Math.pow(1 - k, 3);
+        el.textContent = Math.round(to * k);
+        if (k < 1) requestAnimationFrame(step);
+        else el.textContent = to;
+      });
+    }, wait);
+  }
+
+  if (calm || !("IntersectionObserver" in window)){
+    items.forEach(settle);
+    return;
+  }
+
+  document.body.classList.add("rv-on");
+
+  /* Two observers, because two kinds of thing are arriving.
+
+     The ordinary one is generous: -18% off the bottom and a low threshold, so
+     copy and cards are already settled by the time they are under your eye.
+
+     The late one is for anything that IS the content rather than decoration —
+     the walk-time counters. Those were running while the section was still a
+     third off the bottom of the window, so by the time you had scrolled to
+     them the numbers had finished counting and you saw a static board. They
+     wait for -32% and half the element in view, which puts the count under
+     the reader rather than ahead of them. */
+  function watch(sel, opts){
+    var list = items.filter(sel);
+    if (!list.length) return;
+    var io = new IntersectionObserver(function(rows){
+      rows.forEach(function(r){
+        if (!r.isIntersecting) return;
+        settle(r.target);
+        io.unobserve(r.target);
+      });
+    }, opts);
+    list.forEach(function(el){ io.observe(el); });
+  }
+  /* Build 026: both observers pull the bottom edge in, so anything already
+     sitting in the lowest fifth of the FIRST screen is not intersecting at
+     load and stays hidden until you scroll past and come back. Anything
+     visible on arrival is settled on arrival. (Mirrored in assets/vh.js —
+     this page does not load it.) */
+  var vh0 = window.innerHeight || document.documentElement.clientHeight;
+  items = items.filter(function(el){
+    var r = el.getBoundingClientRect();
+    if (r.top < vh0 && r.bottom > 0){ settle(el); return false; }
+    return true;
+  });
+
+  watch(function(el){ return el.hasAttribute("data-rv-late"); },
+        { rootMargin: "0px 0px -32% 0px", threshold: 0.5 });
+  watch(function(el){ return !el.hasAttribute("data-rv-late"); },
+        { rootMargin: "0px 0px -18% 0px", threshold: 0.15 });
+})();
+
+</script>
+
+<script src="assets/site.js?v=20260907a"></script>
+
+<script>
+/* site.js paints the iOS status bar to match a cream header. This one is
+   smoked glass over the picture, so the bar follows the glass instead.
+   Registered after site.js, so on the same class change this observer runs
+   second and has the last word. */
+(function(){
+  var meta = document.querySelector('meta[name="theme-color"]');
+  var nav  = document.querySelector("body > nav");
+  if (!meta || !nav) return;
+  var sync = function(){
+    meta.setAttribute("content", nav.classList.contains("solid") ? "#17150F" : "#191614");
+  };
+  new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ["class"] });
+  sync();
+})();
+
+/* ---------- register ----------
+   Build 003. One question at a time, then a summary.
+
+   What changed: answers used to be echoed into a receipt beside the form the
+   instant they were given, which meant the left column spent the first half
+   of the form as a list of em-dashes and the second half repeating what was
+   still on screen. The summary now appears once, on submit, where somebody
+   can actually check it before it counts — and there is a way back if it is
+   wrong.
+
+   TODO — WIRE THE SUBMISSION. Nothing leaves the browser yet: `payload`
+   below is assembled and then handed to send(), which currently only
+   resolves. Point send() at the real endpoint (Formspree / HubSpot / the
+   CRM of record) when that is decided, keep the returned promise, and let
+   the catch branch surface a failure rather than showing the confirmation.  */
+(function(){
+  var form = document.getElementById("regForm");
+  if (!form) return;
+  var steps = [].slice.call(form.querySelectorAll(".rg-step"));
+  var rail  = [].slice.call(document.querySelectorAll("#rgRail i"));
+  var errEl = document.getElementById("rgErr");
+  var back  = document.getElementById("rgBack");
+  var go    = document.getElementById("rgGo");
+  var acts  = document.getElementById("rgActs");
+  var done  = document.getElementById("rgDone");
+  var count = document.getElementById("rgCount");
+  var sum   = document.getElementById("rgSum");
+  var at = 0, touched = false;
+  var said = {};
+
+  function err(m){
+    errEl.textContent = m || "";
+    errEl.classList.toggle("on", !!m);
+  }
+
+  function show(i){
+    at = i;
+    steps.forEach(function(s, n){ s.classList.toggle("is-on", n === i); });
+    rail.forEach(function(r, n){ r.classList.toggle("on", n <= i); });
+    back.classList.toggle("on", i > 0);
+    count.textContent = "Step " + (i + 1) + " of " + steps.length;
+    go.firstChild.nodeValue = i === steps.length - 1 ? "Register " : "Continue ";
+    err("");
+    if (!touched) return;
+    var f = steps[i].querySelector("input, .chips button");
+    if (f) setTimeout(function(){ f.focus({ preventScroll: true }); }, 380);
+  }
+
+  /* chips behave as one choice each */
+  function wireChips(id, key){
+    var box = document.getElementById(id);
+    if (!box) return;
+    var btns = [].slice.call(box.querySelectorAll("button"));
+    btns.forEach(function(b){
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", function(){
+        btns.forEach(function(o){ o.setAttribute("aria-pressed", String(o === b)); });
+        said[key] = b.dataset.v;
+        err("");
+      });
+    });
+  }
+  wireChips("rgHomes", "home");
+  wireChips("rgRep",   "rep");
+
+  function check(){
+    if (at === 0){
+      var f = document.getElementById("rgFirst").value.trim();
+      var l = document.getElementById("rgLast").value.trim();
+      if (!f) { err("A first name is enough to start."); return false; }
+      said.name = (f + " " + l).trim();
+      return true;
+    }
+    if (at === 1){
+      var e = document.getElementById("rgEmail").value.trim();
+      if (!/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(e)) { err("That address does not look complete."); return false; }
+      said.email = e;
+      return true;
+    }
+    if (at === 2){
+      if (!said.home) { err("Pick one, or tell us you are still deciding."); return false; }
+      return true;
+    }
+    if (at === 3){
+      if (!said.rep) { err("One more, then you are done."); return false; }
+      var ph = document.getElementById("rgPhone").value.trim();
+      said.phone = ph || "";
+      return true;
+    }
+    return true;
+  }
+
+  /* TODO: replace with the real POST. Must return a promise. */
+  function send(payload){
+    return Promise.resolve(payload);
+  }
+
+  function row(label, value){
+    if (!value) return "";
+    return "<div><dt>" + label + "</dt><dd>" +
+           String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;") +
+           "</dd></div>";
+  }
+
+  function finish(){
+    var first = (said.name || "").split(" ")[0];
+    document.getElementById("rgDoneH").textContent =
+      first ? "Thank you, " + first + "." : "You are on the list.";
+    document.getElementById("rgDoneP").textContent =
+      "Plans, pricing and the preview date come to you before anything is said publicly. Here is what we have:";
+
+    sum.innerHTML = row("Name", said.name) + row("Email", said.email) +
+                    row("Home", said.home) + row("Realtor", said.rep) +
+                    row("Phone", said.phone);
+
+    steps.forEach(function(s){ s.classList.remove("is-on"); });
+    rail.forEach(function(r){ r.classList.add("on"); });
+    count.textContent = "Registered";
+    acts.hidden = true;
+    errEl.hidden = true;
+    done.hidden = false;
+    /* move the reading position to the confirmation without stealing focus
+       from anyone who is not using a pointer */
+    done.focus({ preventScroll: true });
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    touched = true;
+    if (!check()) return;
+    if (at < steps.length - 1){ show(at + 1); return; }
+
+    go.disabled = true;
+    send({
+      name: said.name, email: said.email, home: said.home,
+      rep: said.rep, phone: said.phone, project: "Victoria Haus"
+    }).then(finish).catch(function(){
+      go.disabled = false;
+      err("That did not go through. Try again, or email hello@victoriahaus.ca.");
+    });
+  });
+
+  back.addEventListener("click", function(){ touched = true; if (at > 0) show(at - 1); });
+
+  /* the way back out of the confirmation, if the summary is wrong */
+  document.getElementById("rgEdit").addEventListener("click", function(){
+    done.hidden = true;
+    acts.hidden = false;
+    errEl.hidden = false;
+    go.disabled = false;
+    touched = true;
+    show(0);
+  });
+
+  /* Enter moves forward from any field rather than submitting the lot */
+  form.addEventListener("keydown", function(e){
+    if (e.key !== "Enter") return;
+    if (e.target.tagName === "BUTTON" && e.target.type === "button") return;
+    e.preventDefault();
+    form.requestSubmit ? form.requestSubmit() : go.click();
+  });
+
+  show(0);
+})();
+</script>
+
+<script src="assets/anim.js?v=20260907a" defer></script>
+<script src="assets/chat.js?v=20260907a" defer></script>
 </body>
 </html>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="color:#3A342C" viewBox="0 0 220 56" fill="none" role="img" aria-label="Aoi Interiors">
+  <circle cx="28" cy="28" r="20" stroke="currentColor" stroke-width="1.2" opacity=".55"/>
+  <circle cx="28" cy="28" r="8.5" stroke="currentColor" stroke-width="1.6"/>
+  <text x="72" y="25" font-family="Jost, sans-serif" font-size="15" font-weight="400" letter-spacing="3.4" fill="currentColor">AOI</text>
+  <text x="72" y="45" font-family="Jost, sans-serif" font-size="15" font-weight="300" letter-spacing="3.4" fill="currentColor" opacity=".72">INTERIORS</text>
+</svg>

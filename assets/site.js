@@ -29,6 +29,72 @@ if (burger && drawer) {
     if (e.key === "Escape" && document.body.classList.contains("menu-open")) setMenu(false);
   });
   matchMedia("(min-width:961px)").addEventListener("change", e => { if (e.matches) setMenu(false); });
+
+  /* ---------- the drawer picture follows the pointer ----------
+     Build 036: hovering a menu item swaps the photograph at the top of the
+     panel for one belonging to that page.
+
+     Three things this has to get right.
+
+     Two frames, not one src swap: changing src on a live <img> blanks it while
+     the new file arrives, which is a blink rather than a transition.
+
+     decode() before showing: without it the incoming frame is made visible
+     while it is still painting, and you watch it resolve.
+
+     A token, because hovers arrive faster than images decode. Run the pointer
+     down five items and five decodes are in flight; without the token the one
+     that happens to finish last wins, which need not be the one under the
+     cursor. Each call takes a ticket and drops out if a later call took one. */
+  const pic = drawer.querySelector(".d-pic");
+  const frames = pic ? pic.querySelectorAll(".d-fr") : [];
+  if (frames.length === 2 && matchMedia("(hover:hover)").matches) {
+    const cap = pic.querySelector(".d-cap");
+    const home = { src: frames[0].getAttribute("src"), cap: cap ? cap.textContent : "" };
+    let front = 0, token = 0;
+
+    const show = (src, text) => {
+      if (!src || frames[front].getAttribute("src") === src) return;
+      const mine = ++token;
+      const next = frames[front ^ 1];
+      next.src = src;
+      const reveal = () => {
+        if (mine !== token) return;              /* a later hover overtook this one */
+        next.classList.add("on");
+        frames[front].classList.remove("on");
+        front ^= 1;
+        if (cap && text !== undefined) {
+          cap.classList.add("d-swap");
+          setTimeout(() => { cap.textContent = text; cap.classList.remove("d-swap"); }, 180);
+        }
+      };
+      /* decode() rejects on an aborted load, which happens whenever a faster
+         hover replaces this src. Showing it anyway would be wrong, so the
+         rejection is simply the end of this attempt. */
+      next.decode ? next.decode().then(reveal, () => {}) : next.onload = reveal;
+    };
+
+    /* Warm them when the panel opens rather than on first hover, or the first
+       item you touch is the one that waits while every one after it is
+       instant, which reads as the effect being broken on that item. Once. */
+    let warmed = false;
+    burger.addEventListener("click", () => {
+      if (warmed || !document.body.classList.contains("menu-open")) return;
+      warmed = true;
+      drawer.querySelectorAll("[data-pic]").forEach(a => { new Image().src = a.dataset.pic; });
+    });
+
+    drawer.querySelectorAll("[data-pic]").forEach(a => {
+      const go = () => show(a.dataset.pic, a.dataset.cap);
+      a.addEventListener("mouseenter", go);
+      a.addEventListener("focus", go);
+    });
+    const rest = () => show(home.src, home.cap);
+    drawer.querySelector(".d-body")?.addEventListener("mouseleave", rest);
+    drawer.addEventListener("focusout", e => {
+      if (!drawer.contains(e.relatedTarget)) rest();
+    });
+  }
 }
 
 /* ---------- video loops without a cut ----------
@@ -280,11 +346,13 @@ if (counters.length) {
   counters.forEach(el => cio.observe(el));
 }
 
-/* demo form */
+/* Build 003: this popped a "Demo only, no data is sent" alert on any
+   form[data-demo]. This is a real site, so the alert is gone. The handler
+   stays as the single place to wire a real submission for any form that is
+   not the staged registration one — TODO when the endpoint is decided. */
 document.querySelectorAll("form[data-demo]").forEach(f =>
   f.addEventListener("submit", e => {
     e.preventDefault();
-    alert("Demo only, no data is sent.");
   }));
 
 /* ============================================================
@@ -320,7 +388,8 @@ const Lightbox = (() => {
       <button class="lb-next" aria-label="Next">&#8250;</button>
       <div class="lb-stage">
         <img alt="">
-        <video class="lb-vid" playsinline controls loop muted preload="none"></video>
+        <video class="lb-vid" playsinline autoplay loop muted preload="none"
+               disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
       </div>
       <div class="lb-bar">
         <div class="lb-cap"></div>

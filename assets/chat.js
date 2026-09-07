@@ -88,8 +88,18 @@
           <b>${PROJECT.name}</b>
           <span>Demo assistant</span>
         </div>
-        <button class="cb-x" aria-label="Close">&#10005;</button>
+        <button class="cb-x" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
       </header>
+      <a class="cb-reg" href="#register">
+        <span class="cb-reg-t"><b>Register in under a minute</b>
+          <i>Plans and pricing before the public launch</i></span>
+        <span class="cb-reg-a" aria-hidden="true">&rarr;</span>
+      </a>
       <div class="cb-log" role="log" aria-live="polite"></div>
       <div class="cb-chips"></div>
       <form class="cb-form">
@@ -97,7 +107,7 @@
                aria-label="Type a question">
         <button class="cb-send" aria-label="Send">&#8594;</button>
       </form>
-      <p class="cb-note">Demo only. A production assistant connects to any AI platform, or to a model trained on your own material.</p>
+      <p class="cb-note">Answers cover the homes, the plans and the neighbourhood. For anything else, email hello@victoriahaus.ca.</p>
     </div>`;
   document.body.appendChild(root);
 
@@ -176,6 +186,22 @@
   document.addEventListener("keydown", e => {
     if (e.key === "Escape" && root.classList.contains("open")) setOpen(false);
   });
+
+  /* Click anywhere off the panel and it closes. On pointerdown rather than
+     click, so it happens the moment you commit to the other thing rather than
+     after the mouse comes back up, and capture so a page handler that stops
+     propagation cannot leave the panel stranded open. root contains the
+     launcher too, so pressing the launcher still toggles rather than being
+     closed here and reopened by its own handler. */
+  document.addEventListener("pointerdown", e => {
+    if (!root.classList.contains("open")) return;
+    if (root.contains(e.target)) return;
+    setOpen(false);
+  }, true);
+
+  /* The register strip leaves the panel for the form, so the panel gets out
+     of the way rather than sitting over what it just sent you to. */
+  root.querySelector(".cb-reg").addEventListener("click", () => setOpen(false));
 
   /* The label collapses to a circle once the visitor scrolls, so it stops
      competing with the page and becomes a permanent, quiet affordance. */

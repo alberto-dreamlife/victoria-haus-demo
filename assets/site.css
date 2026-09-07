@@ -512,9 +512,35 @@ footer a:hover{color:#fff}
   padding:16px 18px;background:var(--cb-accent);color:var(--cb-on-accent)}
 .cb-head b{display:block;font-family:var(--cb-display);font-weight:400;font-size:17px;letter-spacing:.01em}
 .cb-head span{font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.72}
-.cb-x{background:transparent;border:0;color:inherit;font-size:15px;cursor:pointer;
-  width:30px;height:30px;border-radius:50%;transition:background .3s}
-.cb-x:hover{background:rgba(255,255,255,.16)}
+/* Build 027: 30px with a 15px glyph is a target you have to aim at. A real
+   close control, with a drawn stroke rather than a text character so it does
+   not shift with the font. */
+.cb-x{display:flex;align-items:center;justify-content:center;flex:none;
+  background:transparent;border:1px solid rgba(255,255,255,.22);color:inherit;
+  cursor:pointer;width:44px;height:44px;border-radius:50%;margin-right:-4px;
+  transition:background .3s,border-color .3s,transform .3s}
+.cb-x:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
+.cb-x:active{transform:scale(.94)}
+.cb-x svg{display:block}
+
+/* Build 027: the fastest thing a visitor can do here is register, so it is a
+   green strip across the top of the panel rather than a line of copy they
+   have to reach the end of a conversation to find. */
+.cb-reg{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:13px 18px;background:#5A6650;color:#F4F1EA;text-decoration:none;
+  border-bottom:1px solid rgba(0,0,0,.16);
+  transition:background .35s ease}
+.cb-reg:hover{background:#4C5843}
+.cb-reg-t{display:block;min-width:0}
+.cb-reg-t b{display:block;font-family:var(--cb-display);font-weight:400;font-size:14px;
+  letter-spacing:.01em}
+.cb-reg-t i{display:block;margin-top:2px;font-style:normal;font-size:11px;
+  line-height:1.4;color:rgba(244,241,234,.72)}
+.cb-reg-a{flex:none;font-size:16px;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.cb-reg:hover .cb-reg-a{transform:translateX(4px)}
+@media(prefers-reduced-motion:reduce){
+  .cb-reg-a,.cb-x{transition:none}
+  .cb-reg:hover .cb-reg-a{transform:none}}
 
 .cb-log{padding:18px;display:flex;flex-direction:column;gap:11px;
   max-height:min(46vh,380px);overflow-y:auto;overscroll-behavior:contain}
